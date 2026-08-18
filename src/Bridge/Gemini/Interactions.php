@@ -58,8 +58,6 @@ final readonly class Interactions implements InferenceProviderInterface
     {
         try {
             $requestPayload = $this->inferenceNormalizer->normalize($request, 'json');
-        } catch (ExceptionInterface $e) {
-            throw $e;
         } catch (\Throwable $e) {
             throw new RuntimeException('Normalizing the Gemini inference request failed.', previous: $e);
         }

@@ -6,12 +6,12 @@ use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
 use function implode;
 use function is_array;
-use function is_string;
 use function sprintf;
 use function trim;
 
@@ -123,43 +123,45 @@ readonly class Transport
     }
 
     /**
-     * @throws RuntimeException when reading the response status fails
-     * @throws RuntimeException when an unsuccessful response is returned
+     * @throws RuntimeException when the request fails due to a transport error
+     * @throws RuntimeException when the request was unsuccessful due to an HTTP error
      */
     private function assertSuccessful(HttpResponseInterface $response): void
     {
         try {
             $status = $response->getStatusCode();
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
+        } catch (HttpClientExceptionInterface $e) {
             throw new RuntimeException(sprintf('The %s request failed.', $this->provider->getName()), previous: $e);
         }
 
-        if ($status >= 200 && $status < 300) {
-            return;
+        if ($status < 200 || $status >= 300) {
+            throw new RuntimeException($this->errorMessage($response) ?? sprintf('The %d request was unsuccessful.', $this->provider->getName()), $status);
         }
-
-        throw new RuntimeException($this->errorMessage($response) ?? sprintf('%s returned HTTP %d.', $this->provider->getName(), $status), $status);
     }
 
+    /**
+     * @return ?non-empty-string
+     */
     private function errorMessage(HttpResponseInterface $response): ?string
     {
+        $message = null;
+
         try {
             $data = $response->toArray(false);
-        } catch (\Throwable) {
-            return null;
-        }
 
-        if (!is_array($error = $data['error'] ?? null)) {
-            return null;
-        }
+            if (isset($data['error'])) {
+                $error = $data['error'];
 
-        if (!is_string($message = $error['message'] ?? null)) {
-            return null;
-        }
+                if (is_array($error)) {
+                    if (isset($error['message'])) {
+                        $message = $error['message'];
+                    }
+                }
+            }
 
-        $message = trim($message);
+            $message = trim((string) $message);
+        } catch (HttpClientExceptionInterface) {
+        }
 
         return '' !== $message ? $message : null;
     }
