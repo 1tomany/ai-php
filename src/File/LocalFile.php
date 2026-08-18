@@ -3,6 +3,7 @@
 namespace OneToMany\AI\File;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
+use OneToMany\AI\Exception\RuntimeException;
 
 use function basename;
 use function filesize;
@@ -29,7 +30,7 @@ final readonly class LocalFile
     public string $mediaType;
 
     /**
-     * @var positive-int
+     * @var non-negative-int
      */
     public int $size;
 
@@ -46,23 +47,24 @@ final readonly class LocalFile
             throw new InvalidArgumentException(sprintf('The file "%s" is not readable.', $path));
         }
 
-        if ('' === $mediaType = trim($mediaType)) {
-            throw new InvalidArgumentException('The media type cannot be empty.');
-        }
+        $this->path = $path;
 
         if ('' === $name = trim($name ?? basename($path))) {
             throw new InvalidArgumentException('The file name cannot be empty.');
         }
 
-        $size = @filesize($path);
+        $this->name = $name;
 
-        if (false === $size || $size < 1) {
-            throw new InvalidArgumentException(sprintf('The file "%s" must not be empty.', $path));
+        if ('' === $mediaType = trim($mediaType)) {
+            throw new InvalidArgumentException('The media type cannot be empty.');
         }
 
-        $this->path = $path;
-        $this->name = $name;
         $this->mediaType = $mediaType;
+
+        if (false === $size = @filesize($path)) {
+            throw new RuntimeException(sprintf('Calculating the size of the file "%s" failed.', $path));
+        }
+
         $this->size = $size;
     }
 }
