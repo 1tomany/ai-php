@@ -1,8 +1,10 @@
 <?php
 
-namespace OneToMany\AI\File;
+namespace OneToMany\AI\Contract\Resource;
 
 use OneToMany\AI\Model;
+use OneToMany\AI\Resource\Files\LocalFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 interface FilesInterface
 {

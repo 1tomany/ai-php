@@ -1,10 +1,10 @@
 <?php
 
-namespace OneToMany\AI\Bridge;
+namespace OneToMany\AI\Contract\Bridge;
 
-use OneToMany\AI\File\LocalFile;
-use OneToMany\AI\File\RemoteFile;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\LocalFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 interface FilesProviderInterface
 {

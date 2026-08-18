@@ -2,13 +2,13 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\FilesProviderInterface;
 use OneToMany\AI\Bridge\OpenAI\Payload\File as FilePayload;
+use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\File\LocalFile;
-use OneToMany\AI\File\RemoteFile;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\LocalFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 use function fclose;
 use function fopen;

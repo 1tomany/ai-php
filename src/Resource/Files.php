@@ -1,13 +1,16 @@
 <?php
 
-namespace OneToMany\AI\File;
+namespace OneToMany\AI\Resource;
 
-use OneToMany\AI\Bridge\FilesProviderInterface;
+use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
+use OneToMany\AI\Contract\Resource\FilesInterface;
 use OneToMany\AI\Exception\LogicException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\LocalFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 use function sprintf;
 

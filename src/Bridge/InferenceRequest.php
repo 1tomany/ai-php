@@ -2,8 +2,8 @@
 
 namespace OneToMany\AI\Bridge;
 
-use OneToMany\AI\Inference\Prompt;
 use OneToMany\AI\Model;
+use OneToMany\AI\Resource\Inference\Prompt;
 
 final readonly class InferenceRequest
 {

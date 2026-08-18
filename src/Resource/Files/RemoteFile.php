@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\File;
+namespace OneToMany\AI\Resource\Files;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;

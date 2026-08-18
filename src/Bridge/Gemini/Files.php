@@ -2,14 +2,14 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
-use OneToMany\AI\Bridge\FilesProviderInterface;
 use OneToMany\AI\Bridge\Gemini\Payload\FileResponse;
+use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\File\LocalFile;
-use OneToMany\AI\File\RemoteFile;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\LocalFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 use function fclose;
 use function feof;

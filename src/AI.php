@@ -2,8 +2,8 @@
 
 namespace OneToMany\AI;
 
-use OneToMany\AI\File\FilesInterface;
-use OneToMany\AI\Inference\InferenceInterface;
+use OneToMany\AI\Contract\Resource\FilesInterface;
+use OneToMany\AI\Contract\Resource\InferenceInterface;
 
 final readonly class AI
 {

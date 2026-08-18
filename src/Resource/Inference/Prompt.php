@@ -1,9 +1,9 @@
 <?php
 
-namespace OneToMany\AI\Inference;
+namespace OneToMany\AI\Resource\Inference;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\File\RemoteFile;
+use OneToMany\AI\Resource\Files\RemoteFile;
 
 use function array_values;
 use function trim;

@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Inference;
+namespace OneToMany\AI\Resource\Inference;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 

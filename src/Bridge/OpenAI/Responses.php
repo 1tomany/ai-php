@@ -2,16 +2,16 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\InferenceProviderInterface;
 use OneToMany\AI\Bridge\InferenceRequest;
 use OneToMany\AI\Bridge\OpenAI\Payload\Response as ResponsePayload;
 use OneToMany\AI\Bridge\OpenAI\Payload\Usage as UsagePayload;
+use OneToMany\AI\Contract\Bridge\InferenceProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Inference\Response;
-use OneToMany\AI\Inference\Usage;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Inference\Response;
+use OneToMany\AI\Resource\Inference\Usage;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function implode;

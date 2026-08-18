@@ -1,8 +1,10 @@
 <?php
 
-namespace OneToMany\AI\Inference;
+namespace OneToMany\AI\Contract\Resource;
 
 use OneToMany\AI\Model;
+use OneToMany\AI\Resource\Inference\Prompt;
+use OneToMany\AI\Resource\Inference\Response;
 
 interface InferenceInterface
 {

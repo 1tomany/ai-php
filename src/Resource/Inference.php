@@ -1,16 +1,19 @@
 <?php
 
-namespace OneToMany\AI\Inference;
+namespace OneToMany\AI\Resource;
 
-use OneToMany\AI\Bridge\InferenceProviderInterface;
 use OneToMany\AI\Bridge\InferenceRequest;
+use OneToMany\AI\Contract\Bridge\InferenceProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
+use OneToMany\AI\Contract\Resource\InferenceInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\LogicException;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\File\RemoteFile;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\Inference\Prompt;
+use OneToMany\AI\Resource\Inference\Response;
 
 use function sprintf;
 
