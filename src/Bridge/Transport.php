@@ -12,6 +12,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
 use function implode;
 use function is_array;
+use function is_string;
 use function sprintf;
 use function trim;
 
@@ -152,9 +153,15 @@ readonly class Transport
             if (isset($data['error'])) {
                 $error = $data['error'];
 
-                if (is_array($error)) {
-                    if (isset($error['message'])) {
-                        $message = $error['message'];
+                if (!is_array($error)) {
+                    return $message;
+                }
+
+                if (isset($error['message'])) {
+                    $message = $error['message'];
+
+                    if (!is_string($message)) {
+                        $message = null;
                     }
                 }
             }
