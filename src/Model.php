@@ -36,10 +36,9 @@ final readonly class Model implements \Stringable
      */
     public static function create(string $model): self
     {
-        $provider = Provider::fromModel($model);
-        [, $name] = explode(':', trim($model), 2);
+        $name = \array_last(explode(':', trim($model), 2));
 
-        return new self($provider, $name);
+        return new self(Provider::fromModel($model), $name);
     }
 
     /**
