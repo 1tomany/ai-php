@@ -1,0 +1,95 @@
+<?php
+
+namespace OneToMany\AI\Bridge\Gemini\Normalizer;
+
+use OneToMany\AI\Bridge\InferenceRequest;
+use OneToMany\AI\Exception\InvalidArgumentException;
+use OneToMany\AI\Provider;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
+use function array_replace;
+use function is_string;
+use function str_starts_with;
+
+final readonly class InferenceRequestNormalizer implements NormalizerInterface
+{
+    /**
+     * @param InferenceRequest $data
+     *
+     * @return array<string, mixed>
+     */
+    #[\Override]
+    public function normalize(mixed $data, ?string $format = null, array $context = []): array
+    {
+        if (!$this->supportsNormalization($data, $format, $context)) {
+            throw new InvalidArgumentException('The Gemini request normalizer received an unsupported value.');
+        }
+
+        $input = [];
+
+        foreach ($data->prompt->input as $part) {
+            if (is_string($part)) {
+                $input[] = ['type' => 'text', 'text' => $part];
+
+                continue;
+            }
+
+            if (null === $part->uri) {
+                throw new InvalidArgumentException('A Gemini inference request requires a file URI.');
+            }
+
+            $input[] = [
+                'type' => $this->contentType($part->mediaType),
+                'uri' => $part->uri,
+                'mime_type' => $part->mediaType,
+            ];
+        }
+
+        $payload = [
+            'model' => $data->model->name,
+            'stream' => false,
+            'input' => $input,
+        ];
+
+        if (null !== $data->prompt->instructions) {
+            $payload['system_instruction'] = $data->prompt->instructions;
+        }
+
+        if (null !== $data->prompt->schema) {
+            $payload['response_format'] = [
+                'type' => 'text',
+                'mime_type' => 'application/json',
+                'schema' => $data->prompt->schema->schema,
+            ];
+        }
+
+        return array_replace($data->options, $payload);
+    }
+
+    #[\Override]
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
+    {
+        return $data instanceof InferenceRequest
+            && Provider::Gemini === $data->model->provider
+            && (null === $format || 'json' === $format)
+        ;
+    }
+
+    #[\Override]
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            InferenceRequest::class => false,
+        ];
+    }
+
+    private function contentType(string $mediaType): string
+    {
+        return match (true) {
+            str_starts_with($mediaType, 'audio/') => 'audio',
+            str_starts_with($mediaType, 'image/') => 'image',
+            str_starts_with($mediaType, 'video/') => 'video',
+            default => 'document',
+        };
+    }
+}
