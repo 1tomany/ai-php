@@ -1,0 +1,74 @@
+{
+    "name": "1tomany/ai-php",
+    "description": "A single, unified, framework-independent library for integration with many popular AI platforms and large language models",
+    "license": "MIT",
+    "type": "library",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "keywords": [
+        "ai",
+        "ai client",
+        "ai sdk",
+        "chatgpt",
+        "chat gpt",
+        "claude",
+        "gemini",
+        "gpt",
+        "llm",
+        "llm client",
+        "llm sdk",
+        "openai",
+        "open ai"
+    ],
+    "require": {
+        "php": ">=8.4",
+        "ext-fileinfo": "*",
+        "fakerphp/faker": "^1.24",
+        "psr/container": "^2.0",
+        "symfony/http-client": "^7.2|^8.0|^8.1",
+        "symfony/property-access": "^7.2|^8.0|^8.1",
+        "symfony/property-info": "^7.2|^8.0|^8.1",
+        "symfony/serializer": "^7.2|^8.0|^8.1"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.93",
+        "phpdocumentor/reflection-docblock": "^5.6|^6.0.3",
+        "phpstan/phpstan": "^2.1.55",
+        "phpunit/phpunit": "^13.1.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "OneToMany\\AI\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OneToMany\\AI\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "fix": "php-cs-fixer fix",
+        "stan": "phpstan",
+        "test": "phpunit",
+        "flat": [
+            "@fix",
+            "@stan",
+            "@test"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Vic Cherubini",
+            "email": "vcherubini@gmail.com"
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
