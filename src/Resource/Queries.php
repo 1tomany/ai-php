@@ -34,25 +34,17 @@ final readonly class Queries implements QueriesInterface
     public function __construct(
         iterable $providers,
     ) {
-        $indexed = [];
+        $indexedProviders = [];
 
-        try {
-            foreach ($providers as $provider) {
-                $key = $provider->provider()->getValue();
-
-                if (isset($indexed[$key])) {
-                    throw new LogicException(sprintf('More than one "%s" query provider is registered.', $key));
-                }
-
-                $indexed[$key] = $provider;
+        foreach ($providers as $provider) {
+            if (isset($indexedProviders[$provider->provider()->getValue()])) {
+                throw new LogicException(sprintf('The "%s" query provider is already registered.', $provider->provider()->getValue()));
             }
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new LogicException('Registering the query providers failed.', previous: $e);
+
+            $indexedProviders[$provider->provider()->getValue()] = $provider;
         }
 
-        $this->providers = $indexed;
+        $this->providers = $indexedProviders;
     }
 
     /**
@@ -130,11 +122,14 @@ final readonly class Queries implements QueriesInterface
     }
 
     /**
-     * @throws LogicException when no query provider is registered
+     * @throws InvalidArgumentException when the query provider is not registered
      */
     private function provider(Provider $provider): QueryProviderInterface
     {
-        return $this->providers[$provider->getValue()]
-            ?? throw new LogicException(sprintf('No "%s" query provider is registered.', $provider->getValue()));
+        if (!isset($this->providers[$provider->getValue()])) {
+            throw new InvalidArgumentException(sprintf('The "%s" query provider is not registered.', $provider->getValue()));
+        }
+
+        return $this->providers[$provider->getValue()];
     }
 }

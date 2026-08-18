@@ -21,7 +21,7 @@
         "open ai"
     ],
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "ext-fileinfo": "*",
         "phpdocumentor/reflection-docblock": "^5.6|^6.0.3",
         "symfony/http-client": "^7.2|^8.0|^8.1",
