@@ -5,6 +5,7 @@ namespace OneToMany\AI\Bridge;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
+use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -26,20 +27,18 @@ readonly class Transport
     }
 
     /**
+     * @see OneToMany\AI\Bridge\Transport::assertSuccessful()
+     *
      * @param array<string, mixed> $options
      *
      * @throws RuntimeException when sending the request fails
-     * @throws RuntimeException when reading the response status fails
-     * @throws RuntimeException when an unsuccessful response is returned
      */
     public function request(string $method, string $url, array $options = []): HttpResponseInterface
     {
         try {
             $response = $this->httpClient->request($method, $url, $options);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Sending the %s request failed.', $this->provider->getName()), previous: $e);
+        } catch (HttpClientExceptionInterface $e) {
+            throw new RuntimeException(sprintf('Sending the request to %s failed.', $this->provider->getName()), previous: $e);
         }
 
         $this->assertSuccessful($response);
@@ -74,9 +73,7 @@ readonly class Transport
     {
         try {
             return $response->getHeaders(false);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
+        } catch (HttpClientExceptionInterface $e) {
             throw new RuntimeException(sprintf('Reading the %s response headers failed.', $this->provider->getName()), previous: $e);
         }
     }
@@ -97,22 +94,14 @@ readonly class Transport
     {
         try {
             $content = $response->getContent(false);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
+        } catch (HttpClientExceptionInterface $e) {
             throw new RuntimeException(sprintf('Reading the %s response failed.', $this->provider->getName()), previous: $e);
         }
 
         try {
             $payload = $this->serializer->deserialize($content, $type, 'json');
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
+        } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException(sprintf('Deserializing the %s response failed.', $this->provider->getName()), previous: $e);
-        }
-
-        if (!$payload instanceof $type) {
-            throw new RuntimeException(sprintf('Deserializing the %s response as "%s" failed.', $this->provider->getName(), $type));
         }
 
         return $payload;
