@@ -136,14 +136,14 @@ readonly class Transport
         }
 
         if ($status < 200 || $status >= 300) {
-            throw new RuntimeException($this->errorMessage($response) ?? sprintf('The %d request was unsuccessful.', $this->provider->getName()), $status);
+            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('The %d request was unsuccessful.', $this->provider->getName()), $status);
         }
     }
 
     /**
      * @return ?non-empty-string
      */
-    private function errorMessage(HttpResponseInterface $response): ?string
+    private function extractErrorMessage(HttpResponseInterface $response): ?string
     {
         $message = null;
 
@@ -153,20 +153,14 @@ readonly class Transport
             if (isset($data['error'])) {
                 $error = $data['error'];
 
-                if (!is_array($error)) {
-                    return $message;
-                }
-
-                if (isset($error['message'])) {
-                    $message = $error['message'];
-
-                    if (!is_string($message)) {
-                        $message = null;
+                if (is_array($error)) {
+                    if (isset($error['message'])) {
+                        if (is_string($error['message'])) {
+                            $message = trim($error['message']);
+                        }
                     }
                 }
             }
-
-            $message = trim((string) $message);
         } catch (HttpClientExceptionInterface) {
         }
 
