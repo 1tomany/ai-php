@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Resource\Inference;
+namespace OneToMany\AI\Resource\Queries;
 
 final readonly class Usage
 {

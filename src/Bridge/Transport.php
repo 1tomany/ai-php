@@ -125,7 +125,7 @@ readonly class Transport
         }
 
         if ($status < 200 || $status >= 300) {
-            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('The %d request was unsuccessful.', $this->provider->getName()), $status);
+            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('The %s request was unsuccessful.', $this->provider->getName()), $status);
         }
     }
 

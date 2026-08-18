@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Resource\Inference;
+namespace OneToMany\AI\Resource\Queries;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\Files\RemoteFile;

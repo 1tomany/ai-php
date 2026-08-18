@@ -2,31 +2,35 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\InferenceRequest;
-use OneToMany\AI\Bridge\OpenAI\Normalizer\InferenceRequestNormalizer;
+use OneToMany\AI\Bridge\OpenAI\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\OpenAI\Payload\Response as ResponsePayload;
 use OneToMany\AI\Bridge\OpenAI\Payload\Usage as UsagePayload;
+use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
-use OneToMany\AI\Contract\Bridge\InferenceProviderInterface;
+use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
+use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
+use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Inference\Response;
-use OneToMany\AI\Resource\Inference\Usage;
+use OneToMany\AI\Resource\Queries\Prompt;
+use OneToMany\AI\Resource\Queries\Query;
+use OneToMany\AI\Resource\Queries\Response;
+use OneToMany\AI\Resource\Queries\Usage;
 
 use function implode;
 use function trim;
 
-final readonly class Responses implements InferenceProviderInterface
+final readonly class Responses implements QueryProviderInterface
 {
     public function __construct(
         private Transport $transport,
-        private InferenceRequestNormalizer $normalizer,
+        private QueryRequestNormalizer $normalizer,
         private string $apiVersion = 'v1',
     ) {
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
      */
     #[\Override]
     public function provider(): Provider
@@ -35,35 +39,54 @@ final readonly class Responses implements InferenceProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
      *
-     * @throws RuntimeException when creating the response fails
+     * @param array<string, mixed> $options
+     *
+     * @throws ExceptionInterface when request normalization throws a package exception
+     * @throws RuntimeException when compiling the query fails
      */
     #[\Override]
-    public function create(InferenceRequest $request): Response
+    public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
         try {
-            return $this->createResponse($request);
+            $payload = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options));
+        } catch (ExceptionInterface $e) {
+            throw $e;
         } catch (\Throwable $e) {
-            throw new RuntimeException('Creating the OpenAI response failed.', previous: $e);
+            throw new RuntimeException('Compiling the OpenAI query failed.', previous: $e);
+        }
+
+        return new Query($model, $payload);
+    }
+
+    /**
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
+     *
+     * @throws ExceptionInterface when response creation throws a package exception
+     * @throws RuntimeException when running the query fails
+     */
+    #[\Override]
+    public function run(Query $query): Response
+    {
+        try {
+            return $this->runQuery($query);
+        } catch (ExceptionInterface $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new RuntimeException('Running the OpenAI query failed.', previous: $e);
         }
     }
 
     /**
-     * @throws RuntimeException when normalizing the request fails
+     * @throws ExceptionInterface when response creation throws a package exception
      */
-    private function createResponse(InferenceRequest $request): Response
+    private function runQuery(Query $query): Response
     {
-        try {
-            $requestPayload = $this->normalizer->normalize($request);
-        } catch (\Throwable $e) {
-            throw new RuntimeException('Normalizing the OpenAI inference request failed.', previous: $e);
-        }
-
         $url = $this->transport->url($this->apiVersion, 'responses');
 
         $payload = $this->transport->requestObject('POST', $url, ResponsePayload::class, [
-            'json' => $requestPayload,
+            'json' => $query->payload,
         ]);
 
         $texts = [];
@@ -82,8 +105,6 @@ final readonly class Responses implements InferenceProviderInterface
         }
 
         $usage = $payload->usage ?? new UsagePayload();
-        $cachedInputTokens = $usage->input_token_details->cached_tokens;
-        $reasoningTokens = $usage->output_token_details->reasoning_tokens;
         $error = null;
 
         if (null !== $payload->error && null !== $payload->error->message) {
@@ -104,8 +125,8 @@ final readonly class Responses implements InferenceProviderInterface
             usage: new Usage(
                 inputTokens: $usage->input_tokens,
                 outputTokens: $usage->output_tokens,
-                cachedInputTokens: $cachedInputTokens,
-                reasoningTokens: $reasoningTokens,
+                cachedInputTokens: $usage->input_token_details->cached_tokens,
+                reasoningTokens: $usage->output_token_details->reasoning_tokens,
                 totalTokens: $usage->total_tokens,
             ),
         );

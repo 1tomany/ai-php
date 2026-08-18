@@ -3,9 +3,9 @@
 namespace OneToMany\AI\Bridge;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Inference\Prompt;
+use OneToMany\AI\Resource\Queries\Prompt;
 
-final readonly class InferenceRequest
+final readonly class QueryRequest
 {
     /**
      * @param array<string, mixed> $options

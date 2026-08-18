@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
-use OneToMany\AI\Bridge\InferenceRequest;
+use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Resource\Files\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -10,12 +10,12 @@ use function array_replace;
 use function is_string;
 use function stripos;
 
-final readonly class InferenceRequestNormalizer implements NormalizerInterface
+final readonly class QueryRequestNormalizer implements NormalizerInterface
 {
     /**
      * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
      *
-     * @param InferenceRequest $data
+     * @param QueryRequest $data
      *
      * @return array<string, mixed>
      */
@@ -89,7 +89,7 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof InferenceRequest && $data->model->provider->isOpenAI();
+        return $data instanceof QueryRequest && $data->model->provider->isOpenAI();
     }
 
     /**
@@ -99,7 +99,7 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
     public function getSupportedTypes(?string $format): array
     {
         return [
-            InferenceRequest::class => false,
+            QueryRequest::class => false,
         ];
     }
 }

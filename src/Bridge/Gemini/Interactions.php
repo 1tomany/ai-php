@@ -2,32 +2,35 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
-use OneToMany\AI\Bridge\Gemini\Normalizer\InferenceRequestNormalizer;
+use OneToMany\AI\Bridge\Gemini\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\Gemini\Payload\Interaction;
 use OneToMany\AI\Bridge\Gemini\Payload\Usage as UsagePayload;
-use OneToMany\AI\Bridge\InferenceRequest;
+use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
-use OneToMany\AI\Contract\Bridge\InferenceProviderInterface;
+use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
+use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Inference\Response;
-use OneToMany\AI\Resource\Inference\Usage;
+use OneToMany\AI\Resource\Queries\Prompt;
+use OneToMany\AI\Resource\Queries\Query;
+use OneToMany\AI\Resource\Queries\Response;
+use OneToMany\AI\Resource\Queries\Usage;
 
 use function implode;
 use function trim;
 
-final readonly class Interactions implements InferenceProviderInterface
+final readonly class Interactions implements QueryProviderInterface
 {
     public function __construct(
         private Transport $transport,
-        private InferenceRequestNormalizer $inferenceNormalizer,
+        private QueryRequestNormalizer $normalizer,
         private string $apiVersion = 'v1beta',
     ) {
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
      */
     #[\Override]
     public function provider(): Provider
@@ -36,37 +39,55 @@ final readonly class Interactions implements InferenceProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
      *
-     * @throws RuntimeException when creating the interaction fails
+     * @param array<string, mixed> $options
+     *
+     * @throws ExceptionInterface when request normalization throws a package exception
+     * @throws RuntimeException when compiling the query fails
      */
     #[\Override]
-    public function create(InferenceRequest $request): Response
+    public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
         try {
-            return $this->createResponse($request);
+            $payload = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options), 'json');
+        } catch (ExceptionInterface $e) {
+            throw $e;
         } catch (\Throwable $e) {
-            throw new RuntimeException('Creating the Gemini interaction failed.', previous: $e);
+            throw new RuntimeException('Compiling the Gemini query failed.', previous: $e);
+        }
+
+        return new Query($model, $payload);
+    }
+
+    /**
+     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
+     *
+     * @throws ExceptionInterface when interaction creation throws a package exception
+     * @throws RuntimeException when running the query fails
+     */
+    #[\Override]
+    public function run(Query $query): Response
+    {
+        try {
+            return $this->runQuery($query);
+        } catch (ExceptionInterface $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new RuntimeException('Running the Gemini query failed.', previous: $e);
         }
     }
 
     /**
-     * @throws ExceptionInterface when request normalization throws a package exception
-     * @throws RuntimeException when normalizing the request fails
+     * @throws ExceptionInterface when interaction creation throws a package exception
      */
-    private function createResponse(InferenceRequest $request): Response
+    private function runQuery(Query $query): Response
     {
-        try {
-            $requestPayload = $this->inferenceNormalizer->normalize($request, 'json');
-        } catch (\Throwable $e) {
-            throw new RuntimeException('Normalizing the Gemini inference request failed.', previous: $e);
-        }
-
         $payload = $this->transport->requestObject(
             'POST',
             $this->transport->url($this->apiVersion, 'interactions'),
             Interaction::class,
-            ['json' => $requestPayload],
+            ['json' => $query->payload],
         );
 
         $texts = [];
