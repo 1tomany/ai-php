@@ -49,20 +49,20 @@ final readonly class RemoteFile
 
         $this->mediaType = $mediaType;
 
-        if ($provider->isGemini()) {
-            if ('' === $uri = trim((string) $uri)) {
-                throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
-            }
-
-            $this->uri = $uri;
-        } else {
-            $this->uri = null;
+        if (null !== $uri) {
+            $uri = trim($uri);
         }
 
-        if ('' !== $purpose = trim((string) $purpose)) {
-            $this->purpose = $purpose;
-        } else {
-            $this->purpose = null;
+        if ($provider->isGemini() && '' === $uri) {
+            throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
         }
+
+        $this->uri = '' !== $uri ? $uri : null;
+
+        if (null !== $purpose) {
+            $purpose = trim($purpose);
+        }
+
+        $this->purpose = '' !== $purpose ? $purpose : null;
     }
 }
