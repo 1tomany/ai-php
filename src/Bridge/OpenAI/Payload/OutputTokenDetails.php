@@ -2,9 +2,6 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Payload;
 
-use OneToMany\AI\Exception\UnexpectedValueException;
-use Symfony\Component\Serializer\Attribute\SerializedName;
-
 final readonly class OutputTokenDetails
 {
     /**

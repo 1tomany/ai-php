@@ -32,11 +32,12 @@ final readonly class Interaction
             throw new UnexpectedValueException('The Gemini interaction is missing its ID.');
         }
 
+        $this->id = $id;
+
         if ('' === $status = trim($status)) {
             throw new UnexpectedValueException('The Gemini interaction is missing its status.');
         }
 
-        $this->id = $id;
         $this->status = $status;
     }
 }
