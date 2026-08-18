@@ -2,7 +2,8 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\OpenAI\Payload\File as FilePayload;
+use OneToMany\AI\Bridge\OpenAI\Payload\File;
+use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
@@ -18,6 +19,7 @@ final readonly class Files implements FilesProviderInterface
 {
     public function __construct(
         private Transport $transport,
+        private string $apiVersion = 'v1',
     ) {
     }
 
@@ -43,21 +45,23 @@ final readonly class Files implements FilesProviderInterface
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
-        $url = $this->transport->url('files');
+        $url = $this->transport->url($this->apiVersion, 'files');
 
         try {
-            $payload = $this->transport->requestObject('POST', $url, FilePayload::class, [
+            $response = $this->transport->request('POST', $url, [
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
                 ],
-            ])->payload;
+            ]);
+
+            $record = $this->transport->decode($response, File::class);
         } finally {
             @fclose($handle);
         }
 
         try {
-            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $payload->expires_at, $payload->purpose);
+            return new RemoteFile($this->provider(), $record->id, $file->mediaType, null, $record->expires_at, $record->purpose);
         } catch (\Throwable $e) {
             throw new RuntimeException('OpenAI returned an invalid file response.', previous: $e);
         }
@@ -76,6 +80,6 @@ final readonly class Files implements FilesProviderInterface
             throw new InvalidArgumentException('The OpenAI files provider can only delete OpenAI files.');
         }
 
-        $this->transport->request('DELETE', $this->transport->url('files', $file->id));
+        $this->transport->request('DELETE', $this->transport->url($this->apiVersion, 'files', $file->id));
     }
 }

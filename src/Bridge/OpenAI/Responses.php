@@ -3,26 +3,25 @@
 namespace OneToMany\AI\Bridge\OpenAI;
 
 use OneToMany\AI\Bridge\InferenceRequest;
+use OneToMany\AI\Bridge\OpenAI\Normalizer\InferenceRequestNormalizer;
 use OneToMany\AI\Bridge\OpenAI\Payload\Response as ResponsePayload;
 use OneToMany\AI\Bridge\OpenAI\Payload\Usage as UsagePayload;
+use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\InferenceProviderInterface;
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
-use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Inference\Response;
 use OneToMany\AI\Resource\Inference\Usage;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function implode;
-use function is_array;
 use function trim;
 
 final readonly class Responses implements InferenceProviderInterface
 {
     public function __construct(
         private Transport $transport,
-        private NormalizerInterface $normalizer,
+        private InferenceRequestNormalizer $normalizer,
+        private string $apiVersion = 'v1',
     ) {
     }
 
@@ -38,30 +37,20 @@ final readonly class Responses implements InferenceProviderInterface
     /**
      * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
      *
-     * @throws ExceptionInterface when response creation throws a package exception
-     * @throws InvalidArgumentException when the request uses another provider's model
      * @throws RuntimeException when creating the response fails
      */
     #[\Override]
     public function create(InferenceRequest $request): Response
     {
-        if (Provider::OpenAI !== $request->model->provider) {
-            throw new InvalidArgumentException('The OpenAI responses provider requires an OpenAI model.');
-        }
-
         try {
             return $this->createResponse($request);
-        } catch (ExceptionInterface $e) {
-            throw $e;
         } catch (\Throwable $e) {
             throw new RuntimeException('Creating the OpenAI response failed.', previous: $e);
         }
     }
 
     /**
-     * @throws ExceptionInterface when request normalization throws a package exception
      * @throws RuntimeException when normalizing the request fails
-     * @throws RuntimeException when normalization does not produce an object
      */
     private function createResponse(InferenceRequest $request): Response
     {
@@ -71,17 +60,11 @@ final readonly class Responses implements InferenceProviderInterface
             throw new RuntimeException('Normalizing the OpenAI inference request failed.', previous: $e);
         }
 
-        if (!is_array($requestPayload)) {
-            throw new RuntimeException('Normalizing the OpenAI inference request did not produce an object.');
-        }
+        $url = $this->transport->url($this->apiVersion, 'responses');
 
-        $decoded = $this->transport->requestObject(
-            'POST',
-            $this->transport->url('responses'),
-            ResponsePayload::class,
-            ['json' => $requestPayload],
-        );
-        $payload = $decoded->payload;
+        $payload = $this->transport->requestObject('POST', $url, ResponsePayload::class, [
+            'json' => $requestPayload,
+        ]);
 
         $texts = [];
         $refusal = null;
@@ -99,8 +82,8 @@ final readonly class Responses implements InferenceProviderInterface
         }
 
         $usage = $payload->usage ?? new UsagePayload();
-        $cachedInputTokens = null !== $usage->input_token_details ? $usage->input_token_details->cached_tokens : 0;
-        $reasoningTokens = null !== $usage->output_token_details ? $usage->output_token_details->reasoning_tokens : 0;
+        $cachedInputTokens = $usage->input_token_details->cached_tokens;
+        $reasoningTokens = $usage->output_token_details->reasoning_tokens;
         $error = null;
 
         if (null !== $payload->error && null !== $payload->error->message) {
@@ -125,7 +108,6 @@ final readonly class Responses implements InferenceProviderInterface
                 reasoningTokens: $reasoningTokens,
                 totalTokens: $usage->total_tokens,
             ),
-            raw: $decoded->raw,
         );
     }
 }

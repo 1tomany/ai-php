@@ -21,8 +21,8 @@ final readonly class Response
     /**
      * @param list<Output> $output
      *
-     * @throws InvalidArgumentException when the response ID is missing
-     * @throws InvalidArgumentException when the response status is missing
+     * @throws InvalidArgumentException when the response ID is empty
+     * @throws InvalidArgumentException when the response status is empty
      */
     public function __construct(
         string $id,
@@ -33,11 +33,11 @@ final readonly class Response
         public ?IncompleteDetails $incomplete_details = null,
     ) {
         if ('' === $id = trim($id)) {
-            throw new InvalidArgumentException('The OpenAI response is missing its ID.');
+            throw new InvalidArgumentException('The response ID cannot be empty.');
         }
 
         if ('' === $status = trim($status)) {
-            throw new InvalidArgumentException('The OpenAI response is missing its status.');
+            throw new InvalidArgumentException('The response status cannot be empty.');
         }
 
         $this->id = $id;

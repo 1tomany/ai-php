@@ -3,7 +3,6 @@
 namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\InferenceRequest;
-use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\Files\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -19,8 +18,6 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
      * @param InferenceRequest $data
      *
      * @return array<string, mixed>
-     *
-     * @throws InvalidArgumentException when the value cannot be normalized
      */
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array

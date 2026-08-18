@@ -3,9 +3,9 @@
 namespace OneToMany\AI\Bridge\Gemini;
 
 use OneToMany\AI\Bridge\Gemini\Payload\FileResponse;
+use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
-use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Files\LocalFile;
@@ -138,7 +138,7 @@ final readonly class Files implements FilesProviderInterface
             throw new RuntimeException('Gemini did not receive any file data.');
         }
 
-        $payload = $this->transport->decode($response, FileResponse::class)->payload->file;
+        $payload = $this->transport->decode($response, FileResponse::class)->file;
 
         return new RemoteFile($this->provider(), $payload->name, $payload->mimeType, $payload->uri, $payload->expirationTime);
     }
@@ -146,16 +146,11 @@ final readonly class Files implements FilesProviderInterface
     /**
      * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
      *
-     * @throws InvalidArgumentException when the file belongs to another provider
      * @throws RuntimeException when deleting the file fails
      */
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        if (Provider::Gemini !== $file->provider) {
-            throw new InvalidArgumentException('The Gemini files provider can only delete Gemini files.');
-        }
-
         $this->transport->request('DELETE', $this->transport->url($this->apiVersion, $file->id));
     }
 }

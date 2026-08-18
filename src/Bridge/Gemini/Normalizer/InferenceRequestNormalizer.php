@@ -20,16 +20,11 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
      *
      * @return array<string, mixed>
      *
-     * @throws InvalidArgumentException when the value cannot be normalized
      * @throws InvalidArgumentException when a referenced file has no URI
      */
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        if (!$this->supportsNormalization($data, $format, $context)) {
-            throw new InvalidArgumentException('The Gemini request normalizer received an unsupported value.');
-        }
-
         $input = [];
 
         foreach ($data->prompt->input as $part) {

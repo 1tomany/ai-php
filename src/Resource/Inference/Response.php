@@ -18,7 +18,6 @@ final readonly class Response
      * @param ?non-empty-string $text
      * @param ?non-empty-string $refusal
      * @param ?non-empty-string $error
-     * @param array<string, mixed> $raw
      */
     public function __construct(
         public Provider $provider,
@@ -28,7 +27,6 @@ final readonly class Response
         public ?string $refusal,
         public ?string $error,
         public Usage $usage,
-        public array $raw,
     ) {
     }
 
