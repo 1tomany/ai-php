@@ -67,8 +67,6 @@ final readonly class Responses implements InferenceProviderInterface
     {
         try {
             $requestPayload = $this->normalizer->normalize($request);
-        } catch (ExceptionInterface $e) {
-            throw $e;
         } catch (\Throwable $e) {
             throw new RuntimeException('Normalizing the OpenAI inference request failed.', previous: $e);
         }
@@ -101,16 +99,16 @@ final readonly class Responses implements InferenceProviderInterface
         }
 
         $usage = $payload->usage ?? new UsagePayload();
-        $cachedInputTokens = null !== $usage->inputTokenDetails ? $usage->inputTokenDetails->cachedTokens : 0;
-        $reasoningTokens = null !== $usage->outputTokenDetails ? $usage->outputTokenDetails->reasoningTokens : 0;
+        $cachedInputTokens = null !== $usage->input_token_details ? $usage->input_token_details->cached_tokens : 0;
+        $reasoningTokens = null !== $usage->output_token_details ? $usage->output_token_details->reasoning_tokens : 0;
         $error = null;
 
         if (null !== $payload->error && null !== $payload->error->message) {
             $error = trim($payload->error->message) ?: null;
         }
 
-        if (null === $error && null !== $payload->incompleteDetails && null !== $payload->incompleteDetails->reason) {
-            $error = trim($payload->incompleteDetails->reason) ?: null;
+        if (null === $error && null !== $payload->incomplete_details && null !== $payload->incomplete_details->reason) {
+            $error = trim($payload->incomplete_details->reason) ?: null;
         }
 
         return new Response(
@@ -121,11 +119,11 @@ final readonly class Responses implements InferenceProviderInterface
             refusal: $refusal,
             error: $error,
             usage: new Usage(
-                inputTokens: $usage->inputTokens,
-                outputTokens: $usage->outputTokens,
+                inputTokens: $usage->input_tokens,
+                outputTokens: $usage->output_tokens,
                 cachedInputTokens: $cachedInputTokens,
                 reasoningTokens: $reasoningTokens,
-                totalTokens: $usage->totalTokens,
+                totalTokens: $usage->total_tokens,
             ),
             raw: $decoded->raw,
         );

@@ -8,21 +8,10 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 final readonly class OutputTokenDetails
 {
     /**
-     * @var non-negative-int
-     */
-    #[SerializedName('reasoning_tokens')]
-    public int $reasoningTokens;
-
-    /**
-     * @throws UnexpectedValueException when the reasoning token count is negative
+     * @param non-negative-int $reasoning_tokens
      */
     public function __construct(
-        int $reasoningTokens = 0,
+        public int $reasoning_tokens = 0,
     ) {
-        if ($reasoningTokens < 0) {
-            throw new UnexpectedValueException('The OpenAI response contains invalid "reasoning_tokens" usage.');
-        }
-
-        $this->reasoningTokens = $reasoningTokens;
     }
 }

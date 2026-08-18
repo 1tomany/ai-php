@@ -2,8 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Payload;
 
-use OneToMany\AI\Exception\UnexpectedValueException;
-use Symfony\Component\Serializer\Attribute\SerializedName;
+use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function trim;
 
@@ -15,16 +14,15 @@ final readonly class File
     public string $id;
 
     /**
-     * @throws UnexpectedValueException when the file ID is missing
+     * @throws InvalidArgumentException when the file ID is missing
      */
     public function __construct(
         string $id,
         public string $purpose,
-        #[SerializedName('expires_at')]
-        public ?int $expiresAt = null,
+        public ?int $expires_at = null,
     ) {
         if ('' === $id = trim($id)) {
-            throw new UnexpectedValueException('The OpenAI file response is missing its ID.');
+            throw new InvalidArgumentException('The OpenAI file response is missing its ID.');
         }
 
         $this->id = $id;

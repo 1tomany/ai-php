@@ -57,7 +57,7 @@ final readonly class Files implements FilesProviderInterface
         }
 
         try {
-            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $payload->expiresAt, $payload->purpose);
+            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $payload->expires_at, $payload->purpose);
         } catch (\Throwable $e) {
             throw new RuntimeException('OpenAI returned an invalid file response.', previous: $e);
         }
