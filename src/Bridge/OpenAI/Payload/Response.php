@@ -21,6 +21,9 @@ final readonly class Response
 
     /**
      * @param list<Output> $output
+     *
+     * @throws UnexpectedValueException when the response ID is missing
+     * @throws UnexpectedValueException when the response status is missing
      */
     public function __construct(
         string $id,

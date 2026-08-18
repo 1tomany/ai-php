@@ -17,6 +17,9 @@ final readonly class Interaction
     /**
      * @param list<Step> $steps
      * @param list<Error> $errors
+     *
+     * @throws UnexpectedValueException when the interaction ID is missing
+     * @throws UnexpectedValueException when the interaction status is missing
      */
     public function __construct(
         string $id,

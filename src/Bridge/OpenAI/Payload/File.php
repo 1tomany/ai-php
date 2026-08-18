@@ -14,6 +14,9 @@ final readonly class File
      */
     public string $id;
 
+    /**
+     * @throws UnexpectedValueException when the file ID is missing
+     */
     public function __construct(
         string $id,
         public string $purpose,

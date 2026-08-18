@@ -17,6 +17,11 @@ final readonly class File
     /** @var non-empty-string */
     public string $mimeType;
 
+    /**
+     * @throws UnexpectedValueException when the file name is missing
+     * @throws UnexpectedValueException when the file URI is missing
+     * @throws UnexpectedValueException when the media type is missing
+     */
     public function __construct(
         string $name,
         string $uri,

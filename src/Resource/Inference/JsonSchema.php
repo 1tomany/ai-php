@@ -22,6 +22,8 @@ final readonly class JsonSchema
 
     /**
      * @param array<string, mixed> $schema
+     *
+     * @throws InvalidArgumentException when the schema has no name
      */
     public function __construct(
         public array $schema,
@@ -37,6 +39,12 @@ final readonly class JsonSchema
         $this->name = $name;
     }
 
+    /**
+     * @throws InvalidArgumentException when reading the schema file fails
+     * @throws InvalidArgumentException when decoding the schema fails
+     * @throws InvalidArgumentException when the schema does not contain an object
+     * @throws InvalidArgumentException when the schema has no name
+     */
     public static function fromFile(string $path, ?string $name = null, bool $strict = true): self
     {
         if (false === $contents = @file_get_contents($path)) {

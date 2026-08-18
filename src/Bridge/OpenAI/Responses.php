@@ -26,12 +26,22 @@ final readonly class Responses implements InferenceProviderInterface
     ) {
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     */
     #[\Override]
     public function provider(): Provider
     {
         return Provider::OpenAI;
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Bridge\InferenceProviderInterface
+     *
+     * @throws ExceptionInterface when response creation throws a package exception
+     * @throws InvalidArgumentException when the request uses another provider's model
+     * @throws RuntimeException when creating the response fails
+     */
     #[\Override]
     public function create(InferenceRequest $request): Response
     {
@@ -48,6 +58,11 @@ final readonly class Responses implements InferenceProviderInterface
         }
     }
 
+    /**
+     * @throws ExceptionInterface when request normalization throws a package exception
+     * @throws RuntimeException when normalizing the request fails
+     * @throws RuntimeException when normalization does not produce an object
+     */
     private function createResponse(InferenceRequest $request): Response
     {
         try {

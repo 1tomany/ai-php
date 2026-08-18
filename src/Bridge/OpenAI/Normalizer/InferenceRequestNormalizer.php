@@ -14,9 +14,13 @@ use function str_starts_with;
 final readonly class InferenceRequestNormalizer implements NormalizerInterface
 {
     /**
+     * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
+     *
      * @param InferenceRequest $data
      *
      * @return array<string, mixed>
+     *
+     * @throws InvalidArgumentException when the value cannot be normalized
      */
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
@@ -72,6 +76,9 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
         return array_replace($data->options, $payload);
     }
 
+    /**
+     * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
+     */
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
@@ -81,6 +88,9 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
         ;
     }
 
+    /**
+     * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
+     */
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {

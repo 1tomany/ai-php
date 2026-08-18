@@ -21,6 +21,9 @@ final readonly class Usage
     #[SerializedName('total_tokens')]
     public int $totalTokens;
 
+    /**
+     * @throws UnexpectedValueException when a token count is negative
+     */
     public function __construct(
         int $inputTokens = 0,
         int $outputTokens = 0,
@@ -37,6 +40,8 @@ final readonly class Usage
 
     /**
      * @return non-negative-int
+     *
+     * @throws UnexpectedValueException when the token count is negative
      */
     private function tokens(int $tokens, string $field): int
     {

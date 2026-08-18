@@ -20,6 +20,10 @@ final readonly class Prompt
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException when no input is provided
+     * @throws InvalidArgumentException when prompt text is empty
+     */
     public static function with(string|RemoteFile ...$input): self
     {
         if ([] === $input) {
@@ -35,6 +39,9 @@ final readonly class Prompt
         return new self(array_values($input));
     }
 
+    /**
+     * @throws InvalidArgumentException when the instructions are empty
+     */
     public function withInstructions(string $instructions): self
     {
         if ('' === $instructions = trim($instructions)) {

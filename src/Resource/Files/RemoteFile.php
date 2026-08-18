@@ -29,6 +29,11 @@ final readonly class RemoteFile
      */
     public ?string $purpose;
 
+    /**
+     * @throws InvalidArgumentException when the remote file ID is empty
+     * @throws InvalidArgumentException when the media type is empty
+     * @throws InvalidArgumentException when a Gemini file has no URI
+     */
     public function __construct(
         public Provider $provider,
         string $id,

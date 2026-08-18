@@ -22,12 +22,21 @@ final readonly class Files implements FilesProviderInterface
     ) {
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     */
     #[\Override]
     public function provider(): Provider
     {
         return Provider::OpenAI;
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     *
+     * @throws RuntimeException when opening the file fails
+     * @throws RuntimeException when an invalid response is returned
+     */
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
     {
@@ -63,6 +72,12 @@ final readonly class Files implements FilesProviderInterface
         }
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     *
+     * @throws InvalidArgumentException when the file belongs to another provider
+     * @throws RuntimeException when deleting the file fails
+     */
     #[\Override]
     public function delete(RemoteFile $file): void
     {

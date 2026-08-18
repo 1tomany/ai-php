@@ -26,6 +26,10 @@ final readonly class Inference implements InferenceInterface
 
     /**
      * @param iterable<InferenceProviderInterface> $providers
+     *
+     * @throws ExceptionInterface when a provider throws a package exception during registration
+     * @throws LogicException when the same provider is registered more than once
+     * @throws LogicException when registering a provider fails
      */
     public function __construct(
         iterable $providers,
@@ -52,7 +56,15 @@ final readonly class Inference implements InferenceInterface
     }
 
     /**
+     * @see OneToMany\AI\Contract\Resource\InferenceInterface
+     *
      * @param array<string, mixed> $options
+     *
+     * @throws ExceptionInterface when the selected provider throws a package exception
+     * @throws InvalidArgumentException when a file and model belong to different providers
+     * @throws LogicException when no provider is registered for the model
+     * @throws RuntimeException when the selected provider throws a foreign exception
+     * @throws RuntimeException when the provider returns a response for another provider
      */
     #[\Override]
     public function create(Model $model, Prompt $prompt, array $options = []): Response
@@ -78,6 +90,9 @@ final readonly class Inference implements InferenceInterface
         return $response;
     }
 
+    /**
+     * @throws LogicException when no inference provider is registered
+     */
     private function provider(Provider $provider): InferenceProviderInterface
     {
         return $this->providers[$provider->getValue()]

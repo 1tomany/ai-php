@@ -24,6 +24,10 @@ final readonly class Transport
 
     /**
      * @param array<string, mixed> $options
+     *
+     * @throws RuntimeException when sending the request fails
+     * @throws RuntimeException when reading the response status fails
+     * @throws RuntimeException when an unsuccessful response is returned
      */
     public function request(string $method, string $url, array $options = []): HttpResponseInterface
     {
@@ -46,6 +50,10 @@ final readonly class Transport
      * @param class-string<T> $type
      *
      * @return Decoded<T>
+     *
+     * @throws RuntimeException when sending the request fails
+     * @throws RuntimeException when reading or decoding the response fails
+     * @throws RuntimeException when an unsuccessful response is returned
      */
     public function requestObject(string $method, string $url, string $type, array $options = []): Decoded
     {
@@ -54,6 +62,8 @@ final readonly class Transport
 
     /**
      * @return array<string, list<string>>
+     *
+     * @throws RuntimeException when reading the response headers fails
      */
     public function headers(HttpResponseInterface $response): array
     {
@@ -70,6 +80,9 @@ final readonly class Transport
      * @param class-string<T> $type
      *
      * @return Decoded<T>
+     *
+     * @throws RuntimeException when reading the response fails
+     * @throws RuntimeException when decoding the response fails
      */
     public function decode(HttpResponseInterface $response, string $type): Decoded
     {
@@ -87,6 +100,10 @@ final readonly class Transport
         return implode('/', $parts);
     }
 
+    /**
+     * @throws RuntimeException when reading the response status fails
+     * @throws RuntimeException when an unsuccessful response is returned
+     */
     private function assertSuccessful(HttpResponseInterface $response): void
     {
         try {

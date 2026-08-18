@@ -15,6 +15,9 @@ final readonly class Model implements \Stringable
      */
     public string $name;
 
+    /**
+     * @throws InvalidArgumentException when the model name is empty
+     */
     public function __construct(
         public Provider $provider,
         string $name,
@@ -26,6 +29,11 @@ final readonly class Model implements \Stringable
         $this->name = $name;
     }
 
+    /**
+     * @throws InvalidArgumentException when the model format is invalid
+     * @throws InvalidArgumentException when the provider is not found
+     * @throws InvalidArgumentException when the model name is empty
+     */
     public static function create(string $model): self
     {
         $provider = Provider::fromModel($model);
@@ -34,17 +42,25 @@ final readonly class Model implements \Stringable
         return new self($provider, $name);
     }
 
+    /**
+     * @throws InvalidArgumentException when the model name is empty
+     */
     public static function gemini(string $name): self
     {
         return new self(Provider::Gemini, $name);
     }
 
+    /**
+     * @throws InvalidArgumentException when the model name is empty
+     */
     public static function openai(string $name): self
     {
         return new self(Provider::OpenAI, $name);
     }
 
     /**
+     * @see \Stringable
+     *
      * @return non-empty-string
      */
     public function __toString(): string

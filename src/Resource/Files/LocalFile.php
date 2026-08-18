@@ -34,6 +34,13 @@ final readonly class LocalFile
      */
     public int $size;
 
+    /**
+     * @throws InvalidArgumentException when the file path is empty
+     * @throws InvalidArgumentException when the file is not readable
+     * @throws InvalidArgumentException when the file name is empty
+     * @throws InvalidArgumentException when the media type is empty
+     * @throws RuntimeException when calculating the file size fails
+     */
     public function __construct(
         string $path,
         string $mediaType,

@@ -13,6 +13,9 @@ final readonly class OutputTokenDetails
     #[SerializedName('reasoning_tokens')]
     public int $reasoningTokens;
 
+    /**
+     * @throws UnexpectedValueException when the reasoning token count is negative
+     */
     public function __construct(
         int $reasoningTokens = 0,
     ) {

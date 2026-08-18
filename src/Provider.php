@@ -14,6 +14,10 @@ enum Provider: string
     case Gemini = 'gemini';
     case OpenAI = 'openai';
 
+    /**
+     * @throws InvalidArgumentException when the model format is invalid
+     * @throws InvalidArgumentException when the provider is not found
+     */
     public static function fromModel(string $model): self
     {
         $model = trim($model);

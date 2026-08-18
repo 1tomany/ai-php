@@ -26,6 +26,11 @@ final readonly class ResponseDecoder
      * @param class-string<T> $type
      *
      * @return Decoded<T>
+     *
+     * @throws ExceptionInterface when response payload validation fails
+     * @throws RuntimeException when the response is not a JSON object
+     * @throws RuntimeException when decoding or denormalizing the response fails
+     * @throws RuntimeException when the decoded response has an unexpected type
      */
     public function decode(Provider $provider, string $content, string $type): Decoded
     {

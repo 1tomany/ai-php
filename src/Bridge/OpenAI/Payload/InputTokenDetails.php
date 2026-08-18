@@ -13,6 +13,9 @@ final readonly class InputTokenDetails
     #[SerializedName('cached_tokens')]
     public int $cachedTokens;
 
+    /**
+     * @throws UnexpectedValueException when the cached token count is negative
+     */
     public function __construct(
         int $cachedTokens = 0,
     ) {

@@ -23,6 +23,10 @@ final readonly class Files implements FilesInterface
 
     /**
      * @param iterable<FilesProviderInterface> $providers
+     *
+     * @throws ExceptionInterface when a provider throws a package exception during registration
+     * @throws LogicException when the same provider is registered more than once
+     * @throws LogicException when registering a provider fails
      */
     public function __construct(
         iterable $providers,
@@ -48,6 +52,14 @@ final readonly class Files implements FilesInterface
         $this->providers = $indexed;
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Resource\FilesInterface
+     *
+     * @throws ExceptionInterface when the selected provider throws a package exception
+     * @throws LogicException when no provider is registered for the model
+     * @throws RuntimeException when the selected provider throws a foreign exception
+     * @throws RuntimeException when the provider returns a file for another provider
+     */
     #[\Override]
     public function upload(Model $model, LocalFile $file): RemoteFile
     {
@@ -66,6 +78,13 @@ final readonly class Files implements FilesInterface
         return $remoteFile;
     }
 
+    /**
+     * @see OneToMany\AI\Contract\Resource\FilesInterface
+     *
+     * @throws ExceptionInterface when the selected provider throws a package exception
+     * @throws LogicException when no provider is registered for the file
+     * @throws RuntimeException when the selected provider throws a foreign exception
+     */
     #[\Override]
     public function delete(RemoteFile $file): void
     {
@@ -78,6 +97,9 @@ final readonly class Files implements FilesInterface
         }
     }
 
+    /**
+     * @throws LogicException when no files provider is registered
+     */
     private function provider(Provider $provider): FilesProviderInterface
     {
         return $this->providers[$provider->getValue()]
