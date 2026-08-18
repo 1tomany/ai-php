@@ -8,7 +8,7 @@ use OneToMany\AI\Bridge\ResponseDecoder;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface as HttpClientResponseInterface;
 
 use function implode;
 use function sprintf;
@@ -29,7 +29,7 @@ final readonly class Transport
      * @throws RuntimeException when reading the response status fails
      * @throws RuntimeException when an unsuccessful response is returned
      */
-    public function request(string $method, string $url, array $options = []): HttpResponseInterface
+    public function request(string $method, string $url, array $options = []): HttpClientResponseInterface
     {
         try {
             $response = $this->httpClient->request($method, $url, $options);
@@ -65,7 +65,7 @@ final readonly class Transport
      *
      * @throws RuntimeException when reading the response headers fails
      */
-    public function headers(HttpResponseInterface $response): array
+    public function headers(HttpClientResponseInterface $response): array
     {
         try {
             return $response->getHeaders(false);
@@ -84,7 +84,7 @@ final readonly class Transport
      * @throws RuntimeException when reading the response fails
      * @throws RuntimeException when decoding the response fails
      */
-    public function decode(HttpResponseInterface $response, string $type): Decoded
+    public function decode(HttpClientResponseInterface $response, string $type): Decoded
     {
         try {
             $content = $response->getContent(false);
@@ -104,7 +104,7 @@ final readonly class Transport
      * @throws RuntimeException when reading the response status fails
      * @throws RuntimeException when an unsuccessful response is returned
      */
-    private function assertSuccessful(HttpResponseInterface $response): void
+    private function assertSuccessful(HttpClientResponseInterface $response): void
     {
         try {
             $status = $response->getStatusCode();

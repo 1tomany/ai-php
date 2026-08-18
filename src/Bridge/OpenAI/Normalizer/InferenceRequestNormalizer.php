@@ -4,12 +4,12 @@ namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\InferenceRequest;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\Files\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function array_replace;
 use function is_string;
-use function str_starts_with;
+use function stripos;
 
 final readonly class InferenceRequestNormalizer implements NormalizerInterface
 {
@@ -25,30 +25,38 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        if (!$this->supportsNormalization($data, $format, $context)) {
-            throw new InvalidArgumentException('The OpenAI request normalizer received an unsupported value.');
-        }
+        $model = $data->model->name;
+
+        $resolveType = static function (
+            string|RemoteFile $i,
+        ): string {
+            if (is_string($i)) {
+                return 'input_text';
+            }
+
+            return 0 === stripos($i->mediaType, 'image/') ? 'input_image' : 'input_file';
+        };
 
         $content = [];
 
         foreach ($data->prompt->input as $input) {
+            $type = $resolveType($input);
+
             if (is_string($input)) {
                 $content[] = [
-                    'type' => 'input_text',
+                    'type' => $type,
                     'text' => $input,
                 ];
-
-                continue;
+            } else {
+                $content[] = [
+                    'type' => $type,
+                    'file_id' => $input->id,
+                ];
             }
-
-            $content[] = [
-                'type' => str_starts_with($input->mediaType, 'image/') ? 'input_image' : 'input_file',
-                'file_id' => $input->id,
-            ];
         }
 
         $payload = [
-            'model' => $data->model->name,
+            'model' => $model,
             'stream' => false,
             'input' => [
                 [
@@ -63,12 +71,14 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
         }
 
         if (null !== $data->prompt->schema) {
+            $schema = $data->prompt->schema;
+
             $payload['text'] = [
                 'format' => [
                     'type' => 'json_schema',
-                    'name' => $data->prompt->schema->name,
-                    'strict' => $data->prompt->schema->strict,
-                    'schema' => $data->prompt->schema->schema,
+                    'name' => $schema->name,
+                    'strict' => $schema->strict,
+                    'schema' => $schema->schema,
                 ],
             ];
         }
@@ -82,10 +92,7 @@ final readonly class InferenceRequestNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof InferenceRequest
-            && Provider::OpenAI === $data->model->provider
-            && (null === $format || 'json' === $format)
-        ;
+        return $data instanceof InferenceRequest && $data->model->provider->isOpenAI();
     }
 
     /**

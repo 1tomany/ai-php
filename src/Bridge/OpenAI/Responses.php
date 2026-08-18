@@ -66,7 +66,7 @@ final readonly class Responses implements InferenceProviderInterface
     private function createResponse(InferenceRequest $request): Response
     {
         try {
-            $requestPayload = $this->normalizer->normalize($request, 'json');
+            $requestPayload = $this->normalizer->normalize($request);
         } catch (ExceptionInterface $e) {
             throw $e;
         } catch (\Throwable $e) {

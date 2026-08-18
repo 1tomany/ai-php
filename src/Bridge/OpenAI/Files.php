@@ -12,7 +12,6 @@ use OneToMany\AI\Resource\Files\RemoteFile;
 
 use function fclose;
 use function fopen;
-use function rawurlencode;
 use function sprintf;
 
 final readonly class Files implements FilesProviderInterface
@@ -58,11 +57,7 @@ final readonly class Files implements FilesProviderInterface
         }
 
         try {
-            $expiresAt = null !== $payload->expiresAt
-                ? \DateTimeImmutable::createFromTimestamp($payload->expiresAt)
-                : null;
-
-            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $expiresAt, $payload->purpose);
+            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $payload->expiresAt, $payload->purpose);
         } catch (\Throwable $e) {
             throw new RuntimeException('OpenAI returned an invalid file response.', previous: $e);
         }
@@ -81,9 +76,6 @@ final readonly class Files implements FilesProviderInterface
             throw new InvalidArgumentException('The OpenAI files provider can only delete OpenAI files.');
         }
 
-        $this->transport->request(
-            'DELETE',
-            $this->transport->url('files', rawurlencode($file->id)),
-        );
+        $this->transport->request('DELETE', $this->transport->url('files', $file->id));
     }
 }

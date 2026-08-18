@@ -16,15 +16,18 @@ use function feof;
 use function fopen;
 use function fread;
 use function is_numeric;
-use function is_string;
 use function max;
 use function sprintf;
 use function strlen;
-use function trim;
 
 final readonly class Files implements FilesProviderInterface
 {
-    private const int DEFAULT_CHUNK_SIZE = 8 * 1024 * 1024;
+    /**
+     * Default granularity (8MB) of each file chunk.
+     *
+     * @var positive-int
+     */
+    private const int DEFAULT_CHUNK_GRANULARITY = 8 * 1024 * 1024;
 
     public function __construct(
         private Transport $transport,
@@ -54,7 +57,9 @@ final readonly class Files implements FilesProviderInterface
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
     {
-        $start = $this->transport->request('POST', $this->transport->url('upload', $this->apiVersion, 'files'), [
+        $url = $this->transport->url('upload', $this->apiVersion, 'files');
+
+        $start = $this->transport->request('POST', $url, [
             'headers' => [
                 'x-goog-upload-command' => 'start',
                 'x-goog-upload-header-content-length' => $file->size,
@@ -62,46 +67,60 @@ final readonly class Files implements FilesProviderInterface
                 'x-goog-upload-protocol' => 'resumable',
             ],
             'json' => [
-                'file' => ['display_name' => $file->name],
+                'file' => [
+                    'display_name' => $file->name,
+                ],
             ],
         ]);
 
         $headers = $this->transport->headers($start);
-        $uploadUrl = $headers['x-goog-upload-url'][0] ?? null;
 
-        if (!is_string($uploadUrl) || '' === trim($uploadUrl)) {
+        if (!isset($headers['x-goog-upload-url'][0])) {
             throw new RuntimeException('Gemini did not return a resumable upload URL.');
         }
 
-        $chunkSize = $headers['x-goog-upload-chunk-granularity'][0] ?? null;
-        $chunkSize = is_numeric($chunkSize) ? max(1, (int) $chunkSize) : self::DEFAULT_CHUNK_SIZE;
+        /** @var non-empty-string $uploadUrl */
+        $uploadUrl = $headers['x-goog-upload-url'][0];
+
+        // Determine the number of bytes in each uploaded chunk
+        if (isset($headers['x-goog-upload-chunk-granularity'][0])) {
+            $chunkSize = $headers['x-goog-upload-chunk-granularity'][0];
+        }
+
+        if (!isset($chunkSize) || !is_numeric($chunkSize)) {
+            $chunkSize = self::DEFAULT_CHUNK_GRANULARITY;
+        }
+
+        $chunkSize = max(1, (int) $chunkSize);
 
         if (false === $handle = @fopen($file->path, 'rb')) {
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
         $offset = 0;
-        $response = null;
 
         try {
             while (!feof($handle)) {
-                $chunk = fread($handle, $chunkSize);
+                $command = 'upload';
 
-                if (false === $chunk) {
+                if (false === $chunk = fread($handle, $chunkSize)) {
                     throw new RuntimeException(sprintf('Reading the file "%s" failed.', $file->path));
                 }
 
-                if ('' === $chunk) {
+                $length = strlen($chunk);
+
+                if (!$length) {
                     break;
                 }
 
-                $length = strlen($chunk);
-                $final = $offset + $length >= $file->size;
+                if ($offset + $length >= $file->size) {
+                    $command = "{$command}, finalize";
+                }
 
                 $response = $this->transport->request('POST', $uploadUrl, [
                     'headers' => [
                         'content-length' => $length,
-                        'x-goog-upload-command' => $final ? 'upload, finalize' : 'upload',
+                        'x-goog-upload-command' => $command,
                         'x-goog-upload-offset' => $offset,
                     ],
                     'body' => $chunk,
@@ -109,35 +128,19 @@ final readonly class Files implements FilesProviderInterface
 
                 $offset += $length;
             }
-        } catch (ExceptionInterface $e) {
-            throw $e;
         } catch (\Throwable $e) {
             throw new RuntimeException(sprintf('Reading the file "%s" failed.', $file->path), previous: $e);
         } finally {
             @fclose($handle);
         }
 
-        if (null === $response) {
+        if (!isset($response)) {
             throw new RuntimeException('Gemini did not receive any file data.');
         }
 
         $payload = $this->transport->decode($response, FileResponse::class)->payload->file;
 
-        try {
-            $expiration = null !== $payload->expirationTime
-                ? new \DateTimeImmutable($payload->expirationTime)
-                : null;
-
-            return new RemoteFile(
-                provider: Provider::Gemini,
-                id: $payload->name,
-                mediaType: '' !== trim($payload->mimeType) ? $payload->mimeType : $file->mediaType,
-                uri: $payload->uri,
-                expiresAt: $expiration,
-            );
-        } catch (\Throwable $e) {
-            throw new RuntimeException('Gemini returned an invalid file response.', previous: $e);
-        }
+        return new RemoteFile($this->provider(), $payload->name, $payload->mimeType, $payload->uri, $payload->expirationTime);
     }
 
     /**
@@ -153,9 +156,6 @@ final readonly class Files implements FilesProviderInterface
             throw new InvalidArgumentException('The Gemini files provider can only delete Gemini files.');
         }
 
-        $this->transport->request(
-            'DELETE',
-            $this->transport->url($this->apiVersion, $file->id),
-        );
+        $this->transport->request('DELETE', $this->transport->url($this->apiVersion, $file->id));
     }
 }

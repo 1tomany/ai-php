@@ -5,6 +5,8 @@ namespace OneToMany\AI\Resource\Files;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
 
+use function is_int;
+use function is_string;
 use function trim;
 
 final readonly class RemoteFile
@@ -41,7 +43,7 @@ final readonly class RemoteFile
         string $id,
         string $mediaType,
         ?string $uri = null,
-        int|\DateTimeImmutable|null $expiresAt = null,
+        int|string|\DateTimeImmutable|null $expiresAt = null,
         ?string $purpose = null,
     ) {
         if ('' === $id = trim($id)) {
@@ -64,14 +66,24 @@ final readonly class RemoteFile
             throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
         }
 
+        if (null !== $uri) {
+            $uri = trim($uri);
+        }
+
         $this->uri = '' !== $uri ? $uri : null;
 
         if (null !== $purpose) {
             $purpose = trim($purpose);
         }
 
-        if (null !== $expiresAt && !$expiresAt instanceof \DateTimeImmutable) {
-            $expiresAt = \DateTimeImmutable::createFromTimestamp($expiresAt);
+        try {
+            if (is_int($expiresAt)) {
+                $expiresAt = \DateTimeImmutable::createFromTimestamp($expiresAt);
+            } elseif (is_string($expiresAt)) {
+                $expiresAt = new \DateTimeImmutable($expiresAt);
+            }
+        } catch (\DateException) {
+            $expiresAt = null;
         }
 
         $this->expiresAt = $expiresAt;
