@@ -24,6 +24,8 @@ final readonly class RemoteFile
      */
     public ?string $uri;
 
+    public ?\DateTimeImmutable $expiresAt;
+
     /**
      * @var ?non-empty-string
      */
@@ -39,7 +41,7 @@ final readonly class RemoteFile
         string $id,
         string $mediaType,
         ?string $uri = null,
-        public ?\DateTimeImmutable $expiresAt = null,
+        int|\DateTimeImmutable|null $expiresAt = null,
         ?string $purpose = null,
     ) {
         if ('' === $id = trim($id)) {
@@ -63,6 +65,16 @@ final readonly class RemoteFile
         }
 
         $this->uri = '' !== $uri ? $uri : null;
+
+        if (null !== $purpose) {
+            $purpose = trim($purpose);
+        }
+
+        if (null !== $expiresAt && !$expiresAt instanceof \DateTimeImmutable) {
+            $expiresAt = \DateTimeImmutable::createFromTimestamp($expiresAt);
+        }
+
+        $this->expiresAt = $expiresAt;
 
         if (null !== $purpose) {
             $purpose = trim($purpose);

@@ -44,8 +44,10 @@ final readonly class Files implements FilesProviderInterface
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
+        $url = $this->transport->url('files');
+
         try {
-            $payload = $this->transport->requestObject('POST', $this->transport->url('files'), FilePayload::class, [
+            $payload = $this->transport->requestObject('POST', $url, FilePayload::class, [
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
@@ -60,13 +62,7 @@ final readonly class Files implements FilesProviderInterface
                 ? \DateTimeImmutable::createFromTimestamp($payload->expiresAt)
                 : null;
 
-            return new RemoteFile(
-                provider: Provider::OpenAI,
-                id: $payload->id,
-                mediaType: $file->mediaType,
-                expiresAt: $expiresAt,
-                purpose: $payload->purpose,
-            );
+            return new RemoteFile($this->provider(), $payload->id, $file->mediaType, null, $expiresAt, $payload->purpose);
         } catch (\Throwable $e) {
             throw new RuntimeException('OpenAI returned an invalid file response.', previous: $e);
         }
