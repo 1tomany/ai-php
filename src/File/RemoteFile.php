@@ -41,20 +41,28 @@ final readonly class RemoteFile
             throw new InvalidArgumentException('The remote file ID cannot be empty.');
         }
 
+        $this->id = $id;
+
         if ('' === $mediaType = trim($mediaType)) {
             throw new InvalidArgumentException('The remote file media type cannot be empty.');
         }
 
-        $uri = null !== $uri ? trim($uri) : null;
-        $purpose = null !== $purpose ? trim($purpose) : null;
+        $this->mediaType = $mediaType;
 
-        if (Provider::Gemini === $provider && empty($uri)) {
-            throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
+        if ($provider->isGemini()) {
+            if ('' === $uri = trim((string) $uri)) {
+                throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
+            }
+
+            $this->uri = $uri;
+        } else {
+            $this->uri = null;
         }
 
-        $this->id = $id;
-        $this->mediaType = $mediaType;
-        $this->uri = '' !== $uri ? $uri : null;
-        $this->purpose = '' !== $purpose ? $purpose : null;
+        if ('' !== $purpose = trim((string) $purpose)) {
+            $this->purpose = $purpose;
+        } else {
+            $this->purpose = null;
+        }
     }
 }

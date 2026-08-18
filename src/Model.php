@@ -6,7 +6,6 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function explode;
 use function sprintf;
-use function str_contains;
 use function trim;
 
 final readonly class Model implements \Stringable
@@ -27,31 +26,22 @@ final readonly class Model implements \Stringable
         $this->name = $name;
     }
 
+    public static function create(string $model): self
+    {
+        $provider = Provider::fromModel($model);
+        [, $name] = explode(':', trim($model), 2);
+
+        return new self($provider, $name);
+    }
+
     public static function gemini(string $name): self
     {
         return new self(Provider::Gemini, $name);
     }
 
-    public static function openAI(string $name): self
+    public static function openai(string $name): self
     {
         return new self(Provider::OpenAI, $name);
-    }
-
-    public static function fromString(string $model): self
-    {
-        $model = trim($model);
-
-        if (!str_contains($model, ':')) {
-            throw new InvalidArgumentException('A model string must use the "provider:model" format.');
-        }
-
-        [$provider, $name] = explode(':', $model, 2);
-
-        try {
-            return new self(Provider::from(trim($provider)), $name);
-        } catch (\ValueError $e) {
-            throw new InvalidArgumentException(sprintf('The model provider "%s" is not supported.', $provider), previous: $e);
-        }
     }
 
     /**
