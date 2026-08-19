@@ -7,6 +7,8 @@ use OneToMany\AI\Resource\File\LocalFile;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+use function mime_content_type;
+
 #[Group('UnitTests')]
 #[Group('ResourceTests')]
 #[Group('FileTests')]
@@ -31,14 +33,14 @@ final class LocalFileTest extends TestCase
         new LocalFile($path, 'text/plain');
     }
 
-    public function testConstructorRequiresNonEmptyMediaType(): void
+    public function testConstructorAttemptsToResolveMediaTypeIfNotProvided(): void
     {
         $path = __FILE__;
         $this->assertFileExists($path);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIs('The media type cannot be empty.');
+        $mediaType = @mime_content_type($path);
+        $this->assertIsString($mediaType);
 
-        new LocalFile($path, '');
+        $this->assertSame($mediaType, new LocalFile($path)->mediaType);
     }
 }

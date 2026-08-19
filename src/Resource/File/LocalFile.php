@@ -9,6 +9,7 @@ use function basename;
 use function filesize;
 use function is_file;
 use function is_readable;
+use function mime_content_type;
 use function sprintf;
 use function strtolower;
 use function trim;
