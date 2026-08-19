@@ -62,7 +62,7 @@ final readonly class ApplicationFactory
         ));
         $apiKeys = new ApiKeyResolver();
 
-        $application = new Application('OneToMany AI');
+        $application = new Application('ai-php Examples');
         $application->addCommands([
             new UploadFileCommand($factory, $apiKeys),
             new DeleteFileCommand($factory, $apiKeys),

@@ -19,7 +19,7 @@ use function mime_content_type;
     name: 'ai:files:upload',
     description: 'Uploads a local file to an AI provider.',
 )]
-final class UploadFileCommand extends AbstractAICommand
+final class UploadFileCommand extends AbstractCommand
 {
     /**
      * @see Symfony\Component\Console\Command\Command::configure()

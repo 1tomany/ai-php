@@ -23,8 +23,7 @@ final readonly class AIFactory
 
     public function create(
         Provider $provider,
-        #[\SensitiveParameter]
-        string $apiKey,
+        #[\SensitiveParameter] string $apiKey,
     ): AI {
         [$fileProvider, $queryProvider] = match ($provider) {
             Provider::Gemini => [

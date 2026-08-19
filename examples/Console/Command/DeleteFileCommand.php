@@ -18,7 +18,7 @@ use function is_string;
     name: 'ai:files:delete',
     description: 'Deletes a remote file from an AI provider.',
 )]
-final class DeleteFileCommand extends AbstractAICommand
+final class DeleteFileCommand extends AbstractCommand
 {
     /**
      * @see Symfony\Component\Console\Command\Command::configure()

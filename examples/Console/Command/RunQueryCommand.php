@@ -21,7 +21,7 @@ use function is_string;
     name: 'ai:queries:run',
     description: 'Runs a prompt against an AI model.',
 )]
-final class RunQueryCommand extends AbstractAICommand
+final class RunQueryCommand extends AbstractCommand
 {
     /**
      * @see Symfony\Component\Console\Command\Command::configure()

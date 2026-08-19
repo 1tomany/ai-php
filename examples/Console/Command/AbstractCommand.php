@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function is_string;
 
-abstract class AbstractAICommand extends Command
+abstract class AbstractCommand extends Command
 {
     public function __construct(
         protected readonly AIFactory $factory,
