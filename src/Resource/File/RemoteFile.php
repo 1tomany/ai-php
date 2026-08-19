@@ -42,18 +42,27 @@ final readonly class RemoteFile
         $this->id = $id;
     }
 
+    /**
+     * @phpstan-assert-if-true non-empty-string $this->mediaType
+     */
     public function isAudio(): bool
     {
-        return 0 === stripos($this->mediaType, 'audio/');
+        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'audio/');
     }
 
+    /**
+     * @phpstan-assert-if-true non-empty-string $this->mediaType
+     */
     public function isImage(): bool
     {
-        return 0 === stripos($this->mediaType, 'image/');
+        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'image/');
     }
 
+    /**
+     * @phpstan-assert-if-true non-empty-string $this->mediaType
+     */
     public function isVideo(): bool
     {
-        return 0 === stripos($this->mediaType, 'video/');
+        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'video/');
     }
 }
