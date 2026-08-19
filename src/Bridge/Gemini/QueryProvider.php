@@ -87,7 +87,7 @@ final readonly class QueryProvider implements QueryProviderInterface
             'POST',
             $this->transport->url($this->apiVersion, 'interactions'),
             Interaction::class,
-            ['json' => $query->payload],
+            ['json' => $query->request],
         );
 
         $texts = [];

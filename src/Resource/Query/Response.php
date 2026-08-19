@@ -26,7 +26,7 @@ final readonly class Response
         public ?string $text,
         public ?string $refusal,
         public ?string $error,
-        public Usage $usage,
+        public Usage $usage = new Usage(),
     ) {
     }
 

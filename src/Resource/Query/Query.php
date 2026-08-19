@@ -8,11 +8,11 @@ use OneToMany\AI\Provider;
 final readonly class Query
 {
     /**
-     * @param array<string, mixed> $payload
+     * @param array<string, mixed> $request
      */
     public function __construct(
         public Model $model,
-        public array $payload,
+        public array $request,
     ) {
     }
 

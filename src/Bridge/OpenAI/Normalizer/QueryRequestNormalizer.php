@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function array_replace;
 use function is_string;
-use function stripos;
+use function trim;
 
 final readonly class QueryRequestNormalizer implements NormalizerInterface
 {
@@ -25,19 +25,23 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         $model = $data->model->name;
 
         $resolveType = static function (
-            string|RemoteFile $i,
+            string|RemoteFile $input,
         ): string {
-            if (is_string($i)) {
+            if (is_string($input)) {
                 return 'input_text';
             }
 
-            return 0 === stripos($i->mediaType, 'image/') ? 'input_image' : 'input_file';
+            if ($input->isImage()) {
+                return 'input_image';
+            }
+
+            return 'input_file';
         };
 
         $content = [];
 
         foreach ($data->prompt->input as $input) {
-            $type = $resolveType($input);
+            $type = $resolveType(input: $input);
 
             if (is_string($input)) {
                 $content[] = [
@@ -63,8 +67,8 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
             ],
         ];
 
-        if (null !== $data->prompt->instructions) {
-            $payload['instructions'] = $data->prompt->instructions;
+        if ($instructions = $data->prompt->instructions) {
+            $payload['instructions'] = trim($instructions);
         }
 
         if (null !== $data->prompt->schema) {

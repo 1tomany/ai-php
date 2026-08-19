@@ -5,6 +5,7 @@ namespace OneToMany\AI\Resource\File;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
 
+use function stripos;
 use function trim;
 
 final readonly class RemoteFile
@@ -45,5 +46,10 @@ final readonly class RemoteFile
         }
 
         $this->mediaType = $mediaType;
+    }
+
+    public function isImage(): bool
+    {
+        return 0 === stripos($this->mediaType, 'image/');
     }
 }
