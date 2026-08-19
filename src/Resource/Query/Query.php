@@ -16,7 +16,7 @@ final readonly class Query
     ) {
     }
 
-    public function getProvider(): Provider
+    public function provider(): Provider
     {
         return $this->model->provider;
     }

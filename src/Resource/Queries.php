@@ -3,103 +3,54 @@
 namespace OneToMany\AI\Resource;
 
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Contract\Resource\QueriesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
 
-use function sprintf;
 
 final readonly class Queries implements QueriesInterface
 {
     /**
-     * @var ProviderRegistry<QueryProviderInterface>
+     * @var Registry<QueryProviderInterface>
      */
-    private ProviderRegistry $providers;
+    private Registry $providers;
 
     /**
-     * @param iterable<QueryProviderInterface> $providers
+     * @see OneToMany\AI\Resource\Registry::__construct()
      *
-     * @throws InvalidArgumentException when a provider is already registered
+     * @param iterable<QueryProviderInterface> $providers
      */
     public function __construct(
         iterable $providers,
     ) {
-        $this->providers = new ProviderRegistry($providers);
+        $this->providers = new Registry($providers);
     }
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
-     *
-     * @param array<string, mixed> $options
-     *
-     * @throws ExceptionInterface when the selected provider throws a package exception
-     * @throws InvalidArgumentException when a file and model belong to different providers
-     * @throws InvalidArgumentException when no provider is registered for the model
-     * @throws RuntimeException when the selected provider throws a foreign exception
-     * @throws RuntimeException when the provider compiles a query for another model
      */
     #[\Override]
     public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
-        foreach ($prompt->input as $input) {
-            if ($input instanceof RemoteFile && $model->provider !== $input->provider) {
-                throw new InvalidArgumentException(sprintf('A "%s" file cannot be sent to a "%s" model.', $input->provider->getValue(), $model->provider->getValue()));
-            }
-        }
-
-        try {
-            $query = $this->providers->get($model->provider)->compile($model, $prompt, $options);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Compiling a query for %s failed.', $model->provider->getName()), previous: $e);
-        }
-
-        if ($model->provider !== $query->model->provider || $model->name !== $query->model->name) {
-            throw new RuntimeException(sprintf('The "%s" query provider compiled a query for "%s" instead of "%s".', $model->provider->getValue(), (string) $query->model, (string) $model));
-        }
-
-        return $query;
+        return $this->providers->get($model->provider)->compile($model, $prompt, $options);
     }
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
-     *
-     * @throws ExceptionInterface when the selected provider throws a package exception
-     * @throws InvalidArgumentException when no provider is registered for the query
-     * @throws RuntimeException when the selected provider throws a foreign exception
-     * @throws RuntimeException when the provider returns a response for another provider
      */
     #[\Override]
     public function run(Query $query): Response
     {
-        try {
-            $response = $this->providers->get($query->getProvider())->run($query);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Running the %s query failed.', $query->getProvider()->getName()), previous: $e);
-        }
-
-        if ($query->getProvider() !== $response->provider) {
-            throw new RuntimeException(sprintf('The "%s" query provider returned a "%s" response.', $query->getProvider()->getValue(), $response->provider->getValue()));
-        }
-
-        return $response;
+        return $this->providers->get($query->provider())->run($query);
     }
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
      *
      * @param array<string, mixed> $options
-     *
-     * @throws ExceptionInterface when compiling or running the query throws a package exception
      */
     #[\Override]
     public function compileAndRun(Model $model, Prompt $prompt, array $options = []): Response

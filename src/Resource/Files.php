@@ -12,9 +12,9 @@ use OneToMany\AI\Resource\File\RemoteFile;
 final readonly class Files implements FilesInterface
 {
     /**
-     * @var ProviderRegistry<FileProviderInterface>
+     * @var Registry<FileProviderInterface>
      */
-    private ProviderRegistry $providers;
+    private Registry $providers;
 
     /**
      * @param iterable<FileProviderInterface> $providers
@@ -24,7 +24,7 @@ final readonly class Files implements FilesInterface
     public function __construct(
         iterable $providers,
     ) {
-        $this->providers = new ProviderRegistry($providers);
+        $this->providers = new Registry($providers);
     }
 
     /**

@@ -11,7 +11,7 @@ use function sprintf;
 /**
  * @template T of ProviderInterface
  */
-final readonly class ProviderRegistry
+final readonly class Registry
 {
     /**
      * @var array<non-empty-lowercase-string, T>
@@ -28,13 +28,11 @@ final readonly class ProviderRegistry
         $indexedProviders = [];
 
         foreach ($providers as $provider) {
-            $key = $provider->provider()->getValue();
-
-            if (isset($indexedProviders[$key])) {
-                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $key));
+            if (isset($indexedProviders[$provider->provider()->getValue()])) {
+                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $provider->provider()->getValue()));
             }
 
-            $indexedProviders[$key] = $provider;
+            $indexedProviders[$provider->provider()->getValue()] = $provider;
         }
 
         $this->providers = $indexedProviders;
@@ -47,7 +45,10 @@ final readonly class ProviderRegistry
      */
     public function get(Provider $provider): ProviderInterface
     {
-        return $this->providers[$provider->getValue()]
-            ?? throw new InvalidArgumentException(sprintf('The "%s" provider is not registered.', $provider->getValue()));
+        if (!isset($this->providers[$provider->getValue()])) {
+            throw new InvalidArgumentException(sprintf('The "%s" provider is not registered.', $provider->getValue()));
+        }
+
+        return $this->providers[$provider->getValue()];
     }
 }
