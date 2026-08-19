@@ -2,13 +2,15 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
-use OneToMany\AI\Bridge\Gemini\Payload\Upload;
+use OneToMany\AI\Bridge\Gemini\Payload\Files\File;
+use OneToMany\AI\Bridge\Gemini\Payload\Files\Upload;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
+use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 
 use function fclose;
 use function feof;
@@ -134,7 +136,9 @@ final readonly class FileProvider implements FileProviderInterface
                 throw new RuntimeException(sprintf('The %s server did not receive any file data.', $this->provider()->getName()));
             }
 
-            $file = $this->transport->decode($response, Upload::class)->file;
+            $file = $this->transport->decode($response, File::class, [
+                UnwrappingDenormalizer::UNWRAP_PATH => '[file]',
+            ]);
         } finally {
             @fclose($handle);
         }

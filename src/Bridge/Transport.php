@@ -6,6 +6,7 @@ use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -92,24 +93,27 @@ readonly class Transport
      * @template T of object
      *
      * @param class-string<T> $type
+     * @param array<string, mixed> $context
      *
      * @return T
      *
-     * @throws ExceptionInterface when response payload validation fails
-     * @throws RuntimeException when reading the response fails
+     * @throws RuntimeException when reading the response content fails
      * @throws RuntimeException when deserializing the response fails
-     * @throws RuntimeException when the deserialized response has an unexpected type
      */
-    public function decode(HttpResponseInterface $response, string $type): object
+    public function decode(
+        HttpResponseInterface $response,
+        string $type,
+        array $context = [],
+    ): object
     {
         try {
             $content = $response->getContent(false);
         } catch (HttpClientExceptionInterface $e) {
-            throw new RuntimeException(sprintf('Reading the %s response failed.', $this->provider->getName()), previous: $e);
+            throw new RuntimeException(sprintf('Reading the %s response content failed.', $this->provider->getName()), previous: $e);
         }
 
         try {
-            $payload = $this->serializer->deserialize($content, $type, 'json');
+            $payload = $this->serializer->deserialize($content, $type, 'json', $context);
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException(sprintf('Deserializing the %s response failed.', $this->provider->getName()), previous: $e);
         }
