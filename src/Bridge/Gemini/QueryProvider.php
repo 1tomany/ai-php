@@ -16,6 +16,7 @@ use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
 use OneToMany\AI\Resource\Query\Usage;
+use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 
 use function implode;
 use function trim;
@@ -41,46 +42,38 @@ final readonly class QueryProvider implements QueryProviderInterface
     /**
      * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
      *
-     * @param array<string, mixed> $options
-     *
-     * @throws ExceptionInterface when request normalization throws a package exception
      * @throws RuntimeException when compiling the query fails
      */
     #[\Override]
     public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
         try {
-            $payload = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options), 'json');
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new RuntimeException('Compiling the Gemini query failed.', previous: $e);
+            $request = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options));
+        } catch (SerializerExceptionInterface $e) {
+            throw new RuntimeException(sprintf('Compiling the %s query failed.', $this->provider()->getName()), previous: $e);
         }
 
-        return new Query($model, $payload);
+        return new Query($model, $request);
     }
 
     /**
      * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
-     *
-     * @throws ExceptionInterface when interaction creation throws a package exception
-     * @throws RuntimeException when running the query fails
      */
     #[\Override]
     public function run(Query $query): Response
     {
-        try {
-            return $this->runQuery($query);
-        } catch (ExceptionInterface $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw new RuntimeException('Running the Gemini query failed.', previous: $e);
-        }
+        $url = $this->transport->url($this->apiVersion, 'interactions');
+
+        $response = $this->transport->postRequest($url, [
+            'json' => $query->request,
+        ]);
+
+        $response->toArray(false);
+
+        throw new RuntimeException('Not implemented!');
     }
 
-    /**
-     * @throws ExceptionInterface when interaction creation throws a package exception
-     */
+    /*
     private function runQuery(Query $query): Response
     {
         $payload = $this->transport->requestObject(
@@ -135,4 +128,5 @@ final readonly class QueryProvider implements QueryProviderInterface
             ),
         );
     }
+    */
 }

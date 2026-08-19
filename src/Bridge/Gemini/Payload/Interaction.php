@@ -2,6 +2,7 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Payload;
 
+use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Usage;
 use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function trim;

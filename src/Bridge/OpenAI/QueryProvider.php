@@ -14,12 +14,9 @@ use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
-use OneToMany\AI\Resource\Query\Usage;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 
-use function implode;
 use function sprintf;
-use function trim;
 
 final readonly class QueryProvider implements QueryProviderInterface
 {
@@ -58,8 +55,6 @@ final readonly class QueryProvider implements QueryProviderInterface
 
     /**
      * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
-     *
-     * @throws RuntimeException when running the query fails
      */
     #[\Override]
     public function run(Query $query): Response
@@ -100,7 +95,7 @@ final readonly class QueryProvider implements QueryProviderInterface
         }
         */
 
-        return new Response($this->provider(), $record->id, $record->status?->value ?? ResponseStatus::Completed->value, $record->getText(), null, $record->getError());
+        return new Response($this->provider(), $record->id, ($record->status ?? ResponseStatus::Completed)->value, $record->getText(), null, $record->getError());
 
         /*
             provider: Provider::OpenAI,
