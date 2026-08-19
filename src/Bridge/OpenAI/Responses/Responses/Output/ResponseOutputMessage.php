@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
+namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses\Output;
 
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Enum\ResponseOutputMessageStatus;
 

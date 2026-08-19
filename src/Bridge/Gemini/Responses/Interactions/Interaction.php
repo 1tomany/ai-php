@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Gemini\Payload;
+namespace OneToMany\AI\Bridge\Gemini\Responses\Interactions;
 
 use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Usage;
 use OneToMany\AI\Exception\InvalidArgumentException;
@@ -9,23 +9,23 @@ use function trim;
 
 final readonly class Interaction
 {
-    /** @var non-empty-string */
-    public string $id;
-
-    /** @var non-empty-string */
-    public string $status;
 
     /**
+     * @param non-empty-string $id
+     * @param non-empty-string $model
+     * @param 'interaction' $object
+     * @param non-empty-string $status
      * @param list<Step> $steps
      * @param list<Error> $errors
-     *
-     * @throws InvalidArgumentException when the interaction ID is empty
-     * @throws InvalidArgumentException when the interaction status is empty
      */
     public function __construct(
-        string $id,
-        string $status,
+        public \DateTimeImmutable $created,
+        public string $id,
+        public string $model,
+        public string $object,
+        public string $status,
         public array $steps = [],
+        public \DateTimeImmutable $updated,
         public ?Usage $usage = null,
         public array $errors = [],
     ) {

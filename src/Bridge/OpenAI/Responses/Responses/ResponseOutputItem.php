@@ -2,15 +2,9 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
-use Symfony\Component\Serializer\Attribute\DiscriminatorMap;
+use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Output\Reasoning;
+use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Output\ResponseOutputMessage;
 
-#[DiscriminatorMap(
-    typeProperty: 'type',
-    mapping: [
-        'reasoning' => Reasoning::class,
-        'message' => ResponseOutputMessage::class,
-    ],
-)]
-abstract readonly class ResponseOutputItem
+final readonly class ResponseOutputItem
 {
 }
