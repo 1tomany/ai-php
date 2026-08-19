@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
-final readonly class Response
+final class Response
 {
     /**
      * @param non-empty-string $id
@@ -11,18 +11,36 @@ final readonly class Response
      * @param list<ResponseOutputItem> $output
      */
     public function __construct(
-        public string $id,
-        public int $created_at,
-        public string $status,
-        public array $output = [],
-        public ?ResponseError $error = null,
+        public readonly string $id,
+        public readonly int $created_at,
+        public readonly string $status,
+        public readonly array $output = [],
+        public readonly ?ResponseError $error = null,
     ) {
+    }
+
+    public bool $completed {
+        get => 'completed' === $this->status;
+    }
+
+    /**
+     * @var ?non-empty-string
+     */
+    public ?string $text {
+        get => $this->compileText();
+    }
+
+    /**
+     * @var ?non-empty-string
+     */
+    public ?string $refusal {
+        get => $this->compileRefusal();
     }
 
     /**
      * @return ?non-empty-string
      */
-    public function getText(): ?string
+    private function compileText(): ?string
     {
         foreach ($this->output as $output) {
             $outputText = $output->text;
@@ -38,12 +56,8 @@ final readonly class Response
     /**
      * @return ?non-empty-string
      */
-    public function getError(): ?string
+    private function compileRefusal(): ?string
     {
-        if ($this->error instanceof ResponseError) {
-            return $this->error->message;
-        }
-
         foreach ($this->output as $output) {
             $refusal = $output->refusal;
 

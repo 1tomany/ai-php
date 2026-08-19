@@ -14,7 +14,6 @@ final readonly class Response
 {
     /**
      * @param non-empty-string $id
-     * @param non-empty-string $status
      * @param ?non-empty-string $text
      * @param ?non-empty-string $refusal
      * @param ?non-empty-string $error
@@ -22,31 +21,12 @@ final readonly class Response
     public function __construct(
         public Provider $provider,
         public string $id,
-        public string $status,
-        public ?string $text,
-        public ?string $refusal,
-        public ?string $error,
+        public bool $completed,
+        public ?string $text = null,
+        public ?string $refusal = null,
+        public ?string $error = null,
         public Usage $usage = new Usage(),
     ) {
-    }
-
-    public function completed(): bool
-    {
-        return 'completed' === $this->status;
-    }
-
-    /**
-     * @return non-empty-string
-     *
-     * @throws RuntimeException when the model did not return any text
-     */
-    public function text(): string
-    {
-        if (!empty($this->text)) {
-            return $this->text;
-        }
-
-        throw new RuntimeException($this->error ?? $this->refusal ?? 'The model did not return text.');
     }
 
     /**
@@ -57,10 +37,14 @@ final readonly class Response
      * @throws RuntimeException when decoding the response as JSON fails
      * @throws RuntimeException when the decoded response is not an object or array
      */
-    public function json(): array
+    public function json(): ?array
     {
+        if (!$this->text) {
+            return null;
+        }
+
         try {
-            $decoded = json_decode($this->text(), true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($this->text, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new RuntimeException('Decoding the model response as JSON failed.', previous: $e);
         }

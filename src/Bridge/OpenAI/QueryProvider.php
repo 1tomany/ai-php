@@ -97,7 +97,7 @@ final readonly class QueryProvider implements QueryProviderInterface
 
         print_r($record);
 
-        return new Response($this->provider(), $record->id, ($record->status ?? ResponseStatus::Completed)->value, $record->getText(), null, $record->getError());
+        return new Response($this->provider(), $record->id, $record->completed, $record->text, $record->refusal, $record->error?->message);
 
         /*
             provider: Provider::OpenAI,
