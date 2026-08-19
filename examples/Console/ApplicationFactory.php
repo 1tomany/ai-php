@@ -63,10 +63,14 @@ final readonly class ApplicationFactory
         $apiKeys = new ApiKeyResolver();
 
         $application = new Application('ai-php Examples');
+        $uploadFile = new UploadFileCommand($factory, $apiKeys);
+        $deleteFile = new DeleteFileCommand($factory, $apiKeys);
+        $runQuery = new RunQueryCommand($factory, $apiKeys);
+
         $application->addCommands([
-            new UploadFileCommand($factory, $apiKeys),
-            new DeleteFileCommand($factory, $apiKeys),
-            new RunQueryCommand($factory, $apiKeys),
+            $uploadFile(...),
+            $deleteFile(...),
+            $runQuery(...),
         ]);
 
         return $application;

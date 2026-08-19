@@ -7,68 +7,39 @@ use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\JsonSchema;
 use OneToMany\AI\Resource\Query\Prompt;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-
-use function is_string;
 
 #[AsCommand(
     name: 'ai:queries:run',
     description: 'Runs a prompt against an AI model',
 )]
-final class RunQueryCommand extends AbstractCommand
+final readonly class RunQueryCommand extends AbstractCommand
 {
-    /**
-     * @see Symfony\Component\Console\Command\Command::configure()
-     */
-    #[\Override]
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('model', InputArgument::REQUIRED, 'The model in "provider:model" format.')
-            ->addArgument('prompt', InputArgument::REQUIRED, 'The text prompt to run.')
-            ->addOption(
-                'json-schema-file',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'The path of a JSON Schema file used to constrain the response.',
-            );
-
-        $this->addApiKeyOption();
-    }
-
-    /**
-     * @see Symfony\Component\Console\Command\Command::execute()
-     */
-    #[\Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $modelName = $input->getArgument('model');
-        $promptText = $input->getArgument('prompt');
-        $schemaFile = $input->getOption('json-schema-file');
-
-        if (!is_string($modelName) || !is_string($promptText)) {
-            $io->error('The model and prompt arguments must be strings.');
-
-            return Command::INVALID;
-        }
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The model in "provider:model" format.')] string $model,
+        #[Argument('The text prompt to run.')] string $prompt,
+        #[Option('The path of a JSON Schema file used to constrain the response.')]
+        ?string $jsonSchemaFile = null,
+        #[Option('The provider API key. Defaults to the provider-specific environment variable.')]
+        #[\SensitiveParameter]
+        ?string $apiKey = null,
+    ): int {
         try {
-            $model = Model::create($modelName);
-            $prompt = Prompt::with(new InputText($promptText));
+            $model = Model::create($model);
+            $prompt = Prompt::with(new InputText($prompt));
 
-            if (is_string($schemaFile)) {
-                $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $schemaFile));
+            if (null !== $jsonSchemaFile) {
+                $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $jsonSchemaFile));
             }
 
             $response = $this->factory
-                ->create($model->provider, $this->apiKey($input, $model->provider))
+                ->create($model->provider, $this->apiKey($model->provider, $apiKey))
                 ->queries
                 ->compileAndRun($model, $prompt);
         } catch (AIExceptionInterface $e) {
@@ -96,7 +67,7 @@ final class RunQueryCommand extends AbstractCommand
         }
 
         if (null !== $response->text) {
-            $output->writeln($response->text, OutputInterface::OUTPUT_RAW);
+            $io->writeln($response->text, OutputInterface::OUTPUT_RAW);
 
             return Command::SUCCESS;
         }

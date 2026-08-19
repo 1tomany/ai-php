@@ -5,11 +5,10 @@ namespace OneToMany\AI\Example\Console\Command;
 use OneToMany\AI\Contract\Exception\ExceptionInterface as AIExceptionInterface;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function is_string;
@@ -19,40 +18,19 @@ use function mime_content_type;
     name: 'ai:files:upload',
     description: 'Uploads a file to an AI provider',
 )]
-final class UploadFileCommand extends AbstractCommand
+final readonly class UploadFileCommand extends AbstractCommand
 {
-    /**
-     * @see Symfony\Component\Console\Command\Command::configure()
-     */
-    #[\Override]
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('provider', InputArgument::REQUIRED, 'The provider name: "gemini" or "openai".')
-            ->addArgument('path', InputArgument::REQUIRED, 'The path of the local file to upload.');
-
-        $this->addApiKeyOption();
-    }
-
-    /**
-     * @see Symfony\Component\Console\Command\Command::execute()
-     */
-    #[\Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $providerName = $input->getArgument('provider');
-        $path = $input->getArgument('path');
-
-        if (!is_string($providerName) || !is_string($path)) {
-            $io->error('The provider and path arguments must be strings.');
-
-            return Command::INVALID;
-        }
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The provider name: "gemini" or "openai".')] string $provider,
+        #[Argument('The path of the local file to upload.')] string $path,
+        #[Option('The provider API key. Defaults to the provider-specific environment variable.')]
+        #[\SensitiveParameter]
+        ?string $apiKey = null,
+    ): int {
         try {
-            $provider = Provider::create($providerName);
-            $apiKey = $this->apiKey($input, $provider);
+            $provider = Provider::create($provider);
+            $apiKey = $this->apiKey($provider, $apiKey);
             $mediaType = @mime_content_type($path);
 
             if (!is_string($mediaType)) {
