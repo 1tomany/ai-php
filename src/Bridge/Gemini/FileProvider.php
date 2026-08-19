@@ -2,10 +2,9 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
-use OneToMany\AI\Bridge\Gemini\Payload\FileResponse;
+use OneToMany\AI\Bridge\Gemini\Payload\Upload;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
@@ -46,8 +45,8 @@ final readonly class FileProvider implements FileProviderInterface
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
+     * @see OneToMany\AI\Bridge\Transport::request()
      *
-     * @throws ExceptionInterface when an upload request throws a package exception
      * @throws RuntimeException when no resumable upload URL is returned
      * @throws RuntimeException when opening the file fails
      * @throws RuntimeException when reading the file fails
@@ -59,7 +58,7 @@ final readonly class FileProvider implements FileProviderInterface
     {
         $url = $this->transport->url('upload', $this->apiVersion, 'files');
 
-        $start = $this->transport->request('POST', $url, [
+        $start = $this->transport->postRequest($url, [
             'headers' => [
                 'x-goog-upload-command' => 'start',
                 'x-goog-upload-header-content-length' => $file->size,
@@ -97,9 +96,11 @@ final readonly class FileProvider implements FileProviderInterface
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
-        $offset = 0;
+        $response = null;
 
         try {
+            $offset = 0;
+
             while (!feof($handle)) {
                 $command = 'upload';
 
@@ -117,7 +118,7 @@ final readonly class FileProvider implements FileProviderInterface
                     $command = "{$command}, finalize";
                 }
 
-                $response = $this->transport->request('POST', $uploadUrl, [
+                $response = $this->transport->postRequest($uploadUrl, [
                     'headers' => [
                         'content-length' => $length,
                         'x-goog-upload-command' => $command,
@@ -128,19 +129,18 @@ final readonly class FileProvider implements FileProviderInterface
 
                 $offset += $length;
             }
-        } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Reading the file "%s" failed.', $file->path), previous: $e);
+
+            if (null === $response) {
+                throw new RuntimeException(sprintf('The %s server did not receive any file data.', $this->provider()->getName()));
+            }
+
+            $file = $this->transport->decode($response, Upload::class)->file;
         } finally {
             @fclose($handle);
         }
 
-        if (!isset($response)) {
-            throw new RuntimeException('Gemini did not receive any file data.');
-        }
 
-        $payload = $this->transport->decode($response, FileResponse::class)->file;
-
-        return new RemoteFile($this->provider(), $payload->name, $payload->mimeType, $payload->uri, $payload->expirationTime);
+        return new RemoteFile($this->provider(), $file->name, $file->mimeType, $file->uri, $file->expirationTime);
     }
 
     /**

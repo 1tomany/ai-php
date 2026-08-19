@@ -47,6 +47,16 @@ readonly class Transport
     }
 
     /**
+     * @see OneToMany\AI\Bridge\Transport::request()
+     *
+     * @param array<string, mixed> $options
+     */
+    public function postRequest(string $url, array $options = []): HttpResponseInterface
+    {
+        return $this->request('POST', $url, $options);
+    }
+
+    /**
      * @template T of object
      *
      * @param class-string<T> $type
