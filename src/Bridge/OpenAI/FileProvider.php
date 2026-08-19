@@ -3,7 +3,6 @@
 namespace OneToMany\AI\Bridge\OpenAI;
 
 use OneToMany\AI\Bridge\OpenAI\Responses\Files\File;
-use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Resource\File\LocalFile;
@@ -27,10 +26,11 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
-        $url = $this->url($this->apiVersion, 'files');
+        $url = $this->url('files');
 
         try {
-            $response = $this->postRequest($url, [
+            $response = $this->transport->postRequest($url, [
+                'auth_bearer' => $this->apiKey,
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
@@ -51,6 +51,10 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->deleteRequest($this->url($this->apiVersion, 'files', $file->id));
+        $url = $this->url('files', $file->id);
+
+        $this->transport->deleteRequest($url, [
+            'auth_bearer' => $this->apiKey,
+        ]);
     }
 }

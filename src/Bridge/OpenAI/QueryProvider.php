@@ -32,11 +32,14 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
     #[\Override]
     public function run(Query $query): Response
     {
-        $url = $this->url($this->apiVersion, 'responses');
+        $url = $this->url('responses');
 
         try {
-            $response = $this->postRequest($url, [
-                'json' => $query->request,
+            $response = $this->transport->postRequest($url, [
+                'auth_bearer' => $this->apiKey,
+                'json' => [
+                    ...$query->request,
+                ],
             ]);
 
             $record = $this->transport->decode($response, ResponsePayload::class);
