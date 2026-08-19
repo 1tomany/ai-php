@@ -9,6 +9,8 @@ use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExcep
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
+use function array_first;
+use function array_is_list;
 use function implode;
 use function is_array;
 use function is_string;
@@ -125,44 +127,60 @@ readonly class Transport
         }
 
         if ($status < 200 || $status >= 300) {
-            if (null === $error = $this->extractError($response)) {
-                $error = sprintf('');
+            if (null === $message = $this->errorMessage($response)) {
+                $message = sprintf('');
             }
 
-            throw new RuntimeException($this->extractError($response) ?? 'The request was unsuccessful.', $status);
+            throw new RuntimeException($this->errorMessage($response) ?? 'The request was unsuccessful.', $status);
         }
     }
 
     /**
      * @return ?non-empty-string
      */
-    private function extractError(HttpResponseInterface $response): ?string
+    private function errorMessage(HttpResponseInterface $response): ?string
     {
-        $error = null;
+        $message = null;
 
         try {
             $data = $response->toArray(false);
 
-            if (isset($data['error'])) {
-                $error = $data['error'];
+            if ([] === $data) {
+                return $message;
+            }
 
-                if (is_array($error)) {
-                    if (isset($error['message'])) {
-                        if (is_string($error['message'])) {
-                            $error = trim($error['message']);
+            if (array_is_list($data)) {
+                $data = array_first($data);
+            }
+
+            if (!is_array($data)) {
+                return $message;
+            }
+
+            if (isset($data['error'])) {
+                $message = $data['error'];
+
+                if (is_array($message)) {
+                    foreach (['message', 'code'] as $key) {
+                        if (is_string($message[$key] ?? null)) {
+                            $message = trim($message[$key]);
+                        }
+
+                        if ($message) {
+                            break;
                         }
                     }
                 }
             }
 
-            if (null === $error || '' === $error) {
-                $error = $response->getInfo('error');
+            if (null === $message || '' === $message) {
+                $message = $response->getInfo('error');
             }
 
-            $error = is_string($error) ? $error : null;
+            $message = is_string($message) ? $message : null;
         } catch (HttpClientExceptionInterface) {
         }
 
-        return '' !== $error ? $error : null;
+        return '' !== $message ? $message : null;
     }
 }
