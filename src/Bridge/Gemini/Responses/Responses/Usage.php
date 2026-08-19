@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Gemini\Payload;
+namespace OneToMany\AI\Bridge\Gemini\Responses\Responses;
 
 final readonly class Usage
 {

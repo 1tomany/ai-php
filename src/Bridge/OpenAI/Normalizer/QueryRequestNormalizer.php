@@ -6,6 +6,7 @@ use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Resource\File\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+use function array_merge;
 use function array_replace;
 use function is_string;
 use function trim;
@@ -56,7 +57,7 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
             }
         }
 
-        $payload = [
+        $request = [
             'model' => $model,
             'stream' => false,
             'input' => [
@@ -68,23 +69,23 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         ];
 
         if ($instructions = $data->prompt->instructions) {
-            $payload['instructions'] = trim($instructions);
+            $request['instructions'] = trim($instructions);
         }
 
-        if (null !== $data->prompt->schema) {
-            $schema = $data->prompt->schema;
-
-            $payload['text'] = [
-                'format' => [
-                    'type' => 'json_schema',
-                    'name' => $schema->name,
-                    'strict' => $schema->strict,
-                    'schema' => $schema->schema,
+        if ($schema = $data->prompt->schema) {
+            $request = array_merge($request, [
+                'text' => [
+                    'format' => [
+                        'type' => 'json_schema',
+                        'name' => $schema->name,
+                        'strict' => $schema->strict,
+                        'schema' => $schema->schema,
+                    ],
                 ],
-            ];
+            ]);
         }
 
-        return array_replace($data->options, $payload);
+        return array_replace($data->options, $request);
     }
 
     /**
