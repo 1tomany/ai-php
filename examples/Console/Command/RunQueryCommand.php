@@ -19,7 +19,7 @@ use function is_string;
 
 #[AsCommand(
     name: 'ai:queries:run',
-    description: 'Runs a prompt against an AI model.',
+    description: 'Runs a prompt against an AI model',
 )]
 final class RunQueryCommand extends AbstractCommand
 {

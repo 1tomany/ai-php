@@ -17,7 +17,7 @@ use function mime_content_type;
 
 #[AsCommand(
     name: 'ai:files:upload',
-    description: 'Uploads a local file to an AI provider.',
+    description: 'Uploads a file to an AI provider',
 )]
 final class UploadFileCommand extends AbstractCommand
 {

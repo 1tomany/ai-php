@@ -16,7 +16,7 @@ use function is_string;
 
 #[AsCommand(
     name: 'ai:files:delete',
-    description: 'Deletes a remote file from an AI provider.',
+    description: 'Deletes a file from an AI provider',
 )]
 final class DeleteFileCommand extends AbstractCommand
 {
