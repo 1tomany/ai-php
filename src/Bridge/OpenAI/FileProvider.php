@@ -16,18 +16,6 @@ use function sprintf;
 final readonly class FileProvider extends AbstractProvider implements FileProviderInterface
 {
     /**
-     * @see OneToMany\AI\Bridge\OpenAI\AbstractProvider::__construct()
-     */
-    public function __construct(
-        Transport $transport,
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $apiVersion = 'v1',
-    ) {
-        parent::__construct($transport, $apiKey, $apiVersion);
-    }
-
-    /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws RuntimeException when opening the file fails

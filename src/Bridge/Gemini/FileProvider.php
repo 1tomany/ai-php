@@ -29,18 +29,6 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     private const int DEFAULT_CHUNK_GRANULARITY = 8 * 1024 * 1024;
 
     /**
-     * @see OneToMany\AI\Bridge\Gemini\AbstractProvider::__construct()
-     */
-    public function __construct(
-        Transport $transport,
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $apiVersion = 'v1beta',
-    ) {
-        parent::__construct($transport, $apiKey, $apiVersion);
-    }
-
-    /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      * @see OneToMany\AI\Bridge\Transport::request()
      *
@@ -54,8 +42,9 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     {
         $url = $this->url('upload', $this->apiVersion, 'files');
 
-        $start = $this->postRequest($url, [
+        $start = $this->transport->postRequest($url, [
             'headers' => [
+                'x-goog-api-key' => $this->apiKey,
                 'x-goog-upload-command' => 'start',
                 'x-goog-upload-header-content-length' => $file->size,
                 'x-goog-upload-header-content-type' => $file->mediaType,
@@ -114,9 +103,10 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
                     $command = "{$command}, finalize";
                 }
 
-                $response = $this->postRequest($uploadUrl, [
+                $response = $this->transport->postRequest($uploadUrl, [
                     'headers' => [
                         'content-length' => $length,
+                        'x-goog-api-key' => $this->apiKey,
                         'x-goog-upload-command' => $command,
                         'x-goog-upload-offset' => $offset,
                     ],
@@ -146,6 +136,10 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->deleteRequest($this->url($this->apiVersion, $file->id));
+        $url = $this->url($this->apiVersion, $file->id);
+
+        $this->transport->deleteRequest($url, [
+            'x-goog-api-key' => $this->apiKey,
+        ]);
     }
 }

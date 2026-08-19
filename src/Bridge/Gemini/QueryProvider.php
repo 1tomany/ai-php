@@ -19,9 +19,8 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
      */
     public function __construct(
         Transport $transport,
-        #[\SensitiveParameter]
-        string $apiKey,
         private QueryRequestNormalizer $normalizer,
+        #[\SensitiveParameter] string $apiKey,
         string $apiVersion = 'v1beta',
     ) {
         parent::__construct($transport, $apiKey, $apiVersion);
@@ -36,7 +35,10 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
         $url = $this->url($this->apiVersion, 'interactions');
 
         try {
-            $response = $this->postRequest($url, [
+            $response = $this->transport->postRequest($url, [
+                'headers' => [
+                    'x-goog-api-key' => $this->apiKey,
+                ],
                 'json' => $query->request,
             ]);
 

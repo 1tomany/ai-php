@@ -19,9 +19,8 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
      */
     public function __construct(
         Transport $transport,
-        #[\SensitiveParameter]
-        string $apiKey,
         private QueryRequestNormalizer $normalizer,
+        #[\SensitiveParameter] string $apiKey,
         string $apiVersion = 'v1',
     ) {
         parent::__construct($transport, $apiKey, $apiVersion);
