@@ -13,16 +13,6 @@ use function array_map;
 #[Group('UnitTests')]
 final class ProviderTest extends TestCase
 {
-    public function testCreateRequiresValidProvider(): void
-    {
-        $provider = 'invalid_provider';
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIs('The provider "'.$provider.'" is not valid.');
-
-        Provider::create($provider);
-    }
-
     #[DataProvider('providerProvider')]
     public function testCreateReturnsSelf(Provider $provider): void
     {
@@ -35,5 +25,41 @@ final class ProviderTest extends TestCase
     public static function providerProvider(): array
     {
         return array_map(static fn (Provider $p): array => [$p], Provider::cases());
+    }
+
+    public function testCreateRequiresValidProvider(): void
+    {
+        $provider = 'invalid_provider';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageIs('The provider "'.$provider.'" is not valid.');
+
+        Provider::create($provider);
+    }
+
+    public function testFromModelRequiresValidFormat(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageIs('The model must use the "provider:model" format.');
+
+        Provider::fromModel('gemini');
+    }
+
+    #[DataProvider('providerModelAndProvider')]
+    public function testFromModel(string $model, Provider $provider): void
+    {
+        $this->assertSame($provider, Provider::fromModel($model));
+    }
+
+    public static function providerModelAndProvider(): array
+    {
+        $provider = [
+            ['gemini:', Provider::Gemini],
+            ['openai:', Provider::OpenAI],
+            ['gemini:gemini-flash', Provider::Gemini],
+            ['openai:gpt-5.6-sol', Provider::OpenAI],
+        ];
+
+        return $provider;
     }
 }

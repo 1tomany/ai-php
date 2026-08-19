@@ -39,16 +39,10 @@ enum Provider: string
         $model = trim($model);
 
         if (!str_contains($model, ':')) {
-            throw new InvalidArgumentException('A model string must use the "provider:model" format.');
+            throw new InvalidArgumentException('The model must use the "provider:model" format.');
         }
 
-        [$provider] = explode(':', $model, 2);
-
-        try {
-            return self::from($provider);
-        } catch (\ValueError $e) {
-            throw new InvalidArgumentException(sprintf('The model provider "%s" is not supported.', $provider), previous: $e);
-        }
+        return self::create(explode(':', $model)[0]);
     }
 
     /**
