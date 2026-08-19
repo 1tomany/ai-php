@@ -42,10 +42,7 @@ final readonly class RunQueryCommand extends AbstractCommand
             $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $jsonSchemaFile));
         }
 
-        $response = $this->factory
-            ->create($model->provider, $this->apiKey($model->provider, $apiKey))
-            ->queries
-            ->compileAndRun($model, $prompt);
+        $response = $this->factory->create($model->provider, $this->apiKey($model->provider, $apiKey))->queries->compileAndRun($model, $prompt);
 
         $io->table(['Provider', 'Model', 'ResponseId'], [
             [
