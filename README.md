@@ -50,13 +50,15 @@ Using the library is simple. You can use it via the `OneToMany\AI\AI` facade, or
 
 use OneToMany\AI\Resource\Query\Prompt;
 
+// Upload a file to the LLM provider
 $file = $ai->files->upload('gemini', '/path/to/file.jpeg');
 
-$prompt = new Prompt()
-    ->addInputText('Identify the animal in the picture')
-    ->addRemoteFile($file);
+// Compile and run a query against the LLM
+$response = $ai->queries->compileAndRun('gemini:gemini-3.7-flash', Prompt::with('Identify the animal in the picture.', $file));
 
-$ai->queries->compileAndRun('gemini:gemini-3.7-flash', Prompt::with(new InputT));
+printf("%s\n", $response->text);
+```
+
 ## Credits
 
 - [Vic Cherubini](https://github.com/viccherubini), [1:N Labs, LLC](https://1tomany.com)
@@ -64,4 +66,7 @@ $ai->queries->compileAndRun('gemini:gemini-3.7-flash', Prompt::with(new InputT))
 ## License
 
 The MIT License
+
+```
+
 ```

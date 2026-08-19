@@ -6,7 +6,6 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\File\RemoteFile;
 
 use function is_string;
-use function trim;
 
 final class Prompt
 {
@@ -19,15 +18,8 @@ final class Prompt
 
     private ?JsonSchema $schema = null;
 
-    public function __construct(string|InputText|null $input = null)
+    public function __construct()
     {
-        if (is_string($input)) {
-            $input = trim($input);
-        }
-
-        if (null !== $input && '' !== $input) {
-            $this->addInputText(text: $input);
-        }
     }
 
     /**
