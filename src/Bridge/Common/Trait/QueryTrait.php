@@ -9,7 +9,7 @@ use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 
-trait QueryCompilerTrait
+trait QueryTrait
 {
     /**
      * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface

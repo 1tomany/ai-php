@@ -2,8 +2,8 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\Common\Trait\QueryCompilerTrait;
-use OneToMany\AI\Bridge\OpenAI\Normalizer\QueryRequestNormalizer;
+use OneToMany\AI\Bridge\Common\Trait\QueryTrait;
+use OneToMany\AI\Bridge\OpenAI\Normalizer\PromptNormalizer;
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Response as ResponsePayload;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
@@ -12,14 +12,14 @@ use OneToMany\AI\Resource\Query\Response;
 
 final readonly class QueryProvider extends AbstractProvider implements QueryProviderInterface
 {
-    use QueryCompilerTrait;
+    use QueryTrait;
 
     /**
      * @see OneToMany\AI\Bridge\OpenAI\AbstractProvider::__construct()
      */
     public function __construct(
         Transport $transport,
-        private QueryRequestNormalizer $normalizer,
+        private PromptNormalizer $normalizer,
         #[\SensitiveParameter] string $apiKey,
         string $apiVersion = 'v1',
     ) {

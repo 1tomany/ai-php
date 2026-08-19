@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use function array_merge;
 use function array_replace;
 
-final readonly class QueryRequestNormalizer implements NormalizerInterface
+final readonly class PromptNormalizer implements NormalizerInterface
 {
     /**
      * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
