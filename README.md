@@ -21,13 +21,13 @@ A [Symfony bundle](https://github.com/1tomany/ai-php-bundle) is available if you
 
 ### Platform feature support
 
-**Note:** Each platform refers to generating output (inference) differently; OpenAI uses the word "Responses" while Gemini uses the word "Content". I've decided the word "Output" best represents what a large language model produces in the case of generative models, and "Embedding" in the case of embedding models.
+**Note:** Each platform refers to generating output (inference) differently; OpenAI uses "Response", Gemini uses "Interaction", and Anthropic uses "Message". I've decided the word "Query" best represents how you interact with a generative LLM: you compile a query and then run the query to generate a response. The word "Embedding" will continue to be used for embedding models as that is more or less standard across different providers.
 
-To generate output or create an embedding, you must first compile a "Query". A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions.
+To generate a response, you must first compile a query. A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions. Once the query is compiled, it can be sent to the LLM for analysis.
 
 This library allows you to compile a query before sending it to the model for two reasons:
 
-1. You can log/analyze the request payload before sending it to the model.
+1. You can log/analyze the request payload before sending it.
 2. You can compile individual requests for batching.
 
 | Feature     | Gemini | OpenAI |

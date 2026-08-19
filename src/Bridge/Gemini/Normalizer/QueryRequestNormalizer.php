@@ -4,11 +4,10 @@ namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Resource\File\RemoteFile;
+use OneToMany\AI\Resource\Query\InputText;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function array_replace;
-use function is_string;
-use function trim;
 
 final readonly class QueryRequestNormalizer implements NormalizerInterface
 {
@@ -25,9 +24,9 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         $model = $data->model->name;
 
         $resolveType = static function (
-            string|RemoteFile $part,
+            InputText|RemoteFile $part,
         ): string {
-            if (is_string($part)) {
+            if ($part instanceof InputText) {
                 return 'text';
             }
 
@@ -46,12 +45,14 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         foreach ($data->prompt->input as $part) {
             $type = $resolveType(part: $part);
 
-            if (is_string($part)) {
+            if ($part instanceof InputText) {
                 $input[] = [
                     'type' => $type,
-                    'text' => $part,
+                    'text' => (string) $part,
                 ];
-            } else {
+            }
+
+            if ($part instanceof RemoteFile) {
                 $input[] = [
                     'type' => $type,
                     'uri' => $part->uri,
@@ -67,7 +68,7 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         ];
 
         if (null !== $instructions = $data->prompt->instructions) {
-            $request['system_instruction'] = trim($instructions);
+            $request['system_instruction'] = (string) $instructions;
         }
 
         if ($schema = $data->prompt->schema) {
