@@ -51,6 +51,9 @@ final class ProviderTest extends TestCase
         $this->assertSame($provider, Provider::fromModel($model));
     }
 
+    /**
+     * @return non-empty-list<array{non-empty-string, Provider}>
+     */
     public static function providerModelAndProvider(): array
     {
         $provider = [
