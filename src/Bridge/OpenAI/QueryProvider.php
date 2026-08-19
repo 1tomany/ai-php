@@ -99,7 +99,7 @@ final readonly class QueryProvider implements QueryProviderInterface
         }
         */
 
-        return new Response($this->provider(), '', '', null, null, null);
+        return new Response($this->provider(), $record->id, $record->status->value, $record->getText(), null, $record->getError());
 
         /*
             provider: Provider::OpenAI,
