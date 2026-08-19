@@ -3,6 +3,7 @@
 namespace OneToMany\AI\Bridge\OpenAI;
 
 use OneToMany\AI\Bridge\OpenAI\Normalizer\QueryRequestNormalizer;
+use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Enum\ResponseStatus;
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Response as ResponsePayload;
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
@@ -99,7 +100,7 @@ final readonly class QueryProvider implements QueryProviderInterface
         }
         */
 
-        return new Response($this->provider(), $record->id, $record->status->value, $record->getText(), null, $record->getError());
+        return new Response($this->provider(), $record->id, $record->status?->value ?? ResponseStatus::Completed->value, $record->getText(), null, $record->getError());
 
         /*
             provider: Provider::OpenAI,

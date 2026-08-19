@@ -4,7 +4,7 @@ namespace OneToMany\AI\Bridge\Gemini;
 
 use OneToMany\AI\Bridge\Gemini\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\Gemini\Payload\Interaction;
-use OneToMany\AI\Bridge\Gemini\Responses\Responses\Usage as UsagePayload;
+use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Usage as UsagePayload;
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
