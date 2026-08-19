@@ -5,11 +5,8 @@ namespace OneToMany\AI\Tests;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-
-use function array_map;
 
 #[Group('UnitTests')]
 final class ModelTest extends TestCase
