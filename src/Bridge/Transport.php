@@ -6,7 +6,6 @@ use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -104,8 +103,7 @@ readonly class Transport
         HttpResponseInterface $response,
         string $type,
         array $context = [],
-    ): object
-    {
+    ): object {
         try {
             $content = $response->getContent(false);
         } catch (HttpClientExceptionInterface $e) {

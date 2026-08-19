@@ -5,15 +5,15 @@ namespace OneToMany\AI\Bridge\Gemini\Payload\Files;
 final readonly class File
 {
     /**
-        * @param non-empty-string $name
-        * @param non-empty-string $displayName
-        * @param non-empty-string $mimeType
-        * @param non-negative-int|numeric-string $sizeBytes
-        * @param non-empty-string $sha256Hash
-        * @param non-empty-string $uri
-        * @param non-empty-string $state
-        * @param non-empty-string $source
-        */
+     * @param non-empty-string $name
+     * @param non-empty-string $displayName
+     * @param non-empty-string $mimeType
+     * @param non-negative-int|numeric-string $sizeBytes
+     * @param non-empty-string $sha256Hash
+     * @param non-empty-string $uri
+     * @param non-empty-string $state
+     * @param non-empty-string $source
+     */
     public function __construct(
         public string $name,
         public string $displayName,
