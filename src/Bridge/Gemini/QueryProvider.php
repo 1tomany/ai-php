@@ -8,7 +8,6 @@ use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Usage as UsagePayload;
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
