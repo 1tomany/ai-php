@@ -41,19 +41,16 @@ final readonly class Model implements \Stringable
     }
 
     /**
-     * @throws InvalidArgumentException when the model format is invalid
-     * @throws InvalidArgumentException when the provider is not found
-     * @throws InvalidArgumentException when the model name is empty
+     * @see OneToMany\AI\Provider::fromModel()
+     * @see OneToMany\AI\Model::__construct()
      */
     public static function create(string $model): self
     {
-        $name = array_last(explode(':', trim($model), 2));
-
-        return new self(Provider::fromModel($model), $name);
+        return new self(Provider::fromModel($model), array_last(explode(':', trim($model), 2)));
     }
 
     /**
-     * @throws InvalidArgumentException when the model name is empty
+     * @see OneToMany\AI\Model::__construct()
      */
     public static function gemini(string $name): self
     {
@@ -61,7 +58,7 @@ final readonly class Model implements \Stringable
     }
 
     /**
-     * @throws InvalidArgumentException when the model name is empty
+     * @see OneToMany\AI\Model::__construct()
      */
     public static function openai(string $name): self
     {
