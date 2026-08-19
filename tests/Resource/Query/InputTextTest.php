@@ -3,6 +3,7 @@
 namespace OneToMany\AI\Tests\Resource\Query;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
+use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Resource\Query\InputText;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +23,23 @@ final class InputTextTest extends TestCase
 
     public function testToStringReturnsText(): void
     {
-        $text = \Faker\Factory::create()->sentence();
+        $faker = \Faker\Factory::create();
+
+        $text = $faker->sentence();
         $this->assertNotEmpty($text);
+
+        $inputText = new InputText($text);
+        $this->assertSame($text, $inputText->__toString());
+    }
+
+    public function testFromFileRequiresReadingFile(): void
+    {
+        $path = '/invalid/instructions.txt';
+        $this->assertFileDoesNotExist($path);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageIs('Reading the input text file "'.$path.'" failed.');
+
+        InputText::fromFile($path);
     }
 }
