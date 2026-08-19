@@ -22,12 +22,4 @@ final class RemoteFileTest extends TestCase
 
         new RemoteFile(Provider::OpenAI, '', 'text/plain');
     }
-
-    public function testConstructorRequiresNonEmptyMediaType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIs('The media type cannot be empty.');
-
-        new RemoteFile(Provider::OpenAI, uniqid(), '');
-    }
 }

@@ -18,11 +18,7 @@ final readonly class RemoteFile
     public string $id;
 
     /**
-     * @var non-empty-string
-     */
-    public string $mediaType;
-
-    /**
+     * @param ?non-empty-string $mediaType
      * @param ?non-empty-string $uri
      * @param ?non-empty-string $purpose
      *
@@ -32,7 +28,7 @@ final readonly class RemoteFile
     public function __construct(
         Provider $provider,
         ?string $id,
-        ?string $mediaType,
+        public ?string $mediaType = null,
         public ?string $uri = null,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
@@ -44,12 +40,6 @@ final readonly class RemoteFile
         }
 
         $this->id = $id;
-
-        if ('' === $mediaType = trim((string) $mediaType)) {
-            throw new InvalidArgumentException('The media type cannot be empty.');
-        }
-
-        $this->mediaType = $mediaType;
     }
 
     public function isAudio(): bool
