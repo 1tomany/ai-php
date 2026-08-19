@@ -9,6 +9,7 @@ use OneToMany\AI\Provider;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
 use function array_replace;
+use function sprintf;
 use function trim;
 
 abstract readonly class AbstractProvider implements ProviderInterface
@@ -29,7 +30,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
         protected string $apiVersion = 'v1',
     ) {
         if ('' === $apiKey = trim($apiKey)) {
-            throw new InvalidArgumentException('The OpenAI API key cannot be empty.');
+            throw new InvalidArgumentException(sprintf('The %d API key cannot be empty.', $this->provider()->getName()));
         }
 
         $this->apiKey = $apiKey;

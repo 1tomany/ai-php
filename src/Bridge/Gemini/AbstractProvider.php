@@ -9,6 +9,7 @@ use OneToMany\AI\Provider;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
 use function is_array;
+use function sprintf;
 use function trim;
 
 abstract readonly class AbstractProvider implements ProviderInterface
@@ -29,7 +30,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
         protected string $apiVersion = 'v1beta',
     ) {
         if ('' === $apiKey = trim($apiKey)) {
-            throw new InvalidArgumentException('The Gemini API key cannot be empty.');
+            throw new InvalidArgumentException(sprintf('The %d API key cannot be empty.', $this->provider()->getName()));
         }
 
         $this->apiKey = $apiKey;
@@ -72,14 +73,14 @@ abstract readonly class AbstractProvider implements ProviderInterface
      */
     private function authenticate(array $options): array
     {
-        $headers = $options['headers'] ?? [];
-
-        if (!is_array($headers)) {
-            $headers = [];
+        if (
+            !isset($options['headers'])
+            || !is_array($options['headers'])
+        ) {
+            $options['headers'] = [];
         }
 
-        $headers['x-goog-api-key'] = $this->apiKey;
-        $options['headers'] = $headers;
+        $options['headers']['x-goog-api-key'] = $this->apiKey;
 
         return $options;
     }
