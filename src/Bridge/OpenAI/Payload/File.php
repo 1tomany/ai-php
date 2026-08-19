@@ -2,8 +2,6 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Payload;
 
-use OneToMany\AI\Exception\InvalidArgumentException;
-
 final readonly class File
 {
     /**

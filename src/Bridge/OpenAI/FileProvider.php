@@ -5,7 +5,6 @@ namespace OneToMany\AI\Bridge\OpenAI;
 use OneToMany\AI\Bridge\OpenAI\Payload\File;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
-use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
