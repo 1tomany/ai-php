@@ -5,8 +5,8 @@ namespace OneToMany\AI\Resource\Query;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\File\RemoteFile;
 
-use function is_null;
 use function is_string;
+use function trim;
 
 final class Prompt
 {
@@ -21,8 +21,12 @@ final class Prompt
 
     public function __construct(string|InputText|null $input = null)
     {
-        if (false === is_null($input)) {
-            $this->addInputText($input);
+        if (is_string($input)) {
+            $input = trim($input);
+        }
+
+        if (null !== $input && '' !== $input) {
+            $this->addInputText(text: $input);
         }
     }
 
