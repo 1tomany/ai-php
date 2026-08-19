@@ -7,14 +7,15 @@ final readonly class Response
     /**
      * @param non-empty-string $id
      * @param positive-int $created_at
+     * @param non-empty-string $status
      * @param list<ResponseOutputItem> $output
      */
     public function __construct(
         public string $id,
         public int $created_at,
-        public ?ResponseError $error,
-        public array $output,
-        public ?string $status,
+        public string $status,
+        public array $output = [],
+        public ?ResponseError $error = null,
     ) {
     }
 
@@ -23,13 +24,13 @@ final readonly class Response
      */
     public function getText(): ?string
     {
-        // foreach ($this->output as $output) {
-        //     if ($output instanceof ResponseOutputMessage) {
-        //         if (null !== $output->getText()) {
-        //             return $output->getText();
-        //         }
-        //     }
-        // }
+        foreach ($this->output as $output) {
+            $outputText = $output->text;
+
+            if (null !== $outputText) {
+                return $outputText;
+            }
+        }
 
         return null;
     }
@@ -43,13 +44,13 @@ final readonly class Response
             return $this->error->message;
         }
 
-        // foreach ($this->output as $output) {
-        //     if ($output instanceof ResponseOutputMessage) {
-        //         if (null !== $output->getRefusal()) {
-        //             return $output->getRefusal();
-        //         }
-        //     }
-        // }
+        foreach ($this->output as $output) {
+            $refusal = $output->refusal;
+
+            if (null !== $refusal) {
+                return $refusal;
+            }
+        }
 
         return null;
     }

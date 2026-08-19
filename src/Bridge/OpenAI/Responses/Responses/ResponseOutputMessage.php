@@ -17,7 +17,7 @@ final readonly class ResponseOutputMessage
     /**
      * @phpstan-assert-if-true 'output_text' $this->type
      */
-    public function isOutputText(): bool
+    public function isTypeOutputText(): bool
     {
         return 'output_text' === $this->type;
     }
@@ -25,7 +25,7 @@ final readonly class ResponseOutputMessage
     /**
      * @phpstan-assert-if-true 'refusal' $this->type
      */
-    public function isRefusal(): bool
+    public function isTypeRefusal(): bool
     {
         return 'refusal' === $this->type;
     }
