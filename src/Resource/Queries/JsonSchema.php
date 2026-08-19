@@ -23,14 +23,26 @@ final readonly class JsonSchema
     /**
      * @param array<string, mixed> $schema
      *
-     * @throws InvalidArgumentException when the schema has no name
+     * @throws InvalidArgumentException when the schema has no name or "title" property
      */
     public function __construct(
         public array $schema,
         ?string $name = null,
         public bool $strict = true,
     ) {
-        $name ??= is_string($schema['title'] ?? null) ? $schema['title'] : null;
+        $name = trim((string) $name);
+
+        if (isset($schema['title'])) {
+            if (is_string($schema['title'])) {
+                $title = trim($schema['title']);
+            }
+        }
+
+        if ('' === $name) {
+            if (isset($title)) {
+                $name = $title;
+            }
+        }
 
         if ('' === $name = trim((string) $name)) {
             throw new InvalidArgumentException('A JSON schema requires a name or non-empty "title" property.');
