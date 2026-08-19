@@ -127,7 +127,11 @@ readonly class Transport
         }
 
         if ($statusCode < 200 || $statusCode >= 300) {
-            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('[HTTP %d] The request was unsuccessful.', $statusCode), $statusCode);
+            if (null === $message = $this->extractErrorMessage($response)) {
+                $message = sprintf('[HTTP %d] The request was unsuccessful.', $statusCode);
+            }
+
+            throw new RuntimeException($message, $statusCode);
         }
     }
 
