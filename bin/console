@@ -1,8 +1,0 @@
-#!/usr/bin/env php
-<?php
-
-use OneToMany\AI\Example\Console\ApplicationFactory;
-
-require dirname(__DIR__).'/vendor/autoload.php';
-
-exit(ApplicationFactory::create(dirname(__DIR__))->run());

@@ -4,7 +4,7 @@ namespace OneToMany\AI\Bridge;
 
 use OneToMany\AI\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
@@ -18,7 +18,7 @@ readonly class Transport
 {
     public function __construct(
         private HttpClientInterface $httpClient,
-        private SerializerInterface $serializer,
+        private DenormalizerInterface $denormalizer,
     ) {
     }
 
@@ -84,8 +84,8 @@ readonly class Transport
      *
      * @return T
      *
-     * @throws RuntimeException when reading the response content fails
-     * @throws RuntimeException when deserializing the response fails
+     * @throws RuntimeException when decoding the response fails
+     * @throws RuntimeException when denormalizing the response fails
      */
     public function decode(
         HttpResponseInterface $response,
@@ -93,15 +93,15 @@ readonly class Transport
         array $context = [],
     ): object {
         try {
-            $content = $response->getContent(false);
+            $data = $response->toArray(false);
         } catch (HttpClientExceptionInterface $e) {
-            throw new RuntimeException('Reading the response content failed.', previous: $e);
+            throw new RuntimeException('Decoding the response failed.', previous: $e);
         }
 
         try {
-            $payload = $this->serializer->deserialize($content, $type, 'json', $context);
+            $payload = $this->denormalizer->denormalize($data, $type, 'json', $context);
         } catch (SerializerExceptionInterface $e) {
-            throw new RuntimeException('Deserializing the response failed.', previous: $e);
+            throw new RuntimeException('Denormalizing the response failed.', previous: $e);
         }
 
         return $payload;
