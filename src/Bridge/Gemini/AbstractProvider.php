@@ -25,8 +25,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
      */
     public function __construct(
         protected Transport $transport,
-        #[\SensitiveParameter]
-        string $apiKey,
+        #[\SensitiveParameter] string $apiKey,
         protected string $apiVersion = 'v1beta',
     ) {
         if ('' === $apiKey = trim($apiKey)) {
