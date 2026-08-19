@@ -4,27 +4,27 @@ namespace OneToMany\AI\Bridge\OpenAI\Payload;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 
-use function trim;
-
 final readonly class File
 {
     /**
-     * @var non-empty-string
-     */
-    public string $id;
-
-    /**
-     * @throws InvalidArgumentException when the file ID is empty
+     * @param non-empty-string $id
+     * @param 'file' $object
+     * @param positive-int $created_at
+     * @param ?positive-int $expires_at
+     * @param non-empty-string $purpose
      */
     public function __construct(
-        string $id,
+        public string $id,
+        public string $object,
+        public int $created_at,
+        public ?int $expires_at,
+        public string $filename,
         public string $purpose,
-        public ?int $expires_at = null,
     ) {
-        if ('' === $id = trim($id)) {
-            throw new InvalidArgumentException('The file ID cannot be empty.');
-        }
+    }
 
-        $this->id = $id;
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return null !== $this->expires_at ? \DateTimeImmutable::createFromTimestamp($this->expires_at) : null;
     }
 }

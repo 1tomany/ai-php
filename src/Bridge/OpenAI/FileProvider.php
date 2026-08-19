@@ -36,7 +36,6 @@ final readonly class FileProvider implements FileProviderInterface
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws RuntimeException when opening the file fails
-     * @throws RuntimeException when an invalid response is returned
      */
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
@@ -48,7 +47,7 @@ final readonly class FileProvider implements FileProviderInterface
         $url = $this->transport->url($this->apiVersion, 'files');
 
         try {
-            $response = $this->transport->request('POST', $url, [
+            $response = $this->transport->postRequest($url, [
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
@@ -60,22 +59,15 @@ final readonly class FileProvider implements FileProviderInterface
             @fclose($handle);
         }
 
-        return new RemoteFile($this->provider(), $record->id, $file->mediaType, null, $record->expires_at, $record->purpose);
+        return new RemoteFile($this->provider(), $record->id, $file->mediaType, null, $record->getExpiresAt(), $record->purpose);
     }
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
-     *
-     * @throws InvalidArgumentException when the file belongs to another provider
-     * @throws RuntimeException when deleting the file fails
      */
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        if (Provider::OpenAI !== $file->provider) {
-            throw new InvalidArgumentException('The OpenAI files provider can only delete OpenAI files.');
-        }
-
-        $this->transport->request('DELETE', $this->transport->url($this->apiVersion, 'files', $file->id));
+        $this->transport->deleteRequest($this->transport->url($this->apiVersion, 'files', $file->id));
     }
 }

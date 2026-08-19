@@ -52,8 +52,7 @@ final readonly class FileProvider implements FileProviderInterface
      * @throws RuntimeException when no resumable upload URL is returned
      * @throws RuntimeException when opening the file fails
      * @throws RuntimeException when reading the file fails
-     * @throws RuntimeException when no file data is uploaded
-     * @throws RuntimeException when an invalid response is returned
+     * @throws RuntimeException when the server did not receive any file data
      */
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
@@ -136,24 +135,22 @@ final readonly class FileProvider implements FileProviderInterface
                 throw new RuntimeException(sprintf('The %s server did not receive any file data.', $this->provider()->getName()));
             }
 
-            $file = $this->transport->decode($response, File::class, [
+            $record = $this->transport->decode($response, File::class, [
                 UnwrappingDenormalizer::UNWRAP_PATH => '[file]',
             ]);
         } finally {
             @fclose($handle);
         }
 
-        return new RemoteFile($this->provider(), $file->name, $file->mimeType, $file->uri, $file->expirationTime);
+        return new RemoteFile($this->provider(), $record->name, $record->mimeType, $record->uri, $record->expirationTime);
     }
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
-     *
-     * @throws RuntimeException when deleting the file fails
      */
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->transport->request('DELETE', $this->transport->url($this->apiVersion, $file->id));
+        $this->transport->deleteRequest($this->transport->url($this->apiVersion, $file->id));
     }
 }
