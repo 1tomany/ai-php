@@ -17,9 +17,9 @@ final readonly class Files implements FilesInterface
     private Registry $providers;
 
     /**
-     * @param iterable<FileProviderInterface> $providers
+     * @see OneToMany\AI\Resource\Registry::__construct()
      *
-     * @throws InvalidArgumentException when a provider is already registered
+     * @param iterable<FileProviderInterface> $providers
      */
     public function __construct(
         iterable $providers,
