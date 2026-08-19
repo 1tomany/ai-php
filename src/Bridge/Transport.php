@@ -154,11 +154,13 @@ readonly class Transport
                     }
                 }
             }
-        } catch (HttpClientExceptionInterface) {
-        }
 
-        if (null === $error || '' === $error) {
-            $error = $response->getInfo('error');
+            if (null === $error || '' === $error) {
+                $error = $response->getInfo('error');
+            }
+
+            $error = is_string($error) ? $error : null;
+        } catch (HttpClientExceptionInterface) {
         }
 
         return '' !== $error ? $error : null;
