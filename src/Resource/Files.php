@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Resource;
 
-use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
+use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Contract\Resource\FilesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Model;
@@ -15,12 +15,12 @@ use function sprintf;
 final readonly class Files implements FilesInterface
 {
     /**
-     * @var array<string, FilesProviderInterface>
+     * @var array<string, FileProviderInterface>
      */
     private array $providers;
 
     /**
-     * @param iterable<FilesProviderInterface> $providers
+     * @param iterable<FileProviderInterface> $providers
      *
      * @throws InvalidArgumentException when a file provider is already registered
      */
@@ -61,7 +61,7 @@ final readonly class Files implements FilesInterface
     /**
      * @throws InvalidArgumentException when the file provider is not registered
      */
-    private function getProvider(Provider $provider): FilesProviderInterface
+    private function getProvider(Provider $provider): FileProviderInterface
     {
         if (!isset($this->providers[$provider->getValue()])) {
             throw new InvalidArgumentException(sprintf('The "%s" file provider is not registered.', $provider->getValue()));

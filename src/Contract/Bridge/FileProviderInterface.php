@@ -6,7 +6,7 @@ use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
 
-interface FilesProviderInterface
+interface FileProviderInterface
 {
     public function provider(): Provider;
 

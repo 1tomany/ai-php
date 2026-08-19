@@ -4,7 +4,7 @@ namespace OneToMany\AI\Bridge\OpenAI;
 
 use OneToMany\AI\Bridge\OpenAI\Payload\File;
 use OneToMany\AI\Bridge\Transport;
-use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
+use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
@@ -15,7 +15,7 @@ use function fclose;
 use function fopen;
 use function sprintf;
 
-final readonly class Files implements FilesProviderInterface
+final readonly class FileProvider implements FileProviderInterface
 {
     public function __construct(
         private Transport $transport,
@@ -24,7 +24,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      */
     #[\Override]
     public function provider(): Provider
@@ -33,7 +33,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws RuntimeException when opening the file fails
      * @throws RuntimeException when an invalid response is returned
@@ -64,7 +64,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws InvalidArgumentException when the file belongs to another provider
      * @throws RuntimeException when deleting the file fails

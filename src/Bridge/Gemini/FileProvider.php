@@ -4,7 +4,7 @@ namespace OneToMany\AI\Bridge\Gemini;
 
 use OneToMany\AI\Bridge\Gemini\Payload\FileResponse;
 use OneToMany\AI\Bridge\Transport;
-use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
+use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
@@ -20,7 +20,7 @@ use function max;
 use function sprintf;
 use function strlen;
 
-final readonly class Files implements FilesProviderInterface
+final readonly class FileProvider implements FileProviderInterface
 {
     /**
      * Default granularity (8MB) of each file chunk.
@@ -36,7 +36,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      */
     #[\Override]
     public function provider(): Provider
@@ -45,7 +45,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws ExceptionInterface when an upload request throws a package exception
      * @throws RuntimeException when no resumable upload URL is returned
@@ -144,7 +144,7 @@ final readonly class Files implements FilesProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FilesProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      *
      * @throws RuntimeException when deleting the file fails
      */

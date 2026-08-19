@@ -20,7 +20,7 @@ use OneToMany\AI\Resource\Query\Usage;
 use function implode;
 use function trim;
 
-final readonly class Responses implements QueryProviderInterface
+final readonly class QueryProvider implements QueryProviderInterface
 {
     public function __construct(
         private Transport $transport,
