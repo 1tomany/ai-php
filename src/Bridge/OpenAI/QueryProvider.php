@@ -60,41 +60,15 @@ final readonly class QueryProvider implements QueryProviderInterface
     {
         $url = $this->transport->url($this->apiVersion, 'responses');
 
-        $response = $this->transport->postRequest($url, [
-            'json' => $query->request,
-        ]);
+        try {
+            $response = $this->transport->postRequest($url, [
+                'json' => $query->request,
+            ]);
 
-        $record = $this->transport->decode($response, ResponsePayload::class);
-
-        /*
-        $texts = [];
-        $refusal = null;
-
-        foreach ($payload->output as $output) {
-            foreach ($output->content as $part) {
-                if ('output_text' === $part->type && null !== $part->text && '' !== $part->text) {
-                    $texts[] = $part->text;
-                }
-
-                if ('refusal' === $part->type && null !== $part->refusal) {
-                    $refusal = trim($part->refusal) ?: null;
-                }
-            }
+            $record = $this->transport->decode($response, ResponsePayload::class);
+        } finally {
+            unset($query);
         }
-
-        $usage = $payload->usage ?? new UsagePayload();
-        $error = null;
-
-        if (null !== $payload->error && null !== $payload->error->message) {
-            $error = trim($payload->error->message) ?: null;
-        }
-
-        if (null === $error && null !== $payload->incomplete_details && null !== $payload->incomplete_details->reason) {
-            $error = trim($payload->incomplete_details->reason) ?: null;
-        }
-        */
-
-        print_r($record);
 
         return new Response($this->provider(), $record->id, $record->completed, $record->text, $record->refusal, $record->error?->message);
 

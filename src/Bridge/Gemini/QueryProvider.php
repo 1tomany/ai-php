@@ -12,11 +12,7 @@ use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
-use OneToMany\AI\Resource\Query\Usage;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
-
-use function implode;
-use function trim;
 
 final readonly class QueryProvider implements QueryProviderInterface
 {
