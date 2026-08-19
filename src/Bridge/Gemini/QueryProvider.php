@@ -3,6 +3,7 @@
 namespace OneToMany\AI\Bridge\Gemini;
 
 use OneToMany\AI\Bridge\Gemini\Normalizer\QueryRequestNormalizer;
+use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Interaction as ResponsePayload;
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
@@ -57,69 +58,16 @@ final readonly class QueryProvider implements QueryProviderInterface
     {
         $url = $this->transport->url($this->apiVersion, 'interactions');
 
-        $response = $this->transport->postRequest($url, [
-            'json' => $query->request,
-        ]);
+        try {
+            $response = $this->transport->postRequest($url, [
+                'json' => $query->request,
+            ]);
 
-        $response->toArray(false);
-
-        throw new RuntimeException('Not implemented!');
-    }
-
-    /*
-    private function runQuery(Query $query): Response
-    {
-        $payload = $this->transport->requestObject(
-            'POST',
-            $this->transport->url($this->apiVersion, 'interactions'),
-            Interaction::class,
-            ['json' => $query->request],
-        );
-
-        $texts = [];
-
-        foreach ($payload->steps as $step) {
-            if ('model_output' !== $step->type) {
-                continue;
-            }
-
-            foreach ($step->content as $content) {
-                if ('text' === $content->type && null !== $content->text && '' !== $content->text) {
-                    $texts[] = $content->text;
-                }
-            }
+            $record = $this->transport->decode($response, ResponsePayload::class);
+        } finally {
+            unset($query);
         }
 
-        $usage = $payload->usage ?? new UsagePayload();
-        $error = null;
-
-        foreach ($payload->errors as $payloadError) {
-            if (null === $payloadError->message) {
-                continue;
-            }
-
-            if ('' !== $message = trim($payloadError->message)) {
-                $error = $message;
-
-                break;
-            }
-        }
-
-        return new Response(
-            provider: Provider::Gemini,
-            id: $payload->id,
-            status: $payload->status,
-            text: [] !== $texts ? implode("\n", $texts) : null,
-            refusal: null,
-            error: $error,
-            usage: new Usage(
-                inputTokens: $usage->total_input_tokens,
-                outputTokens: $usage->total_output_tokens,
-                cachedInputTokens: $usage->total_cached_tokens,
-                reasoningTokens: $usage->total_thought_tokens,
-                totalTokens: $usage->total_tokens,
-            ),
-        );
+        return new Response($this->provider(), $record->id, $record->completed, $record->text, null, $record->error?->message);
     }
-    */
 }

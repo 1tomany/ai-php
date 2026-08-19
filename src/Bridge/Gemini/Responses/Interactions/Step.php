@@ -2,14 +2,52 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Responses\Interactions;
 
-final readonly class Step
+use function trim;
+
+final class Step
 {
     /**
+     * @param non-empty-string $type
      * @param list<Content> $content
      */
     public function __construct(
-        public string $type,
-        public array $content = [],
+        public readonly string $type,
+        public readonly array $content = [],
     ) {
+    }
+
+    /**
+     * @var ?non-empty-string
+     */
+    public ?string $text {
+        get => $this->compileOutputText();
+    }
+
+    /**
+     * @phpstan-assert-if-true 'model_output' $this->type
+     */
+    public function isTypeModelOutput(): bool
+    {
+        return 'model_output' === $this->type;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    private function compileOutputText(): ?string
+    {
+        $outputText = null;
+
+        if ($this->isTypeModelOutput()) {
+            foreach ($this->content as $content) {
+                if ($content->isTypeText()) {
+                    $outputText .= $content->text;
+                }
+            }
+
+            $outputText = trim((string) $outputText);
+        }
+
+        return '' !== $outputText ? $outputText : null;
     }
 }

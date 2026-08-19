@@ -22,14 +22,16 @@ final readonly class JsonSchema
     public string $name;
 
     /**
+     * @param non-empty-string $mediaType
      * @param array<string, mixed> $schema
      *
      * @throws InvalidArgumentException when the schema has no name or "title" property
      */
     public function __construct(
-        public array $schema,
-        ?string $name = null,
+        ?string $name,
         public bool $strict = true,
+        public string $mediaType = 'application/json',
+        public array $schema = [],
     ) {
         if (null !== $name) {
             $name = trim($name);
@@ -56,11 +58,8 @@ final readonly class JsonSchema
      * @throws InvalidArgumentException when the schema does not contain an object
      * @throws InvalidArgumentException when the schema has no name
      */
-    public static function fromFile(
-        string $path,
-        ?string $name = null,
-        bool $strict = true,
-    ): self {
+    public static function fromFile(?string $name, string $path): self
+    {
         if (false === $contents = @file_get_contents($path)) {
             throw new InvalidArgumentException(sprintf('Reading the JSON schema file "%s" failed.', $path));
         }
@@ -93,6 +92,6 @@ final readonly class JsonSchema
             throw new InvalidArgumentException(sprintf('The JSON schema file "%s" must contain an object.', $path));
         }
 
-        return new self($schema, $name, $strict); // @phpstan-ignore argument.type
+        return new self($name, schema: $schema); // @phpstan-ignore argument.type
     }
 }

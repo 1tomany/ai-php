@@ -3,13 +3,12 @@
 namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 
 use OneToMany\AI\Bridge\QueryRequest;
-use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Resource\File\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function array_replace;
 use function is_string;
-use function str_starts_with;
+use function trim;
 
 final readonly class QueryRequestNormalizer implements NormalizerInterface
 {
@@ -19,51 +18,67 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
      * @param QueryRequest $data
      *
      * @return array<string, mixed>
-     *
-     * @throws InvalidArgumentException when a referenced file has no URI
      */
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
+        $model = $data->model->name;
+
+        $resolveType = static function (
+            string|RemoteFile $part,
+        ): string {
+            if (is_string($part)) {
+                return 'text';
+            }
+
+            $type = match (true) {
+                $part->isAudio() => 'audio',
+                $part->isImage() => 'image',
+                $part->isVideo() => 'video',
+                default => 'document',
+            };
+
+            return $type;
+        };
+
         $input = [];
 
         foreach ($data->prompt->input as $part) {
+            $type = $resolveType(part: $part);
+
             if (is_string($part)) {
-                $input[] = ['type' => 'text', 'text' => $part];
-
-                continue;
+                $input[] = [
+                    'type' => $type,
+                    'text' => $part,
+                ];
+            } else {
+                $input[] = [
+                    'type' => $type,
+                    'uri' => $part->uri,
+                    'mime_type' => $part->mediaType,
+                ];
             }
-
-            if (null === $part->uri) {
-                throw new InvalidArgumentException('A Gemini query requires a file URI.');
-            }
-
-            $input[] = [
-                'type' => $this->contentType($part->mediaType),
-                'uri' => $part->uri,
-                'mime_type' => $part->mediaType,
-            ];
         }
 
-        $payload = [
-            'model' => $data->model->name,
+        $request = [
+            'model' => $model,
             'stream' => false,
             'input' => $input,
         ];
 
-        if (null !== $data->prompt->instructions) {
-            $payload['system_instruction'] = $data->prompt->instructions;
+        if (null !== $instructions = $data->prompt->instructions) {
+            $request['system_instruction'] = trim($instructions);
         }
 
-        if (null !== $data->prompt->schema) {
-            $payload['response_format'] = [
+        if ($schema = $data->prompt->schema) {
+            $request['response_format'] = [
                 'type' => 'text',
-                'mime_type' => 'application/json',
-                'schema' => $data->prompt->schema->schema,
+                'mime_type' => $schema->mediaType,
+                'schema' => $schema->schema,
             ];
         }
 
-        return array_replace($data->options, $payload);
+        return array_replace($data->options, $request);
     }
 
     /**
@@ -72,10 +87,7 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryRequest
-            && Provider::Gemini === $data->model->provider
-            && (null === $format || 'json' === $format)
-        ;
+        return $data instanceof QueryRequest && $data->model->provider->isGemini();
     }
 
     /**
@@ -87,15 +99,5 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         return [
             QueryRequest::class => false,
         ];
-    }
-
-    private function contentType(string $mediaType): string
-    {
-        return match (true) {
-            str_starts_with($mediaType, 'audio/') => 'audio',
-            str_starts_with($mediaType, 'image/') => 'image',
-            str_starts_with($mediaType, 'video/') => 'video',
-            default => 'document',
-        };
     }
 }

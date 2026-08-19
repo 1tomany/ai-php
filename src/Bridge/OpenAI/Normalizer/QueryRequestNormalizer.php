@@ -26,13 +26,13 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
         $model = $data->model->name;
 
         $resolveType = static function (
-            string|RemoteFile $input,
+            string|RemoteFile $part,
         ): string {
-            if (is_string($input)) {
+            if (is_string($part)) {
                 return 'input_text';
             }
 
-            if ($input->isImage()) {
+            if ($part->isImage()) {
                 return 'input_image';
             }
 
@@ -41,18 +41,18 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
 
         $content = [];
 
-        foreach ($data->prompt->input as $input) {
-            $type = $resolveType(input: $input);
+        foreach ($data->prompt->input as $part) {
+            $type = $resolveType(part: $part);
 
-            if (is_string($input)) {
+            if (is_string($part)) {
                 $content[] = [
                     'type' => $type,
-                    'text' => $input,
+                    'text' => $part,
                 ];
             } else {
                 $content[] = [
                     'type' => $type,
-                    'file_id' => $input->id,
+                    'file_id' => $part->id,
                 ];
             }
         }
