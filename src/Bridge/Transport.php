@@ -67,24 +67,6 @@ readonly class Transport
     }
 
     /**
-     * @template T of object
-     *
-     * @param class-string<T> $type
-     * @param array<string, mixed> $options
-     *
-     * @return T
-     *
-     * @throws ExceptionInterface when response payload validation fails
-     * @throws RuntimeException when sending the request fails
-     * @throws RuntimeException when reading or deserializing the response fails
-     * @throws RuntimeException when an unsuccessful response is returned
-     */
-    public function requestObject(string $method, string $url, string $type, array $options = []): object
-    {
-        return $this->decode($this->request($method, $url, $options), $type);
-    }
-
-    /**
      * @return array<string, list<string>>
      *
      * @throws RuntimeException when reading the response headers fails
@@ -114,8 +96,6 @@ readonly class Transport
         string $type,
         array $context = [],
     ): object {
-        $response->toArray(false);
-
         try {
             $content = $response->getContent(false);
         } catch (HttpClientExceptionInterface $e) {

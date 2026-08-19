@@ -4,19 +4,17 @@ namespace OneToMany\AI\Bridge\Gemini;
 
 use OneToMany\AI\Bridge\Gemini\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Interaction as ResponsePayload;
-use OneToMany\AI\Bridge\QueryRequest;
+use OneToMany\AI\Bridge\QueryCompilerTrait;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
-use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
-use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 
 final readonly class QueryProvider implements QueryProviderInterface
 {
+    use QueryCompilerTrait;
+
     public function __construct(
         private Transport $transport,
         private QueryRequestNormalizer $normalizer,
@@ -31,23 +29,6 @@ final readonly class QueryProvider implements QueryProviderInterface
     public function provider(): Provider
     {
         return Provider::Gemini;
-    }
-
-    /**
-     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
-     *
-     * @throws RuntimeException when compiling the query fails
-     */
-    #[\Override]
-    public function compile(Model $model, Prompt $prompt, array $options = []): Query
-    {
-        try {
-            $request = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options));
-        } catch (SerializerExceptionInterface $e) {
-            throw new RuntimeException(sprintf('Compiling the %s query failed.', $this->provider()->getName()), previous: $e);
-        }
-
-        return new Query($model, $request);
     }
 
     /**
