@@ -2,7 +2,6 @@
 
 namespace OneToMany\AI\Bridge;
 
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
