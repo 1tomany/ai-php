@@ -10,6 +10,7 @@ use function filesize;
 use function is_file;
 use function is_readable;
 use function sprintf;
+use function strtolower;
 use function trim;
 
 final readonly class LocalFile
@@ -43,7 +44,7 @@ final readonly class LocalFile
      */
     public function __construct(
         string $path,
-        string $mediaType,
+        ?string $mediaType = null,
         ?string $name = null,
     ) {
         if ('' === $path = trim($path)) {
@@ -56,11 +57,15 @@ final readonly class LocalFile
 
         $this->path = $path;
 
-        if ('' === $mediaType = trim($mediaType)) {
+        if ('' === $mediaType = trim((string) $mediaType)) {
+            $mediaType = @mime_content_type(filename: $path);
+        }
+
+        if (false === $mediaType || '' === $mediaType) {
             throw new InvalidArgumentException('The media type cannot be empty.');
         }
 
-        $this->mediaType = $mediaType;
+        $this->mediaType = strtolower($mediaType);
 
         if ('' === $name = trim($name ?? basename($path))) {
             throw new InvalidArgumentException('The file name cannot be empty.');

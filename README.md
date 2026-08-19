@@ -19,11 +19,11 @@ A [Symfony bundle](https://github.com/1tomany/ai-php-bundle) is available if you
 - Gemini
 - OpenAI
 
-### Platform feature support
+### Platform features
 
-**Note:** Each platform refers to generating output (inference) differently; OpenAI uses "Response", Gemini uses "Interaction", and Anthropic uses "Message". I've decided the word "Query" best represents how you interact with a generative LLM: you compile a query and then run the query to generate a response. The word "Embedding" will continue to be used for embedding models as that is more or less standard across different providers.
+**Note:** Each platform refers to generating output - inference - differently: OpenAI uses "Response", Gemini uses "Interaction", and Anthropic uses "Message". I've decided the word "Query" best represents how you interact with a generative LLM: you compile a query and then run the query to generate a response. The word "Embedding" will continue to be used for embedding models.
 
-To generate a response, you must first compile a query. A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions. Once the query is compiled, it can be sent to the LLM for analysis.
+To generate a response, you must first compile a query. A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions. Once the query is compiled, it can be sent to the LLM for inference.
 
 This library allows you to compile a query before sending it to the model for two reasons:
 
@@ -39,6 +39,17 @@ This library allows you to compile a query before sending it to the model for tw
 | Compile     |   ✅   |   ✅   |
 | Run         |   ✅   |   ✅   |
 
+## Usage
+
+Using the library is simple. You can use it via the `OneToMany\AI\AI` facade, or via the individual resources directly.
+
+### Using the `AI` facade
+
+```php
+<?php
+
+$ai->files->upload('gemini');
+
 ## Credits
 
 - [Vic Cherubini](https://github.com/viccherubini), [1:N Labs, LLC](https://1tomany.com)
@@ -46,3 +57,4 @@ This library allows you to compile a query before sending it to the model for tw
 ## License
 
 The MIT License
+```
