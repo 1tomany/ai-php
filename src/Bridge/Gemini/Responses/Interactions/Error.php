@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Gemini\Responeses\Interactions;
+namespace OneToMany\AI\Bridge\Gemini\Responses\Interactions;
 
 final readonly class Error
 {
