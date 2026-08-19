@@ -22,7 +22,7 @@ final readonly class Response
     public function __construct(
         public Provider $provider,
         public string $id,
-        public bool $completed,
+        public bool $completed = true,
         public ?string $text = null,
         public ?string $refusal = null,
         public ?string $error = null,

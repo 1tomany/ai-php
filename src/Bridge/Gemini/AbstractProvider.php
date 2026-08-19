@@ -8,7 +8,7 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
 
-use function array_replace_recursive;
+use function is_array;
 use function trim;
 
 abstract readonly class AbstractProvider implements ProviderInterface
@@ -73,10 +73,15 @@ abstract readonly class AbstractProvider implements ProviderInterface
      */
     private function authenticate(array $options): array
     {
-        return array_replace_recursive($options, [
-            'headers' => [
-                'x-goog-api-key' => $this->apiKey,
-            ],
-        ]);
+        $headers = $options['headers'] ?? [];
+
+        if (!is_array($headers)) {
+            $headers = [];
+        }
+
+        $headers['x-goog-api-key'] = $this->apiKey;
+        $options['headers'] = $headers;
+
+        return $options;
     }
 }
