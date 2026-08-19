@@ -2,7 +2,6 @@
 
 namespace OneToMany\AI\Example\Console\Command;
 
-use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\RemoteFile;
 use Symfony\Component\Console\Attribute\Argument;

@@ -8,8 +8,6 @@ use OneToMany\AI\Resource\File\RemoteFile;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-use function uniqid;
-
 #[Group('UnitTests')]
 #[Group('ResourceTests')]
 #[Group('FileTests')]
