@@ -15,6 +15,22 @@ enum Provider: string
     case OpenAI = 'openai';
 
     /**
+     * @throws InvalidArgumentException when the provider is not valid
+     */
+    public static function create(string|self $provider): self
+    {
+        if ($provider instanceof self) {
+            return $provider;
+        }
+
+        try {
+            return self::from($provider);
+        } catch (\ValueError $e) {
+            throw new InvalidArgumentException(sprintf('The provider "%s" is not valid.', $provider), previous: $e);
+        }
+    }
+
+    /**
      * @throws InvalidArgumentException when the model format is invalid
      * @throws InvalidArgumentException when the provider is not found
      */
