@@ -2,9 +2,9 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
+use OneToMany\AI\Bridge\Common\Trait\QueryCompilerTrait;
 use OneToMany\AI\Bridge\Gemini\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Interaction as ResponsePayload;
-use OneToMany\AI\Bridge\QueryCompilerTrait;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Resource\Query\Query;

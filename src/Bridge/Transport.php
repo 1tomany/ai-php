@@ -2,6 +2,7 @@
 
 namespace OneToMany\AI\Bridge;
 
+use OneToMany\AI\Bridge\Common\Response\Error\GenericError;
 use OneToMany\AI\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -13,8 +14,6 @@ use function array_first;
 use function array_is_list;
 use function implode;
 use function is_array;
-use function is_string;
-use function trim;
 
 readonly class Transport
 {
@@ -140,43 +139,26 @@ readonly class Transport
      */
     private function extractErrorMessage(HttpResponseInterface $response): ?string
     {
-        $message = null;
-
         try {
             $data = $response->toArray(false);
-
-            if ([] === $data) {
-                return $message;
-            }
-
-            if (array_is_list($data)) {
-                $data = array_first($data);
-            }
-
-            if (!is_array($data)) {
-                return $message;
-            }
-
-            if (isset($data['error'])) {
-                $message = $data['error'];
-
-                if (is_array($message)) {
-                    foreach (['message', 'code'] as $key) {
-                        if (is_string($message[$key] ?? null)) {
-                            $message = trim($message[$key]);
-                        }
-
-                        if ($message) {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            $message = is_string($message) ? $message : null;
         } catch (HttpClientExceptionInterface) {
+            return null;
         }
 
-        return '' !== $message ? $message : null;
+        if (array_is_list($data)) {
+            $data = array_first($data);
+        }
+
+        if (!is_array($data)) {
+            return null;
+        }
+
+        try {
+            $error = $this->denormalizer->denormalize($data, GenericError::class);
+        } catch (SerializerExceptionInterface) {
+            return null;
+        }
+
+        return $error->message ?? $error->code;
     }
 }

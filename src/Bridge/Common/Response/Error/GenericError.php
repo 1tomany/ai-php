@@ -1,13 +1,16 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Common\Response;
+namespace OneToMany\AI\Bridge\Common\Response\Error;
 
-use function is_string;
+use function is_null;
 use function trim;
 
-final readonly class Error
+final readonly class GenericError
 {
-    public int|string|null $code;
+    /**
+     * @var ?non-empty-string
+     */
+    public ?string $code;
 
     /**
      * @var ?non-empty-string
@@ -18,8 +21,8 @@ final readonly class Error
         int|string|null $code = null,
         ?string $message = null,
     ) {
-        if (is_string($code)) {
-            $code = trim($code);
+        if (false === is_null($code)) {
+            $code = trim((string) $code);
         }
 
         $this->code = '' !== $code ? $code : null;

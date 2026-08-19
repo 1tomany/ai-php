@@ -1,7 +1,8 @@
 <?php
 
-namespace OneToMany\AI\Bridge;
+namespace OneToMany\AI\Bridge\Common\Trait;
 
+use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\Prompt;

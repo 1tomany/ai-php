@@ -2,9 +2,9 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
+use OneToMany\AI\Bridge\Common\Trait\QueryCompilerTrait;
 use OneToMany\AI\Bridge\OpenAI\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Response as ResponsePayload;
-use OneToMany\AI\Bridge\QueryCompilerTrait;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Resource\Query\Query;
