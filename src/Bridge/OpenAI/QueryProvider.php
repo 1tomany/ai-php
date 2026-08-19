@@ -4,7 +4,6 @@ namespace OneToMany\AI\Bridge\OpenAI;
 
 use OneToMany\AI\Bridge\OpenAI\Normalizer\QueryRequestNormalizer;
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Response as ResponsePayload;
-use OneToMany\AI\Bridge\OpenAI\Payload\Usage as UsagePayload;
 use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;

@@ -1,8 +1,8 @@
 <?php
 
-namespace OneToMany\AI\Bridge\OpenAI\Payload;
+namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
-final readonly class Usage
+final readonly class ResponseUsage
 {
     /**
      * @param non-negative-int $input_tokens
@@ -11,10 +11,10 @@ final readonly class Usage
      */
     public function __construct(
         public int $input_tokens = 0,
-        public int $output_tokens = 0,
-        public int $total_tokens = 0,
         public InputTokenDetails $input_token_details = new InputTokenDetails(),
+        public int $output_tokens = 0,
         public OutputTokenDetails $output_token_details = new OutputTokenDetails(),
+        public int $total_tokens = 0,
     ) {
     }
 }

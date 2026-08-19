@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\OpenAI\Payload;
+namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
 final readonly class OutputTokenDetails
 {
