@@ -139,7 +139,6 @@ final readonly class FileProvider implements FileProviderInterface
             @fclose($handle);
         }
 
-
         return new RemoteFile($this->provider(), $file->name, $file->mimeType, $file->uri, $file->expirationTime);
     }
 
