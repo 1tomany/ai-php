@@ -6,6 +6,7 @@ use OneToMany\AI\Bridge\Common\Response\Error\GenericError;
 use OneToMany\AI\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
@@ -154,7 +155,9 @@ readonly class Transport
         }
 
         try {
-            $error = $this->denormalizer->denormalize($data, GenericError::class);
+            $error = $this->denormalizer->denormalize($data, GenericError::class, null, [
+                UnwrappingDenormalizer::UNWRAP_PATH => '[error]',
+            ]);
         } catch (SerializerExceptionInterface) {
             return null;
         }

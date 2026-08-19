@@ -3,6 +3,8 @@
 namespace OneToMany\AI\Bridge\Common\Response\Error;
 
 use function is_null;
+use function sprintf;
+use function str_ends_with;
 use function trim;
 
 final readonly class GenericError
@@ -28,7 +30,11 @@ final readonly class GenericError
         $this->code = '' !== $code ? $code : null;
 
         if (null !== $message) {
-            $message = trim($message);
+            if ('' !== $message = trim($message)) {
+                if (!str_ends_with($message, '.')) {
+                    $message = sprintf('%s.', $message);
+                }
+            }
         }
 
         $this->message = '' !== $message ? $message : null;
