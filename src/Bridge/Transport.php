@@ -125,16 +125,20 @@ readonly class Transport
         }
 
         if ($status < 200 || $status >= 300) {
-            throw new RuntimeException($this->extractErrorMessage($response) ?? 'The request was unsuccessful.', $status);
+            if (null === $error = $this->extractError($response)) {
+                $error = sprintf('');
+            }
+
+            throw new RuntimeException($this->extractError($response) ?? 'The request was unsuccessful.', $status);
         }
     }
 
     /**
      * @return ?non-empty-string
      */
-    private function extractErrorMessage(HttpResponseInterface $response): ?string
+    private function extractError(HttpResponseInterface $response): ?string
     {
-        $message = null;
+        $error = null;
 
         try {
             $data = $response->toArray(false);
@@ -145,7 +149,7 @@ readonly class Transport
                 if (is_array($error)) {
                     if (isset($error['message'])) {
                         if (is_string($error['message'])) {
-                            $message = trim($error['message']);
+                            $error = trim($error['message']);
                         }
                     }
                 }
@@ -153,6 +157,10 @@ readonly class Transport
         } catch (HttpClientExceptionInterface) {
         }
 
-        return '' !== $message ? $message : null;
+        if (null === $error || '' === $error) {
+            $error = $response->getInfo('error');
+        }
+
+        return '' !== $error ? $error : null;
     }
 }

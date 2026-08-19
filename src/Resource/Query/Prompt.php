@@ -52,8 +52,12 @@ final class Prompt
 
     public function withInstructions(string|InputText $instructions): self
     {
+        if (!$instructions instanceof InputText) {
+            $instructions = new InputText($instructions);
+        }
+
         $prompt = clone $this;
-        $prompt->instructions = is_string($instructions) ? new InputText($instructions) : $instructions;
+        $prompt->instructions = $instructions;
 
         return $prompt;
     }
@@ -66,7 +70,7 @@ final class Prompt
         array $schema,
         bool $strict = true,
     ): self {
-        return $this->withSchema(new JsonSchema($name, strict: $strict, schema: $schema));
+        return $this->withSchema(new JsonSchema($name, $strict, schema: $schema));
     }
 
     public function withJsonSchemaFile(string $path, ?string $name = null): self
@@ -74,12 +78,22 @@ final class Prompt
         return $this->withSchema(JsonSchema::fromFile($name, $path));
     }
 
-    public function withSchema(JsonSchema $schema): self
+    /**
+     * @return list<InputText|RemoteFile>
+     */
+    public function input(): array
     {
-        $prompt = clone $this;
-        $prompt->schema = $schema;
+        return $this->input;
+    }
 
-        return $prompt;
+    public function instructions(): ?InputText
+    {
+        return $this->instructions;
+    }
+
+    public function schema(): ?JsonSchema
+    {
+        return $this->schema;
     }
 
     public function isEmpty(): bool
@@ -87,28 +101,18 @@ final class Prompt
         return [] === $this->input;
     }
 
-    /**
-     * @return list<InputText|RemoteFile>
-     */
-    public function getInput(): array
-    {
-        return $this->input;
-    }
-
-    public function getInstructions(): ?InputText
-    {
-        return $this->instructions;
-    }
-
-    public function getSchema(): ?JsonSchema
-    {
-        return $this->schema;
-    }
-
     private function addInput(InputText|RemoteFile $input): self
     {
         $prompt = clone $this;
         $prompt->input[] = $input;
+
+        return $prompt;
+    }
+
+    private function withSchema(JsonSchema $schema): self
+    {
+        $prompt = clone $this;
+        $prompt->schema = $schema;
 
         return $prompt;
     }
