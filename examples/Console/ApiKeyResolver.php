@@ -20,8 +20,7 @@ final readonly class ApiKeyResolver
      */
     public function resolve(
         Provider $provider,
-        #[\SensitiveParameter]
-        ?string $apiKey,
+        #[\SensitiveParameter] ?string $apiKey,
     ): string {
         $environmentVariable = sprintf('%s_API_KEY', strtoupper($provider->getValue()));
 
