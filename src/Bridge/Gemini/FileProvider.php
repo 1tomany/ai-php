@@ -6,7 +6,6 @@ use OneToMany\AI\Bridge\Gemini\Responses\Files\File;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
@@ -20,7 +19,7 @@ use function max;
 use function sprintf;
 use function strlen;
 
-final readonly class FileProvider implements FileProviderInterface
+final readonly class FileProvider extends AbstractProvider implements FileProviderInterface
 {
     /**
      * Default granularity (8MB) of each file chunk.
@@ -29,19 +28,16 @@ final readonly class FileProvider implements FileProviderInterface
      */
     private const int DEFAULT_CHUNK_GRANULARITY = 8 * 1024 * 1024;
 
-    public function __construct(
-        private Transport $transport,
-        private string $apiVersion = 'v1beta',
-    ) {
-    }
-
     /**
-     * @see OneToMany\AI\Contract\Bridge\ProviderInterface
+     * @see OneToMany\AI\Bridge\Gemini\AbstractProvider::__construct()
      */
-    #[\Override]
-    public function provider(): Provider
-    {
-        return Provider::Gemini;
+    public function __construct(
+        Transport $transport,
+        #[\SensitiveParameter]
+        string $apiKey,
+        string $apiVersion = 'v1beta',
+    ) {
+        parent::__construct($transport, $apiKey, $apiVersion);
     }
 
     /**
@@ -56,9 +52,9 @@ final readonly class FileProvider implements FileProviderInterface
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
     {
-        $url = $this->transport->url('upload', $this->apiVersion, 'files');
+        $url = $this->url('upload', $this->apiVersion, 'files');
 
-        $start = $this->transport->postRequest($url, [
+        $start = $this->postRequest($url, [
             'headers' => [
                 'x-goog-upload-command' => 'start',
                 'x-goog-upload-header-content-length' => $file->size,
@@ -118,7 +114,7 @@ final readonly class FileProvider implements FileProviderInterface
                     $command = "{$command}, finalize";
                 }
 
-                $response = $this->transport->postRequest($uploadUrl, [
+                $response = $this->postRequest($uploadUrl, [
                     'headers' => [
                         'content-length' => $length,
                         'x-goog-upload-command' => $command,
@@ -150,6 +146,6 @@ final readonly class FileProvider implements FileProviderInterface
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->transport->deleteRequest($this->transport->url($this->apiVersion, $file->id));
+        $this->deleteRequest($this->url($this->apiVersion, $file->id));
     }
 }

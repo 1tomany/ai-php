@@ -7,28 +7,24 @@ use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Response as ResponsePayload;
 use OneToMany\AI\Bridge\QueryCompilerTrait;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
 
-final readonly class QueryProvider implements QueryProviderInterface
+final readonly class QueryProvider extends AbstractProvider implements QueryProviderInterface
 {
     use QueryCompilerTrait;
 
-    public function __construct(
-        private Transport $transport,
-        private QueryRequestNormalizer $normalizer,
-        private string $apiVersion = 'v1',
-    ) {
-    }
-
     /**
-     * @see OneToMany\AI\Contract\Bridge\ProviderInterface
+     * @see OneToMany\AI\Bridge\OpenAI\AbstractProvider::__construct()
      */
-    #[\Override]
-    public function provider(): Provider
-    {
-        return Provider::OpenAI;
+    public function __construct(
+        Transport $transport,
+        #[\SensitiveParameter]
+        string $apiKey,
+        private QueryRequestNormalizer $normalizer,
+        string $apiVersion = 'v1',
+    ) {
+        parent::__construct($transport, $apiKey, $apiVersion);
     }
 
     /**
@@ -37,10 +33,10 @@ final readonly class QueryProvider implements QueryProviderInterface
     #[\Override]
     public function run(Query $query): Response
     {
-        $url = $this->transport->url($this->apiVersion, 'responses');
+        $url = $this->url($this->apiVersion, 'responses');
 
         try {
-            $response = $this->transport->postRequest($url, [
+            $response = $this->postRequest($url, [
                 'json' => $query->request,
             ]);
 

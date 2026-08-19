@@ -6,7 +6,6 @@ use OneToMany\AI\Bridge\OpenAI\Responses\Files\File;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
 
@@ -14,21 +13,18 @@ use function fclose;
 use function fopen;
 use function sprintf;
 
-final readonly class FileProvider implements FileProviderInterface
+final readonly class FileProvider extends AbstractProvider implements FileProviderInterface
 {
-    public function __construct(
-        private Transport $transport,
-        private string $apiVersion = 'v1',
-    ) {
-    }
-
     /**
-     * @see OneToMany\AI\Contract\Bridge\ProviderInterface
+     * @see OneToMany\AI\Bridge\OpenAI\AbstractProvider::__construct()
      */
-    #[\Override]
-    public function provider(): Provider
-    {
-        return Provider::OpenAI;
+    public function __construct(
+        Transport $transport,
+        #[\SensitiveParameter]
+        string $apiKey,
+        string $apiVersion = 'v1',
+    ) {
+        parent::__construct($transport, $apiKey, $apiVersion);
     }
 
     /**
@@ -43,10 +39,10 @@ final readonly class FileProvider implements FileProviderInterface
             throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
-        $url = $this->transport->url($this->apiVersion, 'files');
+        $url = $this->url($this->apiVersion, 'files');
 
         try {
-            $response = $this->transport->postRequest($url, [
+            $response = $this->postRequest($url, [
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
@@ -67,6 +63,6 @@ final readonly class FileProvider implements FileProviderInterface
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->transport->deleteRequest($this->transport->url($this->apiVersion, 'files', $file->id));
+        $this->deleteRequest($this->url($this->apiVersion, 'files', $file->id));
     }
 }
