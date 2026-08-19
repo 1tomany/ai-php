@@ -118,27 +118,23 @@ readonly class Transport
      * @throws RuntimeException when the request fails due to a transport error
      * @throws RuntimeException when the request was unsuccessful due to an HTTP error
      */
-    private function assertSuccessful(HttpResponseInterface $response): void
+    public function assertSuccessful(HttpResponseInterface $response): void
     {
         try {
-            $status = $response->getStatusCode();
+            $statusCode = $response->getStatusCode();
         } catch (HttpClientExceptionInterface $e) {
             throw new RuntimeException('The request failed.', previous: $e);
         }
 
-        if ($status < 200 || $status >= 300) {
-            if (null === $message = $this->errorMessage($response)) {
-                $message = sprintf('');
-            }
-
-            throw new RuntimeException($this->errorMessage($response) ?? 'The request was unsuccessful.', $status);
+        if ($statusCode < 200 || $statusCode >= 300) {
+            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('[HTTP %d] The request was unsuccessful.', $statusCode), $statusCode);
         }
     }
 
     /**
      * @return ?non-empty-string
      */
-    private function errorMessage(HttpResponseInterface $response): ?string
+    private function extractErrorMessage(HttpResponseInterface $response): ?string
     {
         $message = null;
 
@@ -171,10 +167,6 @@ readonly class Transport
                         }
                     }
                 }
-            }
-
-            if (null === $message || '' === $message) {
-                $message = $response->getInfo('error');
             }
 
             $message = is_string($message) ? $message : null;
