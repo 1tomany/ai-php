@@ -3,7 +3,6 @@
 namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Provider;
 
 final readonly class Query
 {
