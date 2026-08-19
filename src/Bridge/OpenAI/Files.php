@@ -8,8 +8,8 @@ use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Files\LocalFile;
-use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\File\LocalFile;
+use OneToMany\AI\Resource\File\RemoteFile;
 
 use function fclose;
 use function fopen;

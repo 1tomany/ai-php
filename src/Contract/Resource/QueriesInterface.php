@@ -3,9 +3,9 @@
 namespace OneToMany\AI\Contract\Resource;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Queries\Prompt;
-use OneToMany\AI\Resource\Queries\Query;
-use OneToMany\AI\Resource\Queries\Response;
+use OneToMany\AI\Resource\Query\Prompt;
+use OneToMany\AI\Resource\Query\Query;
+use OneToMany\AI\Resource\Query\Response;
 
 interface QueriesInterface
 {

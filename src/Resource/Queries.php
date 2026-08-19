@@ -10,10 +10,10 @@ use OneToMany\AI\Exception\LogicException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Files\RemoteFile;
-use OneToMany\AI\Resource\Queries\Prompt;
-use OneToMany\AI\Resource\Queries\Query;
-use OneToMany\AI\Resource\Queries\Response;
+use OneToMany\AI\Resource\File\RemoteFile;
+use OneToMany\AI\Resource\Query\Prompt;
+use OneToMany\AI\Resource\Query\Query;
+use OneToMany\AI\Resource\Query\Response;
 
 use function sprintf;
 

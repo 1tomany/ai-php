@@ -3,7 +3,7 @@
 namespace OneToMany\AI\Bridge;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Queries\Prompt;
+use OneToMany\AI\Resource\Query\Prompt;
 
 final readonly class QueryRequest
 {

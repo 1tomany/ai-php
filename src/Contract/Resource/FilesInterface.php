@@ -3,8 +3,8 @@
 namespace OneToMany\AI\Contract\Resource;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Files\LocalFile;
-use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\File\LocalFile;
+use OneToMany\AI\Resource\File\RemoteFile;
 
 interface FilesInterface
 {

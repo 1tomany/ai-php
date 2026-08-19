@@ -1,9 +1,9 @@
 <?php
 
-namespace OneToMany\AI\Resource\Queries;
+namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\File\RemoteFile;
 
 use function trim;
 

@@ -3,7 +3,7 @@
 namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\QueryRequest;
-use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\File\RemoteFile;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function array_replace;

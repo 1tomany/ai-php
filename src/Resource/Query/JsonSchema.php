@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Resource\Queries;
+namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 

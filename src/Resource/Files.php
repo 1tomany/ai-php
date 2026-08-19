@@ -7,8 +7,8 @@ use OneToMany\AI\Contract\Resource\FilesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
-use OneToMany\AI\Resource\Files\LocalFile;
-use OneToMany\AI\Resource\Files\RemoteFile;
+use OneToMany\AI\Resource\File\LocalFile;
+use OneToMany\AI\Resource\File\RemoteFile;
 
 use function sprintf;
 
@@ -46,7 +46,7 @@ final readonly class Files implements FilesInterface
     #[\Override]
     public function upload(Model $model, LocalFile $file): RemoteFile
     {
-        return $this->provider($model->provider)->upload($file);
+        return $this->getProvider($model->provider)->upload($file);
     }
 
     /**
@@ -55,13 +55,13 @@ final readonly class Files implements FilesInterface
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->provider($file->provider)->delete($file);
+        $this->getProvider($file->provider)->delete($file);
     }
 
     /**
      * @throws InvalidArgumentException when the file provider is not registered
      */
-    private function provider(Provider $provider): FilesProviderInterface
+    private function getProvider(Provider $provider): FilesProviderInterface
     {
         if (!isset($this->providers[$provider->getValue()])) {
             throw new InvalidArgumentException(sprintf('The "%s" file provider is not registered.', $provider->getValue()));

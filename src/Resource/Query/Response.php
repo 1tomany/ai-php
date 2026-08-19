@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Resource\Queries;
+namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Provider;
@@ -50,7 +50,7 @@ final readonly class Response
     }
 
     /**
-     * @see OneToMany\AI\Resource\Queries\Response::text()
+     * @see OneToMany\AI\Resource\Query\Response::text()
      *
      * @return array<array-key, mixed>
      *
