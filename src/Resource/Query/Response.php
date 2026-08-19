@@ -35,7 +35,7 @@ final readonly class Response
      * @throws RuntimeException when decoding the response as JSON fails
      * @throws RuntimeException when the decoded response is not an object or array
      */
-    public function toArray(): ?array
+    public function decode(): ?array
     {
         if (!$this->text) {
             return null;
