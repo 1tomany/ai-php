@@ -15,9 +15,4 @@ final readonly class Query
         public array $request,
     ) {
     }
-
-    public function provider(): Provider
-    {
-        return $this->model->provider;
-    }
 }

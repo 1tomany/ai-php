@@ -64,17 +64,4 @@ final readonly class Model implements \Stringable
     {
         return new self(Provider::OpenAI, $name);
     }
-
-    public function getProvider(): Provider
-    {
-        return $this->provider;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
 }

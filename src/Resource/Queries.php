@@ -49,11 +49,13 @@ final readonly class Queries implements QueriesInterface
     #[\Override]
     public function run(Query $query): Response
     {
-        return $this->providers->get($query->provider())->run($query);
+        return $this->providers->get($query->model->provider)->run($query);
     }
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
+     * @see OneToMany\AI\Resource\Queries::compile()
+     * @see OneToMany\AI\Resource\Queries::run()
      *
      * @param array<string, mixed> $options
      */
