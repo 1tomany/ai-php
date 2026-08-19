@@ -2,14 +2,12 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Responses\Interactions;
 
-use OneToMany\AI\Bridge\Gemini\Responses\Interactions\Usage;
 use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function trim;
 
 final readonly class Interaction
 {
-
     /**
      * @param non-empty-string $id
      * @param non-empty-string $model
