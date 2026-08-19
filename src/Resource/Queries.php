@@ -4,12 +4,10 @@ namespace OneToMany\AI\Resource;
 
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Contract\Resource\QueriesInterface;
-use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
-
 
 final readonly class Queries implements QueriesInterface
 {
