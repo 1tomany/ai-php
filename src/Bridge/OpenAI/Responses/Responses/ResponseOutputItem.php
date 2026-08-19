@@ -8,14 +8,14 @@ final class ResponseOutputItem
 {
     /**
      * @param non-empty-string $id
-     * @param ?non-empty-string $status
      * @param non-empty-string $type
+     * @param ?non-empty-string $status
      * @param list<ResponseOutputMessage> $content
      */
     public function __construct(
         public readonly string $id,
-        public readonly ?string $status,
         public readonly string $type,
+        public readonly ?string $status,
         public readonly array $content = [],
     ) {
     }
