@@ -2,7 +2,6 @@
 
 namespace OneToMany\AI\Example\Console\Command;
 
-use OneToMany\AI\Contract\Exception\ExceptionInterface as AIExceptionInterface;
 use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\JsonSchema;
@@ -22,36 +21,38 @@ final readonly class RunQueryCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,
-        #[Argument('The model in "provider:model" format.')] string $model,
-        #[Argument('The text prompt to run.')] string $prompt,
-        #[Option('The path of a JSON Schema file used to constrain the response.')]
+
+        #[Argument('The model name')]
+        string $model,
+
+        #[Argument('The input text')]
+        string $text,
+
+        #[Option('JSON schema file')]
         ?string $jsonSchemaFile = null,
-        #[Option('The provider API key. Defaults to the provider-specific environment variable.')]
+
         #[\SensitiveParameter]
+        #[Option('The provider API key')]
         ?string $apiKey = null,
     ): int {
-        try {
-            $model = Model::create($model);
-            $prompt = Prompt::with(new InputText($prompt));
+        $model = Model::create($model);
+        $prompt = Prompt::with(new InputText($text));
 
-            if (null !== $jsonSchemaFile) {
-                $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $jsonSchemaFile));
-            }
-
-            $response = $this->factory
-                ->create($model->provider, $this->apiKey($model->provider, $apiKey))
-                ->queries
-                ->compileAndRun($model, $prompt);
-        } catch (AIExceptionInterface $e) {
-            $io->error($e->getMessage());
-
-            return Command::FAILURE;
+        if (null !== $jsonSchemaFile) {
+            $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $jsonSchemaFile));
         }
 
-        $io->table(['Property', 'Value'], [
-            ['provider', $response->provider->getValue()],
-            ['model', $model->name],
-            ['id', $response->id],
+        $response = $this->factory
+            ->create($model->provider, $this->apiKey($model->provider, $apiKey))
+            ->queries
+            ->compileAndRun($model, $prompt);
+
+        $io->table(['Provider', 'Model', 'ResponseId'], [
+            [
+                $model->provider->value,
+                $model->name,
+                $response->id,
+            ],
         ]);
 
         if (null !== $response->error) {
