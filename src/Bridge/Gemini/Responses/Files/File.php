@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Gemini\Payload\Files;
+namespace OneToMany\AI\Bridge\Gemini\Responses\Files;
 
 final readonly class File
 {

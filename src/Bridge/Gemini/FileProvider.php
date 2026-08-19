@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\Gemini;
 
-use OneToMany\AI\Bridge\Gemini\Payload\Files\File;
+use OneToMany\AI\Bridge\Gemini\Responses\Files\File;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
