@@ -60,8 +60,12 @@ final readonly class Queries implements QueriesInterface
      * @param array<string, mixed> $options
      */
     #[\Override]
-    public function compileAndRun(Model $model, Prompt $prompt, array $options = []): Response
+    public function compileAndRun(string|Model $model, Prompt $prompt, array $options = []): Response
     {
+        if (!$model instanceof Model) {
+            $model = Model::create($model);
+        }
+
         return $this->run($this->compile($model, $prompt, $options));
     }
 }

@@ -5,6 +5,7 @@ namespace OneToMany\AI\Resource\Query;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\File\RemoteFile;
 
+use function is_null;
 use function is_string;
 
 final class Prompt
@@ -17,6 +18,13 @@ final class Prompt
     private ?InputText $instructions = null;
 
     private ?JsonSchema $schema = null;
+
+    public function __construct(string|InputText|null $input = null)
+    {
+        if (false === is_null($input)) {
+            $this->addInputText($input);
+        }
+    }
 
     /**
      * @throws InvalidArgumentException when no input is provided

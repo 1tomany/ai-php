@@ -26,14 +26,14 @@ final readonly class RemoteFile
      * @throws InvalidArgumentException when the file media type is empty
      */
     public function __construct(
-        Provider $provider,
+        string|Provider $provider,
         ?string $id,
         public ?string $mediaType = null,
         public ?string $uri = null,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
-        $this->provider = $provider;
+        $this->provider = Provider::create($provider);
 
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');

@@ -11,7 +11,7 @@ interface FilesInterface
     /**
      * @see OneToMany\AI\Provider::create()
      */
-    public function upload(string|Provider $provider, LocalFile $file): RemoteFile;
+    public function upload(string|Provider $provider, string|LocalFile $file): RemoteFile;
 
     public function delete(RemoteFile $file): void;
 }

@@ -19,5 +19,5 @@ interface QueriesInterface
     /**
      * @param array<string, mixed> $options
      */
-    public function compileAndRun(Model $model, Prompt $prompt, array $options = []): Response;
+    public function compileAndRun(string|Model $model, Prompt $prompt, array $options = []): Response;
 }

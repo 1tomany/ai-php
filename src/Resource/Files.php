@@ -32,8 +32,12 @@ final readonly class Files implements FilesInterface
      * @see OneToMany\AI\Provider::create()
      */
     #[\Override]
-    public function upload(string|Provider $provider, LocalFile $file): RemoteFile
+    public function upload(string|Provider $provider, string|LocalFile $file): RemoteFile
     {
+        if (!$file instanceof LocalFile) {
+            $file = new LocalFile($file);
+        }
+
         return $this->providers->get(Provider::create($provider))->upload($file);
     }
 
