@@ -5,7 +5,6 @@ namespace OneToMany\AI\Resource\Queries;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\Files\RemoteFile;
 
-use function array_values;
 use function trim;
 
 final readonly class Prompt
@@ -22,21 +21,28 @@ final readonly class Prompt
 
     /**
      * @throws InvalidArgumentException when no input is provided
-     * @throws InvalidArgumentException when prompt text is empty
      */
-    public static function with(string|RemoteFile ...$input): self
+    public static function with(string|RemoteFile ...$inputs): self
     {
-        if ([] === $input) {
-            throw new InvalidArgumentException('A prompt requires at least one input.');
-        }
+        $prompts = [];
 
-        foreach ($input as $part) {
-            if (is_string($part) && '' === trim($part)) {
-                throw new InvalidArgumentException('Prompt text cannot be empty.');
+        foreach ($inputs as $input) {
+            if (is_string($input)) {
+                $input = trim($input);
+
+                if ('' !== $input) {
+                    $prompts[] = $input;
+                }
+            } else {
+                $prompts[] = $input;
             }
         }
 
-        return new self(array_values($input));
+        if ([] === $prompts) {
+            throw new InvalidArgumentException('At least one text or file input is required.');
+        }
+
+        return new self($prompts);
     }
 
     /**
@@ -45,7 +51,7 @@ final readonly class Prompt
     public function withInstructions(string $instructions): self
     {
         if ('' === $instructions = trim($instructions)) {
-            throw new InvalidArgumentException('Prompt instructions cannot be empty.');
+            throw new InvalidArgumentException('The instructions cannot be empty.');
         }
 
         return new self($this->input, $instructions, $this->schema);

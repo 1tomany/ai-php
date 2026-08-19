@@ -38,7 +38,7 @@ final readonly class Response
     /**
      * @return non-empty-string
      *
-     * @throws RuntimeException when the response does not contain text
+     * @throws RuntimeException when the model did not return any text
      */
     public function text(): string
     {
@@ -50,9 +50,10 @@ final readonly class Response
     }
 
     /**
+     * @see OneToMany\AI\Resource\Queries\Response::text()
+     *
      * @return array<array-key, mixed>
      *
-     * @throws RuntimeException when the response does not contain text
      * @throws RuntimeException when decoding the response as JSON fails
      * @throws RuntimeException when the decoded response is not an object or array
      */

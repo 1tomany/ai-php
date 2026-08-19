@@ -34,9 +34,8 @@ final readonly class RemoteFile
     public ?string $purpose;
 
     /**
-     * @throws InvalidArgumentException when the remote file ID is empty
-     * @throws InvalidArgumentException when the media type is empty
-     * @throws InvalidArgumentException when a Gemini file has no URI
+     * @throws InvalidArgumentException when the file ID is empty
+     * @throws InvalidArgumentException when the file media type is empty
      */
     public function __construct(
         public Provider $provider,
@@ -47,13 +46,13 @@ final readonly class RemoteFile
         ?string $purpose = null,
     ) {
         if ('' === $id = trim($id)) {
-            throw new InvalidArgumentException('The remote file ID cannot be empty.');
+            throw new InvalidArgumentException('The file ID cannot be empty.');
         }
 
         $this->id = $id;
 
         if ('' === $mediaType = trim($mediaType)) {
-            throw new InvalidArgumentException('The remote file media type cannot be empty.');
+            throw new InvalidArgumentException('The media type cannot be empty.');
         }
 
         $this->mediaType = $mediaType;
@@ -62,19 +61,7 @@ final readonly class RemoteFile
             $uri = trim($uri);
         }
 
-        if ($provider->isGemini() && '' === $uri) {
-            throw new InvalidArgumentException('A Gemini file requires both its resource name and URI.');
-        }
-
-        if (null !== $uri) {
-            $uri = trim($uri);
-        }
-
         $this->uri = '' !== $uri ? $uri : null;
-
-        if (null !== $purpose) {
-            $purpose = trim($purpose);
-        }
 
         try {
             if (is_int($expiresAt)) {
