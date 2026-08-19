@@ -19,4 +19,10 @@ final class InputTextTest extends TestCase
 
         new InputText('');
     }
+
+    public function testToStringReturnsText(): void
+    {
+        $text = \Faker\Factory::create()->sentence();
+        $this->assertNotEmpty($text);
+    }
 }
