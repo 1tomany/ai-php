@@ -13,7 +13,7 @@ final readonly class Response
      * @param 'response' $object
      * @param positive-int $created_at
      * @param non-empty-lowercase-string $model
-     * @param list<ResponseOutputMessage|Reasoning> $output
+     * @param list<ResponseOutputItem> $output
      * @param ?positive-int $completed_at
      * @param ?non-negative-int $max_output_tokens
      * @param ?non-negative-int $max_tool_calls

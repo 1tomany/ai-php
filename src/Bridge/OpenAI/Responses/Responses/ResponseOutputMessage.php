@@ -8,7 +8,7 @@ final readonly class ResponseOutputMessage extends ResponseOutputItem
 {
     /**
      * @param non-empty-string $id
-     * @param list<ResponseOutputText|ResponseOutputRefusal> $content
+     * @param list<OutputMessage> $content
      * @param 'assistant' $role
      * @param 'message' $type
      */
