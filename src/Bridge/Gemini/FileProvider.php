@@ -138,7 +138,9 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
         $url = $this->url($this->apiVersion, $file->id);
 
         $this->transport->deleteRequest($url, [
-            'x-goog-api-key' => $this->apiKey,
+            'headers' => [
+                'x-goog-api-key' => $this->apiKey,
+            ],
         ]);
     }
 }

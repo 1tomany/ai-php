@@ -7,6 +7,7 @@ use PhpCsFixer\Runner\Parallel\ParallelConfig;
 $finder = new Finder();
 
 $finder->in([
+    './examples/',
     './src/',
     './tests/',
 ]);

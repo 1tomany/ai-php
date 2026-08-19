@@ -47,6 +47,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "OneToMany\\AI\\Example\\": "examples/",
             "OneToMany\\AI\\Tests\\": "tests/"
         }
     },
