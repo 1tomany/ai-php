@@ -30,29 +30,27 @@ final readonly class Response
     }
 
     /**
-     * @see OneToMany\AI\Resource\Query\Response::text()
-     *
-     * @return array<array-key, mixed>
+     * @return ?array<array-key, mixed>
      *
      * @throws RuntimeException when decoding the response as JSON fails
      * @throws RuntimeException when the decoded response is not an object or array
      */
-    public function json(): ?array
+    public function toArray(): ?array
     {
         if (!$this->text) {
             return null;
         }
 
         try {
-            $decoded = json_decode($this->text, true, 512, JSON_THROW_ON_ERROR);
+            $array = json_decode($this->text, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new RuntimeException('Decoding the model response as JSON failed.', previous: $e);
+            throw new RuntimeException('Decoding the model output as JSON failed.', previous: $e);
         }
 
-        if (!is_array($decoded)) {
-            throw new RuntimeException('The model response did not contain a JSON object or array.');
+        if (!is_array($array)) {
+            throw new RuntimeException('The model output did not contain a JSON object or array.');
         }
 
-        return $decoded;
+        return $array;
     }
 }
