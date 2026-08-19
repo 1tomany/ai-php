@@ -5,19 +5,18 @@ namespace OneToMany\AI\Resource\Query;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Resource\File\RemoteFile;
 
-use function array_values;
+use function is_string;
 
-final readonly class Prompt
+final class Prompt
 {
     /**
-     * @param non-empty-list<InputText|RemoteFile> $input
+     * @var list<InputText|RemoteFile>
      */
-    private function __construct(
-        public array $input,
-        public ?InputText $instructions = null,
-        public ?JsonSchema $schema = null,
-    ) {
-    }
+    private array $input = [];
+
+    private ?InputText $instructions = null;
+
+    private ?JsonSchema $schema = null;
 
     /**
      * @throws InvalidArgumentException when no input is provided
@@ -28,16 +27,85 @@ final readonly class Prompt
             throw new InvalidArgumentException('At least one text or file input is required.');
         }
 
-        return new self(array_values($inputs));
+        $prompt = new self();
+
+        foreach ($inputs as $input) {
+            $prompt = $prompt->addInput($input);
+        }
+
+        return $prompt;
     }
 
-    public function withInstructions(InputText $instructions): self
+    public function addInputText(string|InputText $text): self
     {
-        return new self($this->input, $instructions, $this->schema);
+        return $this->addInput(is_string($text) ? new InputText($text) : $text);
+    }
+
+    public function addRemoteFile(RemoteFile $file): self
+    {
+        return $this->addInput($file);
+    }
+
+    public function withInstructions(string|InputText $instructions): self
+    {
+        $prompt = clone $this;
+        $prompt->instructions = is_string($instructions) ? new InputText($instructions) : $instructions;
+
+        return $prompt;
+    }
+
+    /**
+     * @param array<string, mixed> $schema
+     */
+    public function withJsonSchema(
+        ?string $name,
+        array $schema,
+        bool $strict = true,
+    ): self {
+        return $this->withSchema(new JsonSchema($name, strict: $strict, schema: $schema));
+    }
+
+    public function withJsonSchemaFile(string $path, ?string $name = null): self
+    {
+        return $this->withSchema(JsonSchema::fromFile($name, $path));
     }
 
     public function withSchema(JsonSchema $schema): self
     {
-        return new self($this->input, $this->instructions, $schema);
+        $prompt = clone $this;
+        $prompt->schema = $schema;
+
+        return $prompt;
+    }
+
+    public function isEmpty(): bool
+    {
+        return [] === $this->input;
+    }
+
+    /**
+     * @return list<InputText|RemoteFile>
+     */
+    public function getInput(): array
+    {
+        return $this->input;
+    }
+
+    public function getInstructions(): ?InputText
+    {
+        return $this->instructions;
+    }
+
+    public function getSchema(): ?JsonSchema
+    {
+        return $this->schema;
+    }
+
+    private function addInput(InputText|RemoteFile $input): self
+    {
+        $prompt = clone $this;
+        $prompt->input[] = $input;
+
+        return $prompt;
     }
 }

@@ -4,6 +4,7 @@ namespace OneToMany\AI\Resource;
 
 use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Contract\Resource\QueriesInterface;
+use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
@@ -29,10 +30,16 @@ final readonly class Queries implements QueriesInterface
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
+     *
+     * @throws InvalidArgumentException when the prompt has no input
      */
     #[\Override]
     public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
+        if ($prompt->isEmpty()) {
+            throw new InvalidArgumentException('At least one text or file input is required to compile a prompt into a query.');
+        }
+
         return $this->providers->get($model->provider)->compile($model, $prompt, $options);
     }
 

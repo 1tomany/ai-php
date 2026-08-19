@@ -42,7 +42,7 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
 
         $input = [];
 
-        foreach ($data->prompt->input as $part) {
+        foreach ($data->prompt->getInput() as $part) {
             $type = $resolveType(part: $part);
 
             if ($part instanceof InputText) {
@@ -67,11 +67,11 @@ final readonly class QueryRequestNormalizer implements NormalizerInterface
             'input' => $input,
         ];
 
-        if (null !== $instructions = $data->prompt->instructions) {
+        if (null !== $instructions = $data->prompt->getInstructions()) {
             $request['system_instruction'] = (string) $instructions;
         }
 
-        if ($schema = $data->prompt->schema) {
+        if ($schema = $data->prompt->getSchema()) {
             $request['response_format'] = [
                 'type' => 'text',
                 'mime_type' => $schema->mediaType,

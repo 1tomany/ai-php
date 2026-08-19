@@ -3,8 +3,6 @@
 namespace OneToMany\AI\Example\Console\Command;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Query\InputText;
-use OneToMany\AI\Resource\Query\JsonSchema;
 use OneToMany\AI\Resource\Query\Prompt;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -36,10 +34,10 @@ final readonly class RunQueryCommand extends AbstractCommand
         ?string $apiKey = null,
     ): int {
         $model = Model::create($model);
-        $prompt = Prompt::with(new InputText($text));
+        $prompt = (new Prompt())->addInputText($text);
 
         if (null !== $jsonSchemaFile) {
-            $prompt = $prompt->withSchema(JsonSchema::fromFile(null, $jsonSchemaFile));
+            $prompt = $prompt->withJsonSchemaFile($jsonSchemaFile);
         }
 
         $response = $this->factory->create($model->provider, $this->apiKey($model->provider, $apiKey))->queries->compileAndRun($model, $prompt);
