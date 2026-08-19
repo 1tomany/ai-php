@@ -6,10 +6,8 @@ use OneToMany\AI\Contract\Bridge\QueryProviderInterface;
 use OneToMany\AI\Contract\Exception\ExceptionInterface;
 use OneToMany\AI\Contract\Resource\QueriesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Exception\LogicException;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
@@ -20,29 +18,19 @@ use function sprintf;
 final readonly class Queries implements QueriesInterface
 {
     /**
-     * @var array<string, QueryProviderInterface>
+     * @var ProviderRegistry<QueryProviderInterface>
      */
-    private array $providers;
+    private ProviderRegistry $providers;
 
     /**
      * @param iterable<QueryProviderInterface> $providers
      *
-     * @throws InvalidArgumentException when a query provider is already registered
+     * @throws InvalidArgumentException when a provider is already registered
      */
     public function __construct(
         iterable $providers,
     ) {
-        $indexedProviders = [];
-
-        foreach ($providers as $provider) {
-            if (isset($indexedProviders[$provider->provider()->getValue()])) {
-                throw new InvalidArgumentException(sprintf('The "%s" query provider is already registered.', $provider->provider()->getValue()));
-            }
-
-            $indexedProviders[$provider->provider()->getValue()] = $provider;
-        }
-
-        $this->providers = $indexedProviders;
+        $this->providers = new ProviderRegistry($providers);
     }
 
     /**
@@ -52,7 +40,7 @@ final readonly class Queries implements QueriesInterface
      *
      * @throws ExceptionInterface when the selected provider throws a package exception
      * @throws InvalidArgumentException when a file and model belong to different providers
-     * @throws LogicException when no provider is registered for the model
+     * @throws InvalidArgumentException when no provider is registered for the model
      * @throws RuntimeException when the selected provider throws a foreign exception
      * @throws RuntimeException when the provider compiles a query for another model
      */
@@ -66,7 +54,7 @@ final readonly class Queries implements QueriesInterface
         }
 
         try {
-            $query = $this->provider($model->provider)->compile($model, $prompt, $options);
+            $query = $this->providers->get($model->provider)->compile($model, $prompt, $options);
         } catch (ExceptionInterface $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -84,7 +72,7 @@ final readonly class Queries implements QueriesInterface
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
      *
      * @throws ExceptionInterface when the selected provider throws a package exception
-     * @throws LogicException when no provider is registered for the query
+     * @throws InvalidArgumentException when no provider is registered for the query
      * @throws RuntimeException when the selected provider throws a foreign exception
      * @throws RuntimeException when the provider returns a response for another provider
      */
@@ -92,7 +80,7 @@ final readonly class Queries implements QueriesInterface
     public function run(Query $query): Response
     {
         try {
-            $response = $this->provider($query->getProvider())->run($query);
+            $response = $this->providers->get($query->getProvider())->run($query);
         } catch (ExceptionInterface $e) {
             throw $e;
         } catch (\Throwable $e) {
@@ -117,17 +105,5 @@ final readonly class Queries implements QueriesInterface
     public function compileAndRun(Model $model, Prompt $prompt, array $options = []): Response
     {
         return $this->run($this->compile($model, $prompt, $options));
-    }
-
-    /**
-     * @throws InvalidArgumentException when the query provider is not registered
-     */
-    private function provider(Provider $provider): QueryProviderInterface
-    {
-        if (!isset($this->providers[$provider->getValue()])) {
-            throw new InvalidArgumentException(sprintf('The "%s" query provider is not registered.', $provider->getValue()));
-        }
-
-        return $this->providers[$provider->getValue()];
     }
 }

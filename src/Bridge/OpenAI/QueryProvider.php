@@ -23,7 +23,7 @@ final readonly class QueryProvider implements QueryProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\QueryProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\ProviderInterface
      */
     #[\Override]
     public function provider(): Provider

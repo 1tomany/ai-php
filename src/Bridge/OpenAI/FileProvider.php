@@ -23,7 +23,7 @@ final readonly class FileProvider implements FileProviderInterface
     }
 
     /**
-     * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
+     * @see OneToMany\AI\Contract\Bridge\ProviderInterface
      */
     #[\Override]
     public function provider(): Provider

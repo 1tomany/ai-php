@@ -3,15 +3,12 @@
 namespace OneToMany\AI\Contract\Bridge;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
 use OneToMany\AI\Resource\Query\Response;
 
-interface QueryProviderInterface
+interface QueryProviderInterface extends ProviderInterface
 {
-    public function provider(): Provider;
-
     /**
      * @param array<string, mixed> $options
      */

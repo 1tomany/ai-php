@@ -20,7 +20,7 @@ final class Step
      * @var ?non-empty-string
      */
     public ?string $text {
-        get => $this->compileOutputText();
+        get => $this->compileText();
     }
 
     /**
@@ -34,20 +34,20 @@ final class Step
     /**
      * @return ?non-empty-string
      */
-    private function compileOutputText(): ?string
+    private function compileText(): ?string
     {
-        $outputText = null;
+        $text = null;
 
         if ($this->isTypeModelOutput()) {
             foreach ($this->content as $content) {
                 if ($content->isTypeText()) {
-                    $outputText .= $content->text;
+                    $text .= $content->text;
                 }
             }
 
-            $outputText = trim((string) $outputText);
+            $text = trim((string) $text);
         }
 
-        return '' !== $outputText ? $outputText : null;
+        return '' !== $text ? $text : null;
     }
 }

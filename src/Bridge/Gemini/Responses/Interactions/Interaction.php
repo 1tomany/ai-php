@@ -44,7 +44,7 @@ final class Interaction
 
         foreach ($this->steps as $step) {
             if (null !== $step->text) {
-                $outputText .= "{$step->text}\n";
+                $outputText .= $step->text;
             }
         }
 
