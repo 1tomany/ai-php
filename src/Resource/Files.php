@@ -5,7 +5,6 @@ namespace OneToMany\AI\Resource;
 use OneToMany\AI\Contract\Bridge\FilesProviderInterface;
 use OneToMany\AI\Contract\Resource\FilesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Exception\LogicException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\Files\LocalFile;
@@ -23,7 +22,7 @@ final readonly class Files implements FilesInterface
     /**
      * @param iterable<FilesProviderInterface> $providers
      *
-     * @throws LogicException when a file provider is already registered
+     * @throws InvalidArgumentException when a file provider is already registered
      */
     public function __construct(
         iterable $providers,
@@ -32,7 +31,7 @@ final readonly class Files implements FilesInterface
 
         foreach ($providers as $provider) {
             if (isset($indexedProviders[$provider->provider()->getValue()])) {
-                throw new LogicException(sprintf('The "%s" file provider is already registered.', $provider->provider()->getValue()));
+                throw new InvalidArgumentException(sprintf('The "%s" file provider is already registered.', $provider->provider()->getValue()));
             }
 
             $indexedProviders[$provider->provider()->getValue()] = $provider;

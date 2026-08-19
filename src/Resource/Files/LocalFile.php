@@ -56,17 +56,17 @@ final readonly class LocalFile
 
         $this->path = $path;
 
-        if ('' === $name = trim($name ?? basename($path))) {
-            throw new InvalidArgumentException('The file name cannot be empty.');
-        }
-
-        $this->name = $name;
-
         if ('' === $mediaType = trim($mediaType)) {
             throw new InvalidArgumentException('The media type cannot be empty.');
         }
 
         $this->mediaType = $mediaType;
+
+        if ('' === $name = trim($name ?? basename($path))) {
+            throw new InvalidArgumentException('The file name cannot be empty.');
+        }
+
+        $this->name = $name;
 
         if (false === $size = @filesize($path)) {
             throw new RuntimeException(sprintf('Calculating the size of the file "%s" failed.', $path));

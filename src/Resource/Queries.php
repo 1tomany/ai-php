@@ -27,9 +27,7 @@ final readonly class Queries implements QueriesInterface
     /**
      * @param iterable<QueryProviderInterface> $providers
      *
-     * @throws ExceptionInterface when a provider throws a package exception during registration
-     * @throws LogicException when the same provider is registered more than once
-     * @throws LogicException when registering a provider fails
+     * @throws InvalidArgumentException when a query provider is already registered
      */
     public function __construct(
         iterable $providers,
@@ -38,7 +36,7 @@ final readonly class Queries implements QueriesInterface
 
         foreach ($providers as $provider) {
             if (isset($indexedProviders[$provider->provider()->getValue()])) {
-                throw new LogicException(sprintf('The "%s" query provider is already registered.', $provider->provider()->getValue()));
+                throw new InvalidArgumentException(sprintf('The "%s" query provider is already registered.', $provider->provider()->getValue()));
             }
 
             $indexedProviders[$provider->provider()->getValue()] = $provider;
