@@ -13,7 +13,7 @@ final readonly class Response
      * @param 'response' $object
      * @param positive-int $created_at
      * @param non-empty-lowercase-string $model
-     * @param list<ResponseOutputMessage> $output
+     * @param list<ResponseOutputMessage|Reasoning> $output
      * @param ?positive-int $completed_at
      * @param ?non-negative-int $max_output_tokens
      * @param ?non-negative-int $max_tool_calls
@@ -62,9 +62,11 @@ final readonly class Response
      */
     public function getText(): ?string
     {
-        foreach ($this->output as $item) {
-            if (null !== $item->getText()) {
-                return $item->getText();
+        foreach ($this->output as $output) {
+            if ($output instanceof ResponseOutputMessage) {
+                if (null !== $output->getText()) {
+                    return $output->getText();
+                }
             }
         }
 
@@ -76,13 +78,15 @@ final readonly class Response
      */
     public function getError(): ?string
     {
-        if ($error = $this->error) {
-            return $error->message;
+        if ($this->error instanceof ResponseError) {
+            return $this->error->message;
         }
 
-        foreach ($this->output as $item) {
-            if (!empty($item->getRefusal())) {
-                return $item->getRefusal();
+        foreach ($this->output as $output) {
+            if ($output instanceof ResponseOutputMessage) {
+                if (null !== $output->getRefusal()) {
+                    return $output->getRefusal();
+                }
             }
         }
 

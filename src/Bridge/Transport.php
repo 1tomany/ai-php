@@ -114,6 +114,8 @@ readonly class Transport
         string $type,
         array $context = [],
     ): object {
+        $response->toArray(false);
+
         try {
             $content = $response->getContent(false);
         } catch (HttpClientExceptionInterface $e) {

@@ -3,29 +3,23 @@
 namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
 use OneToMany\AI\Bridge\OpenAI\Responses\Responses\Enum\ResponseOutputMessageStatus;
-use OneToMany\AI\Exception\InvalidArgumentException;
 
-use function sprintf;
-
-final readonly class ResponseOutputMessage
+final readonly class ResponseOutputMessage extends ResponseOutputItem
 {
     /**
      * @param non-empty-string $id
      * @param list<ResponseOutputText|ResponseOutputRefusal> $content
      * @param 'assistant' $role
+     * @param 'message' $type
      */
     public function __construct(
         public string $id,
         public array $content,
+        public string $role,
         public ResponseOutputMessageStatus $status,
         public string $type,
-        public ?string $encrypted_content,
         public ?string $phase,
-        public string $role,
     ) {
-        // if ($this->type->isMessage() && empty($this->content)) {
-        //     throw new InvalidArgumentException(sprintf('The content cannot be empty when the type is "%s".', $this->type->value));
-        // }
     }
 
     /**

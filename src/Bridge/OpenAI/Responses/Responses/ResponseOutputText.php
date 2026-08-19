@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
-final readonly class ResponseOutputText
+final readonly class ResponseOutputText extends OutputMessage
 {
     /**
      * @param non-empty-string $text

@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Responses\Responses;
 
-final readonly class ResponseOutputRefusal
+final readonly class ResponseOutputRefusal extends OutputMessage
 {
     /**
      * @param non-empty-string $refusal
