@@ -19,15 +19,15 @@ enum Vendor: string
      */
     public static function create(string|self $vendor): self
     {
-        if ($vendor instanceof self) {
-            return $vendor;
+        if (!$vendor instanceof self) {
+            try {
+                return self::from($vendor);
+            } catch (\ValueError $e) {
+                throw new InvalidArgumentException(sprintf('The vendor "%s" is not valid.', $vendor), previous: $e);
+            }
         }
 
-        try {
-            return self::from($vendor);
-        } catch (\ValueError $e) {
-            throw new InvalidArgumentException(sprintf('The vendor "%s" is not valid.', $vendor), previous: $e);
-        }
+        return $vendor;
     }
 
     /**
