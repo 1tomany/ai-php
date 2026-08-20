@@ -14,12 +14,4 @@ abstract readonly class ResponseFormat
         public string $type,
     ) {
     }
-
-    /**
-     * @phpstan-assert-if-true 'text' $this->type
-     */
-    public function isTypeText(): bool
-    {
-        return 'text' === $this->type;
-    }
 }

@@ -18,16 +18,16 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      *
      * @param TType $type
      * @param non-empty-lowercase-string $mime_type
-     * @param ?non-empty-string $data
      * @param ?non-empty-string $uri
+     * @param ?non-empty-string $data
      *
      * @throws InvalidArgumentException when the data and URI are both empty
      */
     public function __construct(
         string $type,
         public string $mime_type,
-        public ?string $data = null,
         public ?string $uri = null,
+        public ?string $data = null,
     ) {
         parent::__construct($type);
 
@@ -38,25 +38,25 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
 
     /**
      * @param non-empty-lowercase-string $mimeType
-     * @param ?non-empty-string $data
      * @param ?non-empty-string $uri
+     * @param ?non-empty-string $data
      *
      * @return AudioContent|DocumentContent|ImageContent
      */
     public static function create(
         string $mimeType,
-        ?string $data = null,
         ?string $uri = null,
+        ?string $data = null,
     ): self {
         if (str_starts_with($mimeType, 'audio')) {
-            return new AudioContent($mimeType, $data, $uri);
+            return new AudioContent($mimeType, $uri, $data);
         }
 
         if (str_starts_with($mimeType, 'image')) {
-            return new ImageContent($mimeType, $data, $uri);
+            return new ImageContent($mimeType, $uri, $data);
         }
 
-        return new DocumentContent($mimeType, $data, $uri);
+        return new DocumentContent($mimeType, $uri, $data);
     }
 
     /**
@@ -64,27 +64,19 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      *
      * @return array{
      *   type: 'audio'|'document'|'image',
+     *   uri: ?non-empty-string,
+     *   data: ?non-empty-string,
      *   mime_type: non-empty-lowercase-string,
-     *   data?: non-empty-string,
-     *   uri?: non-empty-string,
      * }
      */
     #[\Override]
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
-        $json = [
+        return [
             'type' => $this->type,
+            'uri' => $this->uri,
+            'data' => $this->data,
             'mime_type' => $this->mime_type,
         ];
-
-        if (null !== $this->data) {
-            $json['data'] = $this->data;
-        }
-
-        if (null !== $this->uri) {
-            $json['uri'] = $this->uri;
-        }
-
-        return $json;
     }
 }

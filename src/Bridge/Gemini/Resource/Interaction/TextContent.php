@@ -42,7 +42,7 @@ final readonly class TextContent extends Content implements \JsonSerializable
      * }
      */
     #[\Override]
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return [
             'type' => $this->type,

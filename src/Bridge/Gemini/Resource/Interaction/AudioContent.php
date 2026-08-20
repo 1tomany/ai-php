@@ -12,9 +12,9 @@ final readonly class AudioContent extends FileContent
      */
     public function __construct(
         string $mime_type,
-        ?string $data = null,
         ?string $uri = null,
+        ?string $data = null,
     ) {
-        parent::__construct('audio', $mime_type, $data, $uri);
+        parent::__construct('audio', $mime_type, $uri, $data);
     }
 }

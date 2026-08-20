@@ -43,22 +43,17 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
      *
      * @return array{
      *   type: 'text',
+     *   schema: ?array<string, mixed>,
      *   mime_type: 'application/json'|'text/plain',
-     *   schema?: array<string, mixed>,
      * }
      */
     #[\Override]
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
-        $json = [
+        return [
             'type' => $this->type,
+            'schema' => $this->schema,
             'mime_type' => $this->mime_type,
         ];
-
-        if (null !== $this->schema) {
-            $json['schema'] = $this->schema;
-        }
-
-        return $json;
     }
 }

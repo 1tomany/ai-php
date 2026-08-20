@@ -12,9 +12,9 @@ final readonly class DocumentContent extends FileContent
      */
     public function __construct(
         string $mime_type,
-        ?string $data = null,
         ?string $uri = null,
+        ?string $data = null,
     ) {
-        parent::__construct('document', $mime_type, $data, $uri);
+        parent::__construct('document', $mime_type, $uri, $data);
     }
 }

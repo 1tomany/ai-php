@@ -8,9 +8,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-use function is_string;
-use function mime_content_type;
-
 #[AsCommand(
     name: 'ai:files:upload',
     description: 'Uploads a file to an AI provider',

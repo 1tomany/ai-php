@@ -28,20 +28,22 @@ final readonly class QueryNormalizer implements NormalizerInterface
         /** @var list<ResponseInputFile|ResponseInputImage|ResponseInputText> $content */
         $content = [];
 
-        foreach ($data->prompt->input() as $part) {
-            if ($part instanceof InputText) {
-                $content[] = new ResponseInputText($part->text);
+        foreach ($data->prompt->input() as $input) {
+            if ($input instanceof InputText) {
+                $content[] = new ResponseInputText(
+                    text: $input->text,
+                );
 
                 continue;
             }
 
-            if ($part->isImage()) {
-                $content[] = new ResponseInputImage($part->id);
+            if ($input->isImage()) {
+                $content[] = new ResponseInputImage($input->id);
 
                 continue;
             }
 
-            $content[] = new ResponseInputFile($part->id);
+            $content[] = new ResponseInputFile($input->id);
         }
 
         $request = [
