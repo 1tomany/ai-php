@@ -3,19 +3,16 @@
 namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Resource\File\RemoteFile;
 
 use function is_string;
 
 final class Prompt
 {
     /**
-     * @var list<InputText|RemoteFile>
+     * @var list<InputFile|InputText>
      */
-    private array $input = [];
-
+    private array $inputs = [];
     private ?InputText $instructions = null;
-
     private ?JsonSchema $schema = null;
 
     public function __construct()
@@ -25,10 +22,10 @@ final class Prompt
     /**
      * @throws InvalidArgumentException when no input is provided
      */
-    public static function with(string|InputText|RemoteFile ...$inputs): static
+    public static function with(string|InputFile|InputText ...$inputs): static
     {
         if ([] === $inputs) {
-            throw new InvalidArgumentException('At least one text or file input is required.');
+            throw new InvalidArgumentException('At least one file or text input is required.');
         }
 
         $prompt = new static();
@@ -45,19 +42,19 @@ final class Prompt
         return $this->addInput($text);
     }
 
-    public function addRemoteFile(RemoteFile $file): static
+    public function addInputFile(InputFile $file): static
     {
         return $this->addInput($file);
     }
 
-    public function withInstructions(string|InputText $instructions): static
+    public function withInstructions(string|InputText $text): static
     {
-        if (!$instructions instanceof InputText) {
-            $instructions = new InputText($instructions);
+        if (!$text instanceof InputText) {
+            $text = new InputText($text);
         }
 
         $prompt = clone $this;
-        $prompt->instructions = $instructions;
+        $prompt->instructions = $text;
 
         return $prompt;
     }
@@ -79,11 +76,11 @@ final class Prompt
     }
 
     /**
-     * @return list<InputText|RemoteFile>
+     * @return list<InputText|InputFile>
      */
-    public function getInput(): array
+    public function getInputs(): array
     {
-        return $this->input;
+        return $this->inputs;
     }
 
     public function getInstructions(): ?InputText
@@ -98,13 +95,13 @@ final class Prompt
 
     public function isEmpty(): bool
     {
-        return [] === $this->input;
+        return [] === $this->inputs;
     }
 
-    private function addInput(string|InputText|RemoteFile $input): static
+    private function addInput(string|InputFile|InputText $input): static
     {
         $prompt = clone $this;
-        $prompt->input[] = is_string($input) ? new InputText($input) : $input;
+        $prompt->inputs[] = is_string($input) ? new InputText($input) : $input;
 
         return $prompt;
     }

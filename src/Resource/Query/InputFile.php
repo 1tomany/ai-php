@@ -1,12 +1,12 @@
 <?php
 
-namespace OneToMany\AI\Resource\File;
+namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function trim;
 
-final readonly class RemoteFile
+final readonly class InputFile
 {
     /**
      * @var non-empty-string
@@ -14,22 +14,29 @@ final readonly class RemoteFile
     public string $id;
 
     /**
-     * @param ?non-empty-string $uri
-     * @param ?non-empty-string $purpose
-     *
+     * @var non-empty-lowercase-string
+     */
+    public string $mimeType;
+
+    /**
      * @throws InvalidArgumentException when the file ID is empty
+     * @throws InvalidArgumentException when the MIME type is empty
      */
     public function __construct(
         ?string $id,
-        public ?string $uri = null,
-        public ?\DateTimeImmutable $expiresAt = null,
-        public ?string $purpose = null,
+        ?string $mimeType,
     ) {
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');
         }
 
         $this->id = $id;
+
+        if ('' === $mimeType = trim((string) $mimeType)) {
+            throw new InvalidArgumentException('The MIME type cannot be empty.');
+        }
+
+        $this->mimeType = strtolower($mimeType);
     }
 
     /**
@@ -41,23 +48,10 @@ final readonly class RemoteFile
     }
 
     /**
-     * @return ?non-empty-string
+     * @return non-empty-lowercase-string
      */
-    public function getUri(): ?string
+    public function getMimeType(): string
     {
-        return $this->uri;
-    }
-
-    public function getExpiresAt(): ?\DateTimeImmutable
-    {
-        return $this->expiresAt;
-    }
-
-    /**
-     * @return ?non-empty-string
-     */
-    public function getPurpose(): ?string
-    {
-        return $this->purpose;
+        return $this->mimeType;
     }
 }

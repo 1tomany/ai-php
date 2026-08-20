@@ -42,7 +42,7 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             @fclose($handle);
         }
 
-        return new RemoteFile($record->id, null, $file->getMimeType(), $record->getExpiresAt(), $record->purpose);
+        return new RemoteFile($record->id, null, $record->getExpiresAt(), $record->purpose);
     }
 
     /**

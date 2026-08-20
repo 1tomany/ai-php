@@ -24,7 +24,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     {
         $easyInputMessage = new EasyInputMessage();
 
-        foreach ($data->getPrompt()->getInput() as $input) {
+        foreach ($data->getPrompt()->getInputs() as $input) {
             if ($input instanceof InputText) {
                 $content = ResponseInput::asText(
                     text: $input->getText(),

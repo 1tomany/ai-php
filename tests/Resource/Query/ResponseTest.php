@@ -4,7 +4,6 @@ namespace OneToMany\AI\Tests\Resource\Query;
 
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Resource\Query\Response;
-use OneToMany\AI\Vendor;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +25,6 @@ final class ResponseTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageIs('The model output did not contain a JSON object or array.');
 
-        new Response(Vendor::OpenAI, uniqid(), true, $text)->decode();
+        new Response(uniqid(), true, $text)->decode();
     }
 }

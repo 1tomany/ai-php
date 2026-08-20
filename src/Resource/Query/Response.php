@@ -3,7 +3,6 @@
 namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Vendor;
 
 use function is_array;
 use function json_decode;
@@ -20,7 +19,6 @@ final readonly class Response
      * @param ?non-empty-string $error
      */
     public function __construct(
-        public Vendor $vendor,
         public string $id,
         public bool $completed = true,
         public ?string $text = null,
