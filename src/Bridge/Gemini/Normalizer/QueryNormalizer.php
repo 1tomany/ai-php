@@ -25,9 +25,13 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $request = ['model' => $data->model->name, 'input' => []];
+        $request = ['model' => $data->model->name];
 
         foreach ($data->prompt->input() as $input) {
+            if (!isset($request['input'])) {
+                $request['input'] = [];
+            }
+
             if ($input instanceof InputText) {
                 $request['input'][] = new TextContent(
                     text: $input->text,
