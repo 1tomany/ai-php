@@ -4,6 +4,7 @@ namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 
+use function assert;
 use function sprintf;
 
 final readonly class TextResponseFormat extends ResponseFormat implements \JsonSerializable
@@ -26,7 +27,7 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
             throw new InvalidArgumentException(sprintf('A schema is required when the MIME type is "%s".', $this->mime_type));
         }
 
-        \assert('text' === $this->type);
+        assert('text' === $this->type);
     }
 
     /**
