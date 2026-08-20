@@ -110,7 +110,7 @@ readonly class Transport
 
     /**
      * @throws RuntimeException when the request failed due to a network error
-     * @throws RuntimeException when the request failed due to an HTTP error
+     * @throws RuntimeException when the server returns a non-successful status
      */
     public function assertSuccessful(HttpResponseInterface $response): void
     {

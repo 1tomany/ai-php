@@ -33,7 +33,8 @@ final readonly class RemoteFile
      * @param ?non-empty-string $purpose
      *
      * @throws InvalidArgumentException when the file ID is empty
-     * @throws InvalidArgumentException when the file MIME type is empty
+     * @throws InvalidArgumentException when the provider is Gemini and the URI is empty
+     * @throws InvalidArgumentException when the MIME type is empty
      */
     public function __construct(
         string|Provider $provider,
