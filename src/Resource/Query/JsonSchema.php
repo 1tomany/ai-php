@@ -22,15 +22,24 @@ final readonly class JsonSchema
     public string $name;
 
     /**
+     * @var array<string, mixed>
+     */
+    public array $schema;
+
+    /**
      * @param array<string, mixed> $schema
      *
      * @throws InvalidArgumentException when the schema has no name or "title" property
      */
     public function __construct(
-        public array $schema,
+        array $schema,
         ?string $name = null,
         public bool $strict = true,
     ) {
+        if ([] === $schema) {
+            throw new InvalidArgumentException('The schema cannot be empty.');
+        }
+
         if (null !== $name) {
             $name = trim($name);
         }
