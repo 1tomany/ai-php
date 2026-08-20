@@ -125,20 +125,20 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             @fclose($handle);
         }
 
-        return new RemoteFile(static::getVendor(), $record->name, $record->uri, $record->mimeType, $record->expirationTime);
+        return new RemoteFile($record->name, $record->uri, $record->mimeType, $record->expirationTime);
     }
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      */
     #[\Override]
-    public function delete(RemoteFile $file): void
+    public function delete(string $fileId): void
     {
-        $url = $this->url($this->apiVersion, $file->getId());
+        $url = $this->url($this->apiVersion, $fileId);
 
         $this->transport->deleteRequest($url, [
             'headers' => [
-                'x-goog-api-key' => $this->getApiKey(),
+                'x-goog-api-key' => $this->apiKey,
             ],
         ]);
     }

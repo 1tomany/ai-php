@@ -9,6 +9,8 @@ use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Vendor;
 
+use function trim;
+
 final readonly class Files implements FilesInterface
 {
     /**
@@ -17,8 +19,6 @@ final readonly class Files implements FilesInterface
     private Registry $providers;
 
     /**
-     * @see OneToMany\AI\Resource\Registry::__construct()
-     *
      * @param iterable<FileProviderInterface> $providers
      */
     public function __construct(
@@ -42,12 +42,14 @@ final readonly class Files implements FilesInterface
 
     /**
      * @see OneToMany\AI\Contract\Resource\FilesInterface
-     *
-     * @throws InvalidArgumentException when the provider is not registered
      */
     #[\Override]
-    public function delete(RemoteFile $file): void
+    public function delete(string|Vendor $vendor, ?string $fileId): void
     {
-        $this->providers->get($file->vendor)->delete($file);
+        if ('' === $fileId = trim((string) $fileId)) {
+            throw new InvalidArgumentException('The file ID cannot be empty.');
+        }
+
+        $this->providers->get(Vendor::create($vendor))->delete($fileId);
     }
 }
