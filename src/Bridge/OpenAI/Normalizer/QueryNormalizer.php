@@ -4,10 +4,7 @@ namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\EasyInputMessage;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInput;
-use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputFile;
-use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputImage;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputText;
-use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -27,32 +24,25 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $content = [];
+        $easyInputMessage = new EasyInputMessage();
 
         foreach ($data->prompt->input() as $input) {
             if ($input instanceof InputText) {
-                $content[] = new ResponseInputText(
-                    text: $input->text,
+                $content = new ResponseInputText(
+                    text: $input->toString(),
                 );
-            }
-
-            if ($input instanceof RemoteFile) {
-                $content[] = ResponseInput::asFile(
+            } else {
+                $content = ResponseInput::asFile(
                     $input->mimeType, $input->id,
                 );
             }
-        }
 
-        $input = new EasyInputMessage(...[
-            'content' => $content,
-        ]);
+            $easyInputMessage->addContent($content);
+        }
 
         $request = [
             'model' => $data->model->name,
-            'input' => [
-                $input,
-            ],
-            'stream' => false,
+            'input' => [$easyInputMessage],
         ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
