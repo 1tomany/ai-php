@@ -1,11 +1,10 @@
 <?php
 
-namespace OneToMany\AI\Bridge;
+namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Model;
-use OneToMany\AI\Resource\Query\Prompt;
 
-final readonly class QueryRequest
+final readonly class QueryDefinition
 {
     /**
      * @param array<string, mixed> $options

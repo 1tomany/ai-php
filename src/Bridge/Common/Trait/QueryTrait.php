@@ -2,11 +2,11 @@
 
 namespace OneToMany\AI\Bridge\Common\Trait;
 
-use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Model;
 use OneToMany\AI\Resource\Query\Prompt;
 use OneToMany\AI\Resource\Query\Query;
+use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 
 trait QueryTrait
@@ -21,7 +21,7 @@ trait QueryTrait
     {
         try {
             /** @var array<string, mixed> $request */
-            $request = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options));
+            $request = $this->normalizer->normalize(new QueryDefinition($model, $prompt, $options));
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException(sprintf('Compiling the %s query failed.', $this->provider()->getName()), previous: $e);
         }

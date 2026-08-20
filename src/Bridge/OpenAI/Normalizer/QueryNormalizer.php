@@ -1,20 +1,21 @@
 <?php
 
-namespace OneToMany\AI\Bridge\Gemini\Normalizer;
+namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
-use OneToMany\AI\Bridge\QueryRequest;
 use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\InputText;
+use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+use function array_merge;
 use function array_replace;
 
-final readonly class PromptNormalizer implements NormalizerInterface
+final readonly class QueryNormalizer implements NormalizerInterface
 {
     /**
      * @see Symfony\Component\Serializer\Normalizer\NormalizerInterface
      *
-     * @param QueryRequest $data
+     * @param QueryDefinition $data
      *
      * @return array<string, mixed>
      */
@@ -27,36 +28,32 @@ final readonly class PromptNormalizer implements NormalizerInterface
             InputText|RemoteFile $part,
         ): string {
             if ($part instanceof InputText) {
-                return 'text';
+                return 'input_text';
             }
 
-            $type = match (true) {
-                $part->isAudio() => 'audio',
-                $part->isImage() => 'image',
-                $part->isVideo() => 'video',
-                default => 'document',
-            };
+            if ($part->isImage()) {
+                return 'input_image';
+            }
 
-            return $type;
+            return 'input_file';
         };
 
-        $input = [];
+        $content = [];
 
         foreach ($data->prompt->input() as $part) {
             $type = $resolveType(part: $part);
 
             if ($part instanceof InputText) {
-                $input[] = [
+                $content[] = [
                     'type' => $type,
                     'text' => (string) $part,
                 ];
             }
 
             if ($part instanceof RemoteFile) {
-                $input[] = [
+                $content[] = [
                     'type' => $type,
-                    'uri' => $part->uri,
-                    'mime_type' => $part->mediaType,
+                    'file_id' => $part->id,
                 ];
             }
         }
@@ -64,19 +61,29 @@ final readonly class PromptNormalizer implements NormalizerInterface
         $request = [
             'model' => $model,
             'stream' => false,
-            'input' => $input,
+            'input' => [
+                [
+                    'role' => 'user',
+                    'content' => $content,
+                ],
+            ],
         ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
-            $request['system_instruction'] = (string) $instructions;
+            $request['instructions'] = $instructions->__toString();
         }
 
         if ($schema = $data->prompt->schema()) {
-            $request['response_format'] = [
-                'type' => 'text',
-                'mime_type' => $schema->mediaType,
-                'schema' => $schema->schema,
-            ];
+            $request = array_merge($request, [
+                'text' => [
+                    'format' => [
+                        'type' => 'json_schema',
+                        'name' => $schema->name,
+                        'strict' => $schema->strict,
+                        'schema' => $schema->schema,
+                    ],
+                ],
+            ]);
         }
 
         return array_replace($data->options, $request);
@@ -88,7 +95,7 @@ final readonly class PromptNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryRequest && $data->model->provider->isGemini();
+        return $data instanceof QueryDefinition && $data->model->provider->isOpenAI();
     }
 
     /**
@@ -98,7 +105,7 @@ final readonly class PromptNormalizer implements NormalizerInterface
     public function getSupportedTypes(?string $format): array
     {
         return [
-            QueryRequest::class => false,
+            QueryDefinition::class => false,
         ];
     }
 }
