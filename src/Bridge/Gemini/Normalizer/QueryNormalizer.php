@@ -30,14 +30,13 @@ final readonly class QueryNormalizer implements NormalizerInterface
         foreach ($data->prompt->input() as $input) {
             if ($input instanceof InputText) {
                 $request['input'][] = new TextContent(
-                    text: $input->toString(),
+                    text: $input->text,
                 );
             }
 
             if ($input instanceof RemoteFile) {
                 $request['input'][] = FileContent::create(
-                    mimeType: $input->mimeType,
-                    uri: $input->id,
+                    $input->mimeType, uri: $input->id,
                 );
             }
         }
@@ -51,12 +50,6 @@ final readonly class QueryNormalizer implements NormalizerInterface
                 schema: $data->prompt->schema()->schema,
             );
         }
-
-        //         'type' => 'text',
-        //         'mime_type' => $schema->mediaType,
-        //         'schema' => $schema->schema,
-        //     ];
-        // }
 
         return array_replace($data->options, $request);
     }
