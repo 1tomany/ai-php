@@ -6,5 +6,5 @@ use OneToMany\AI\Vendor;
 
 interface ProviderInterface
 {
-    public function vendor(): Vendor;
+    public static function getVendor(): Vendor;
 }

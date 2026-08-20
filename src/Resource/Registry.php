@@ -28,11 +28,11 @@ final readonly class Registry
         $indexedProviders = [];
 
         foreach ($providers as $provider) {
-            if (isset($indexedProviders[$provider->vendor()->getValue()])) {
-                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $provider->vendor()->getValue()));
+            if (isset($indexedProviders[$provider::getVendor()->getValue()])) {
+                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $provider::getVendor()->getValue()));
             }
 
-            $indexedProviders[$provider->vendor()->getValue()] = $provider;
+            $indexedProviders[$provider::getVendor()->getValue()] = $provider;
         }
 
         $this->providers = $indexedProviders;

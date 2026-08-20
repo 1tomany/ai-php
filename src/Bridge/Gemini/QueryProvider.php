@@ -33,6 +33,6 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
             unset($query);
         }
 
-        return new Response($this->vendor(), $record->id, $record->completed, $record->text, null, $record->error?->message);
+        return new Response(static::getVendor(), $record->id, $record->completed, $record->text, null, $record->error?->message);
     }
 }

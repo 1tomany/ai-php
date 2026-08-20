@@ -28,7 +28,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
         foreach ($data->prompt->input() as $input) {
             if ($input instanceof InputText) {
                 $content = ResponseInput::asText(
-                    text: $input->toString(),
+                    text: $input->getText(),
                 );
             } else {
                 $content = ResponseInput::asFile(
@@ -45,7 +45,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
         ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
-            $request['instructions'] = $instructions->toString();
+            $request['instructions'] = $instructions->getText();
         }
 
         if ($schema = $data->prompt->schema()) {

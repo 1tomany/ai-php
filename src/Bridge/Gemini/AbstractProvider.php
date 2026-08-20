@@ -24,7 +24,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
         protected string $apiVersion = 'v1beta',
     ) {
         if ('' === $this->apiKey) {
-            throw new InvalidArgumentException(sprintf('The %s API key cannot be empty.', $this->vendor()->getName()));
+            throw new InvalidArgumentException(sprintf('The %s API key cannot be empty.', $this->getVendor()->getName()));
         }
     }
 
@@ -32,7 +32,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
      * @see OneToMany\AI\Contract\Bridge\ProviderInterface
      */
     #[\Override]
-    public function vendor(): Vendor
+    public static function getVendor(): Vendor
     {
         return Vendor::Gemini;
     }

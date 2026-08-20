@@ -70,7 +70,7 @@ final class Prompt
         array $schema,
         bool $strict = true,
     ): self {
-        return $this->withSchema(new JsonSchema($name, $strict, schema: $schema));
+        return $this->withSchema(new JsonSchema($name, $schema, $strict));
     }
 
     public function withJsonSchemaFile(string $path, ?string $name = null): static

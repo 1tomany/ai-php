@@ -22,16 +22,14 @@ final readonly class JsonSchema
     public string $name;
 
     /**
-     * @param non-empty-string $mediaType
      * @param array<string, mixed> $schema
      *
      * @throws InvalidArgumentException when the schema has no name or "title" property
      */
     public function __construct(
         ?string $name,
+        public array $schema,
         public bool $strict = true,
-        public string $mediaType = 'application/json',
-        public array $schema = [],
     ) {
         if (null !== $name) {
             $name = trim($name);

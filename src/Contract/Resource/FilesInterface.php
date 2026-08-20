@@ -8,9 +8,6 @@ use OneToMany\AI\Vendor;
 
 interface FilesInterface
 {
-    /**
-     * @see OneToMany\AI\Vendor::create()
-     */
     public function upload(string|Vendor $vendor, string|LocalFile $file): RemoteFile;
 
     public function delete(RemoteFile $file): void;

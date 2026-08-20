@@ -115,7 +115,7 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             }
 
             if (null === $response) {
-                throw new RuntimeException(sprintf('The %s server did not receive any file data.', $this->vendor()->getName()));
+                throw new RuntimeException(sprintf('The %s server did not receive any file data.', static::getVendor()->getName()));
             }
 
             $record = $this->transport->decode($response, File::class, [
@@ -125,7 +125,7 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             @fclose($handle);
         }
 
-        return new RemoteFile($this->vendor(), $record->name, $record->uri, $record->mimeType, $record->expirationTime);
+        return new RemoteFile(static::getVendor(), $record->name, $record->uri, $record->mimeType, $record->expirationTime);
     }
 
     /**

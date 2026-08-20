@@ -36,7 +36,7 @@ final readonly class InputText implements \Stringable
     #[\Override]
     public function __toString(): string
     {
-        return $this->toString();
+        return $this->getText();
     }
 
     /**
@@ -56,7 +56,7 @@ final readonly class InputText implements \Stringable
     /**
      * @return non-empty-string
      */
-    public function toString(): string
+    public function getText(): string
     {
         return $this->text;
     }
