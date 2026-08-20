@@ -5,9 +5,7 @@ namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\FileContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextResponseFormat;
-use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\InputText;
-use OneToMany\AI\Resource\Query\JsonSchema;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

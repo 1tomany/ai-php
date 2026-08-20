@@ -8,7 +8,6 @@ use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-use function array_merge;
 use function array_replace;
 
 final readonly class QueryNormalizer implements NormalizerInterface
