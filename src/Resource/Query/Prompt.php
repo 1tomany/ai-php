@@ -34,10 +34,6 @@ final class Prompt
         $prompt = new static();
 
         foreach ($inputs as $input) {
-            if (true === is_string($input)) {
-                $input = new InputText($input);
-            }
-
             $prompt = $prompt->addInput($input);
         }
 
@@ -46,7 +42,7 @@ final class Prompt
 
     public function addInputText(string|InputText $text): static
     {
-        return $this->addInput(is_string($text) ? new InputText($text) : $text);
+        return $this->addInput($text);
     }
 
     public function addRemoteFile(RemoteFile $file): static
@@ -105,10 +101,10 @@ final class Prompt
         return [] === $this->input;
     }
 
-    private function addInput(InputText|RemoteFile $input): static
+    private function addInput(string|InputText|RemoteFile $input): static
     {
         $prompt = clone $this;
-        $prompt->input[] = $input;
+        $prompt->input[] = is_string($input) ? new InputText($input) : $input;
 
         return $prompt;
     }
