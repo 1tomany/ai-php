@@ -27,7 +27,7 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
             throw new InvalidArgumentException(sprintf('A schema is required when the MIME type is "%s".', $this->mime_type));
         }
 
-        assert('text' === $this->type);
+        assert(true === $this->isTypeText());
     }
 
     /**
