@@ -1,6 +1,6 @@
 {
-    "name": "1tomany/ai-php",
-    "description": "A single, unified, framework-independent library for integration with many popular AI platforms and large language models",
+    "name": "1tomany/php-ai",
+    "description": "A single, unified, framework-independent library for integration with many popular AI providers and large language models",
     "license": "MIT",
     "type": "library",
     "minimum-stability": "stable",
@@ -9,6 +9,7 @@
         "ai",
         "ai client",
         "ai sdk",
+        "anthropic",
         "chatgpt",
         "chat gpt",
         "claude",
@@ -45,7 +46,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "OneToMany\\AI\\Example\\": "examples/",
             "OneToMany\\AI\\Tests\\": "tests/"
         }
     },

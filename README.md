@@ -1,18 +1,18 @@
-# AI and LLM Library for PHP
+# PHP AI and LLM Library
 
-This library provides a single, unified, framework-independent library for integration with several popular AI platforms and large language models.
+This library provides a single, unified, framework-independent library for integration with several popular AI providers and large language models.
 
 ## Installation
 
 Install the library using Composer:
 
-```shell
-composer require 1tomany/ai-php
+```console
+composer require 1tomany/php-ai
 ```
 
 ### Symfony Bundle
 
-A [Symfony bundle](https://github.com/1tomany/ai-php-bundle) is available if you wish to integrate this library into your Symfony applications with autowiring and configuration support.
+A [Symfony bundle](https://github.com/1tomany/php-ai-bundle) is available if you wish to integrate this library into your Symfony applications with autowiring and configuration support.
 
 ## Supported platforms
 
@@ -20,15 +20,6 @@ A [Symfony bundle](https://github.com/1tomany/ai-php-bundle) is available if you
 - OpenAI
 
 ### Platform features
-
-**Note:** Each platform refers to generating output - inference - differently: OpenAI uses "Response", Gemini uses "Interaction", and Anthropic uses "Message". I've decided the word "Query" best represents how you interact with a generative LLM: you compile a query and then run the query to generate a response. The word "Embedding" will continue to be used for embedding models.
-
-To generate a response, you must first compile a query. A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions. Once the query is compiled, it can be sent to the LLM for inference.
-
-This library allows you to compile a query before sending it to the model for two reasons:
-
-1. You can log/analyze the request payload before sending it.
-2. You can compile individual requests for batching.
 
 | Feature     | Gemini | OpenAI |
 | ----------- | :----: | :----: |
@@ -39,25 +30,14 @@ This library allows you to compile a query before sending it to the model for tw
 | Compile     |   ✅   |   ✅   |
 | Run         |   ✅   |   ✅   |
 
-## Usage
+**Note:** Each platform refers to generating output - inference - differently: OpenAI uses "Response", Gemini uses "Interaction", and Anthropic uses "Message". I've decided the word "Query" best represents how you interact with a generative LLM: you compile a query and then run the query to generate a response. The word "Embedding" will continue to be used for embedding models.
 
-Using the library is simple. You can use it via the `OneToMany\AI\AI` facade, or via the individual resources directly.
+To generate a response, you must first compile a query. A query is made up of different input components: text prompts, files, a JSON schema, and/or system instructions. Once the query is compiled, it can be sent to the LLM for inference.
 
-### Using the `AI` facade
+This library allows you to compile a query before sending it to the model for two reasons:
 
-```php
-<?php
-
-use OneToMany\AI\Resource\Query\Prompt;
-
-// Upload a file to the LLM provider
-$file = $ai->files->upload('gemini', '/path/to/file.jpeg');
-
-// Compile and run a query against the LLM
-$response = $ai->queries->compileAndRun('gemini:gemini-3.7-flash', Prompt::with('Identify the animal in the picture.', $file));
-
-printf("%s\n", $response->text);
-```
+1. You can log/analyze the request payload before sending it.
+2. You can compile individual requests for batching.
 
 ## Credits
 
@@ -66,7 +46,3 @@ printf("%s\n", $response->text);
 ## License
 
 The MIT License
-
-```
-
-```
