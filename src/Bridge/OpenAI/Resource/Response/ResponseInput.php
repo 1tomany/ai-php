@@ -19,18 +19,18 @@ abstract readonly class ResponseInput implements \JsonSerializable
 
     /**
      * @param non-empty-lowercase-string $mimeType
-     * @param non-empty-string $file_id
+     * @param non-empty-string $fileId
      *
      * @return ResponseInputFile|ResponseInputImage
      */
     public static function asFile(
         string $mimeType,
-        string $file_id,
+        string $fileId,
     ): self {
         if (str_starts_with($mimeType, 'image')) {
-            return new ResponseInputImage($file_id);
+            return new ResponseInputImage($fileId);
         }
 
-        return new ResponseInputFile($file_id);
+        return new ResponseInputFile($fileId);
     }
 }

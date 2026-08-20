@@ -14,22 +14,22 @@ final readonly class ResponseInputImage extends ResponseInput
     /**
      * @var non-empty-string
      */
-    public string $file_id;
+    public string $fileId;
 
     /**
      * @see OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInput
      *
      * @throws InvalidArgumentException when the file ID is empty
      */
-    public function __construct(?string $file_id)
+    public function __construct(?string $fileId)
     {
         parent::__construct('input_image');
 
-        if ('' === $file_id = trim((string) $file_id)) {
+        if ('' === $fileId = trim((string) $fileId)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');
         }
 
-        $this->file_id = $file_id;
+        $this->fileId = $fileId;
     }
 
     /**
@@ -45,7 +45,7 @@ final readonly class ResponseInputImage extends ResponseInput
     {
         return [
             'type' => $this->type,
-            'file_id' => $this->file_id,
+            'file_id' => $this->fileId,
         ];
     }
 }

@@ -12,11 +12,6 @@ final class EasyInputMessage implements \JsonSerializable
     private string $role = 'user';
 
     /**
-     * @var 'message'
-     */
-    private string $type = 'message';
-
-    /**
      * @var list<ResponseInputFile|ResponseInputImage|ResponseInputText>
      */
     private array $content = [];
@@ -41,7 +36,6 @@ final class EasyInputMessage implements \JsonSerializable
      * @see \JsonSerializable
      *
      * @return array{
-     *   type: 'message',
      *   role: 'assistant'|'developer'|'system'|'user',
      *   content: list<ResponseInputFile|ResponseInputImage|ResponseInputText>,
      * }
@@ -50,7 +44,6 @@ final class EasyInputMessage implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'type' => $this->type,
             'role' => $this->role,
             'content' => $this->content,
         ];

@@ -11,10 +11,9 @@ final readonly class AudioContent extends FileContent
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\FileContent
      */
     public function __construct(
-        string $mime_type,
-        ?string $uri = null,
-        ?string $data = null,
+        string $mimeType,
+        ?string $uri,
     ) {
-        parent::__construct('audio', $mime_type, $uri, $data);
+        parent::__construct('audio', $mimeType, $uri);
     }
 }
