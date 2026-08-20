@@ -23,4 +23,11 @@ final class ModelTest extends TestCase
     {
         $this->assertSame('openai:gpt-5.6-sol', new Model(Vendor::OpenAI, 'gpt-5.6-sol')->__toString());
     }
+
+    public function testCreateReturnsSelf(): void
+    {
+        $model = new Model(Vendor::OpenAI, 'gpt-5.6-luna');
+
+        $this->assertSame($model, Model::create($model));
+    }
 }
