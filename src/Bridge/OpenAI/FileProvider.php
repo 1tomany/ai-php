@@ -2,7 +2,7 @@
 
 namespace OneToMany\AI\Bridge\OpenAI;
 
-use OneToMany\AI\Bridge\OpenAI\Responses\Files\File;
+use OneToMany\AI\Bridge\OpenAI\Response\File\File;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Exception\RuntimeException;
 use OneToMany\AI\Resource\File\LocalFile;

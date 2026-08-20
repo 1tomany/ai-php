@@ -1,6 +1,6 @@
 <?php
 
-namespace OneToMany\AI\Bridge\OpenAI\Responses\Files;
+namespace OneToMany\AI\Bridge\OpenAI\Response\File;
 
 final readonly class File
 {
