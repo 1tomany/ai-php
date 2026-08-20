@@ -6,6 +6,7 @@ use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\ProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function sprintf;
 
@@ -18,6 +19,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
      */
     public function __construct(
         protected Transport $transport,
+        protected NormalizerInterface $normalizer,
         #[\SensitiveParameter] protected string $apiKey,
         protected string $apiVersion = 'v1',
     ) {

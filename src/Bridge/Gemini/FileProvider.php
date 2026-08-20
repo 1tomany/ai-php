@@ -29,7 +29,6 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
-     * @see OneToMany\AI\Bridge\Transport::request()
      *
      * @throws RuntimeException when no resumable upload URL is returned
      * @throws RuntimeException when opening the file fails

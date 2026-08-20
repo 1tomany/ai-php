@@ -20,6 +20,7 @@ trait QueryTrait
     public function compile(Model $model, Prompt $prompt, array $options = []): Query
     {
         try {
+            /** @var array<string, mixed> $request */
             $request = $this->normalizer->normalize(new QueryRequest($model, $prompt, $options));
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException(sprintf('Compiling the %s query failed.', $this->provider()->getName()), previous: $e);
