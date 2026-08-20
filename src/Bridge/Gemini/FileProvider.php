@@ -42,15 +42,15 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
 
         $start = $this->transport->postRequest($url, [
             'headers' => [
-                'x-goog-api-key' => $this->apiKey,
                 'x-goog-upload-command' => 'start',
-                'x-goog-upload-header-content-length' => $file->size,
-                'x-goog-upload-header-content-type' => $file->mimeType,
                 'x-goog-upload-protocol' => 'resumable',
+                'x-goog-upload-header-content-length' => $file->getSize(),
+                'x-goog-upload-header-content-type' => $file->getMimeType(),
+                'x-goog-api-key' => $this->getApiKey(),
             ],
             'json' => [
                 'file' => [
-                    'display_name' => $file->name,
+                    'display_name' => $file->getName(),
                 ],
             ],
         ]);
@@ -75,8 +75,8 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
 
         $chunkSize = max(1, (int) $chunkSize);
 
-        if (false === $handle = @fopen($file->path, 'rb')) {
-            throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
+        if (false === $handle = @fopen($file->getPath(), 'rb')) {
+            throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->getPath()));
         }
 
         $response = null;
@@ -88,7 +88,7 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
                 $command = 'upload';
 
                 if (false === $chunk = fread($handle, $chunkSize)) {
-                    throw new RuntimeException(sprintf('Reading the file "%s" failed.', $file->path));
+                    throw new RuntimeException(sprintf('Reading the file "%s" failed.', $file->getPath()));
                 }
 
                 $length = strlen($chunk);
@@ -104,9 +104,9 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
                 $response = $this->transport->postRequest($uploadUrl, [
                     'headers' => [
                         'content-length' => $length,
-                        'x-goog-api-key' => $this->apiKey,
-                        'x-goog-upload-command' => $command,
                         'x-goog-upload-offset' => $offset,
+                        'x-goog-upload-command' => $command,
+                        'x-goog-api-key' => $this->getApiKey(),
                     ],
                     'body' => $chunk,
                 ]);
@@ -134,11 +134,11 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $url = $this->url($this->apiVersion, $file->id);
+        $url = $this->url($this->apiVersion, $file->getId());
 
         $this->transport->deleteRequest($url, [
             'headers' => [
-                'x-goog-api-key' => $this->apiKey,
+                'x-goog-api-key' => $this->getApiKey(),
             ],
         ]);
     }

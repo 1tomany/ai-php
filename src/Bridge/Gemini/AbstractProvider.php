@@ -37,6 +37,14 @@ abstract readonly class AbstractProvider implements ProviderInterface
         return Vendor::Gemini;
     }
 
+    /**
+     * @return non-empty-string
+     */
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
     protected function url(string ...$parts): string
     {
         return $this->transport->url(self::BASE_URL, ...$parts);
