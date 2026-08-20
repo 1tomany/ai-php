@@ -21,7 +21,7 @@ trait QueryTrait
     {
         try {
             /** @var array<string, mixed> $request */
-            $request = $this->normalizer->normalize(new QueryDefinition($model, $prompt, $options));
+            $request = $this->serializer->normalize(new QueryDefinition($model, $prompt, $options));
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException(sprintf('Compiling the %s query failed.', static::getVendor()->getName()), previous: $e);
         }

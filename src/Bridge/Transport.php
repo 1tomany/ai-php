@@ -6,7 +6,9 @@ use OneToMany\AI\Bridge\Common\Response\Error\GenericError;
 use OneToMany\AI\Exception\RuntimeException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\UnwrappingDenormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface as HttpResponseInterface;
@@ -20,7 +22,7 @@ readonly class Transport
 {
     public function __construct(
         private HttpClientInterface $httpClient,
-        private DenormalizerInterface $denormalizer,
+        private SerializerInterface&DenormalizerInterface&NormalizerInterface $serializer,
     ) {
     }
 
@@ -95,7 +97,7 @@ readonly class Transport
         }
 
         try {
-            $payload = $this->denormalizer->denormalize($data, $type, 'json', $context);
+            $payload = $this->serializer->denormalize($data, $type, 'json', $context);
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException('Denormalizing the response content failed.', previous: $e);
         }
@@ -145,7 +147,7 @@ readonly class Transport
         }
 
         try {
-            $error = $this->denormalizer->denormalize($data, GenericError::class, null, [
+            $error = $this->serializer->denormalize($data, GenericError::class, null, [
                 UnwrappingDenormalizer::UNWRAP_PATH => '[error]',
             ]);
         } catch (SerializerExceptionInterface) {
