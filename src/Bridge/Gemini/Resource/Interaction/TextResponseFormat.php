@@ -23,19 +23,11 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
     ) {
         parent::__construct('text');
 
-        if ($this->isJson() && null === $schema) {
+        if ('application/json' === $mime_type && null === $schema) {
             throw new InvalidArgumentException(sprintf('A schema is required when the MIME type is "%s".', $this->mime_type));
         }
 
         assert(true === $this->isTypeText());
-    }
-
-    /**
-     * @phpstan-assert-if-true 'application/json' $this->mime_type
-     */
-    public function isJson(): bool
-    {
-        return 'application/json' === $this->mime_type;
     }
 
     /**
