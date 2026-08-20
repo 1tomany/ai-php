@@ -55,20 +55,10 @@ final readonly class QueryNormalizer implements NormalizerInterface
             }
 
             if ($input instanceof RemoteFile) {
-                // $content = FileContent::create()
-                // $content = match (true) {
-                //     $input->isAudio() => new AudioContent(uri: $input->uri),
-                //     $input->isImage() => new ImageContent(uri: $input->uri),
-                //     default => new DocumentContent(uri: $input->uri),
-                // };
-
-                // $request['input'][] = $content;
-                // $request['input'][] = new
-                // $input[] = [
-                //     'type' => $type,
-                //     'uri' => $part->uri,
-                //     'mime_type' => $part->mediaType,
-                // ];
+                $request['input'][] = FileContent::create(
+                    mimeType: $input->mimeType,
+                    uri: $input->uri,
+                );
             }
         }
 
