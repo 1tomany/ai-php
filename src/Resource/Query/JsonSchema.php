@@ -27,8 +27,8 @@ final readonly class JsonSchema
      * @throws InvalidArgumentException when the schema has no name or "title" property
      */
     public function __construct(
-        ?string $name,
         public array $schema,
+        ?string $name = null,
         public bool $strict = true,
     ) {
         if (null !== $name) {
@@ -89,7 +89,7 @@ final readonly class JsonSchema
             throw new InvalidArgumentException(sprintf('The JSON schema file "%s" must contain an object.', $file));
         }
 
-        return new self($name, schema: $schema); // @phpstan-ignore argument.type
+        return new self($schema, $name); // @phpstan-ignore argument.type
     }
 
     /**
