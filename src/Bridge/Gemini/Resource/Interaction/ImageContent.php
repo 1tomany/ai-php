@@ -11,9 +11,10 @@ final readonly class ImageContent extends FileContent
      * @param ?non-empty-string $uri
      */
     public function __construct(
+        string $mime_type,
         ?string $data = null,
         ?string $uri = null,
     ) {
-        parent::__construct('image', $data, $uri);
+        parent::__construct('image', $mime_type, $data, $uri);
     }
 }

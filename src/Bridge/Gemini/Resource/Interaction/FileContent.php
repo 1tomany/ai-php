@@ -11,6 +11,7 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
     /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
      *
+     * @param non-empty-lowercase-string $mime_type
      * @param ?non-empty-string $data
      * @param ?non-empty-string $uri
      *
@@ -18,9 +19,9 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      */
     public function __construct(
         string $type,
+        public string $mime_type,
         public ?string $data = null,
         public ?string $uri = null,
-        // public ?string $mime_type,
     ) {
         parent::__construct($type);
 
@@ -31,11 +32,29 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
         assert(true === $this->isFile());
     }
 
+    public static function create(
+        string $mimeType,
+        ?string $data = null,
+        ?string $uri = null,
+    ): self
+    {
+        if (\str_starts_with($mimeType, 'audio/')) {
+            return new AudioContent($mimeType, $data, $uri);
+        }
+
+        if (\str_starts_with($mimeType, 'image/')) {
+            return new ImageContent($mimeType, $data, $uri);
+        }
+
+        return new DocumentContent($mimeType, $data, $uri);
+    }
+
     /**
      * @see \JsonSerializable
      *
      * @return array{
      *   type: 'audio'|'document'|'image',
+     *   mime_type: non-empty-lowercase-string,
      *   data?: non-empty-string,
      *   uri?: non-empty-string,
      * }
@@ -43,7 +62,10 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
     #[\Override]
     public function jsonSerialize(): mixed
     {
-        $json = ['type' => $this->type];
+        $json = [
+            'type' => $this->type,
+            'mime_type' => $this->mime_type,
+        ];
 
         if (null !== $this->data) {
             $json['data'] = $this->data;

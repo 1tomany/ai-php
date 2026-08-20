@@ -18,17 +18,22 @@ final readonly class RemoteFile
     public string $id;
 
     /**
-     * @param ?non-empty-string $mediaType
+     * @var non-empty-lowercase-string
+     */
+    public string $mimeType;
+
+    /**
+     * @param ?non-empty-string $mimeType
      * @param ?non-empty-string $uri
      * @param ?non-empty-string $purpose
      *
      * @throws InvalidArgumentException when the file ID is empty
-     * @throws InvalidArgumentException when the file media type is empty
+     * @throws InvalidArgumentException when the file MIME type is empty
      */
     public function __construct(
         string|Provider $provider,
         ?string $id,
-        public ?string $mediaType = null,
+        ?string $mimeType = null,
         public ?string $uri = null,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
@@ -40,29 +45,21 @@ final readonly class RemoteFile
         }
 
         $this->id = $id;
+
+        if ('' === $mimeType = trim((string) $mimeType)) {
+            throw new InvalidArgumentException('The MIME type cannot be empty.');
+        }
+
+        $this->mimeType = \strtolower($mimeType);
     }
 
-    /**
-     * @phpstan-assert-if-true non-empty-string $this->mediaType
-     */
-    public function isAudio(): bool
-    {
-        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'audio/');
-    }
-
-    /**
-     * @phpstan-assert-if-true non-empty-string $this->mediaType
-     */
     public function isImage(): bool
     {
-        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'image/');
+        return \str_starts_with($this->mimeType, 'image/');
     }
 
-    /**
-     * @phpstan-assert-if-true non-empty-string $this->mediaType
-     */
     public function isVideo(): bool
     {
-        return null !== $this->mediaType && 0 === stripos($this->mediaType, 'video/');
+        return \str_starts_with($this->mimeType, 'video/');
     }
 }

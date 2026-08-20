@@ -4,6 +4,7 @@ namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\AudioContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\DocumentContent;
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\FileContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\ImageContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextResponseFormat;
@@ -27,26 +28,24 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $request = ['model' => $data->model->name];
+        $request = ['model' => $data->model->name, 'input' => []];
 
-        $resolveType = static function (
-            InputText|RemoteFile $part,
-        ): string {
-            if ($part instanceof InputText) {
-                return 'text';
-            }
+        // $resolveType = static function (
+        //     InputText|RemoteFile $part,
+        // ): string {
+        //     if ($part instanceof InputText) {
+        //         return 'text';
+        //     }
 
-            $type = match (true) {
-                $part->isAudio() => 'audio',
-                $part->isImage() => 'image',
-                $part->isVideo() => 'video',
-                default => 'document',
-            };
+        //     $type = match (true) {
+        //         $part->isAudio() => 'audio',
+        //         $part->isImage() => 'image',
+        //         $part->isVideo() => 'video',
+        //         default => 'document',
+        //     };
 
-            return $type;
-        };
-
-        $request['input'] = [];
+        //     return $type;
+        // };
 
         foreach ($data->prompt->input() as $input) {
             if ($input instanceof InputText) {
@@ -56,13 +55,14 @@ final readonly class QueryNormalizer implements NormalizerInterface
             }
 
             if ($input instanceof RemoteFile) {
-                $content = match (true) {
-                    $input->isAudio() => new AudioContent(uri: $input->uri),
-                    $input->isImage() => new ImageContent(uri: $input->uri),
-                    default => new DocumentContent(uri: $input->uri),
-                };
+                // $content = FileContent::create()
+                // $content = match (true) {
+                //     $input->isAudio() => new AudioContent(uri: $input->uri),
+                //     $input->isImage() => new ImageContent(uri: $input->uri),
+                //     default => new DocumentContent(uri: $input->uri),
+                // };
 
-                $request['input'][] = $content;
+                // $request['input'][] = $content;
                 // $request['input'][] = new
                 // $input[] = [
                 //     'type' => $type,

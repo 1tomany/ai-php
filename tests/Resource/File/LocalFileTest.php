@@ -41,6 +41,6 @@ final class LocalFileTest extends TestCase
         $mediaType = @mime_content_type($path);
         $this->assertIsString($mediaType);
 
-        $this->assertSame($mediaType, new LocalFile($path)->mediaType);
+        $this->assertSame($mediaType, new LocalFile($path)->mimeType);
     }
 }

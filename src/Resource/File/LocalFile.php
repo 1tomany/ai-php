@@ -27,9 +27,9 @@ final readonly class LocalFile
     public string $name;
 
     /**
-     * @var non-empty-string
+     * @var non-empty-lowercase-string
      */
-    public string $mediaType;
+    public string $mimeType;
 
     /**
      * @var non-negative-int
@@ -39,13 +39,13 @@ final readonly class LocalFile
     /**
      * @throws InvalidArgumentException when the file path is empty
      * @throws InvalidArgumentException when the file is not readable
-     * @throws InvalidArgumentException when the media type is empty
+     * @throws InvalidArgumentException when the MIME type is empty
      * @throws InvalidArgumentException when the file name is empty
      * @throws RuntimeException when calculating the file size fails
      */
     public function __construct(
         string $path,
-        ?string $mediaType = null,
+        ?string $mimeType = null,
         ?string $name = null,
     ) {
         if ('' === $path = trim($path)) {
@@ -58,15 +58,15 @@ final readonly class LocalFile
 
         $this->path = $path;
 
-        if ('' === $mediaType = trim((string) $mediaType)) {
-            $mediaType = @mime_content_type(filename: $path);
+        if ('' === $mimeType = trim((string) $mimeType)) {
+            $mimeType = @mime_content_type(filename: $path);
         }
 
-        if (false === $mediaType || '' === $mediaType) {
-            throw new InvalidArgumentException('The media type cannot be empty.');
+        if (false === $mimeType || '' === $mimeType) {
+            throw new InvalidArgumentException('The MIME type cannot be empty.');
         }
 
-        $this->mediaType = strtolower($mediaType);
+        $this->mimeType = strtolower($mimeType);
 
         if ('' === $name = trim($name ?? basename($path))) {
             throw new InvalidArgumentException('The file name cannot be empty.');

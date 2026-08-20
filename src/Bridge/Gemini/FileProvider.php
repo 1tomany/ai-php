@@ -45,7 +45,7 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
                 'x-goog-api-key' => $this->apiKey,
                 'x-goog-upload-command' => 'start',
                 'x-goog-upload-header-content-length' => $file->size,
-                'x-goog-upload-header-content-type' => $file->mediaType,
+                'x-goog-upload-header-content-type' => $file->mimeType,
                 'x-goog-upload-protocol' => 'resumable',
             ],
             'json' => [
