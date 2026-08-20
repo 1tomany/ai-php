@@ -11,6 +11,8 @@ use function trim;
 
 final readonly class Model implements \Stringable
 {
+    public Vendor $vendor;
+
     /**
      * @var non-empty-string
      */
@@ -20,9 +22,11 @@ final readonly class Model implements \Stringable
      * @throws InvalidArgumentException when the model name is empty
      */
     public function __construct(
-        public Vendor $vendor,
+        string|Vendor $vendor,
         string $name,
     ) {
+        $this->vendor = Vendor::create($vendor);
+
         if ('' === $name = trim($name)) {
             throw new InvalidArgumentException('The model name cannot be empty.');
         }
@@ -46,7 +50,7 @@ final readonly class Model implements \Stringable
             return $model;
         }
 
-        return new self(Vendor::fromModel($model), array_last(explode(':', trim($model), 2)));
+        return new self(Vendor::fromModel($model), array_last(explode(':', $model, 2)));
     }
 
     public static function gemini(string $name): self
