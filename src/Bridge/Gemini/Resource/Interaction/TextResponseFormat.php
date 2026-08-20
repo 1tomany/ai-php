@@ -16,16 +16,17 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
      *
      * @throws InvalidArgumentException when the MIME type is "application/json" and a schema is not provided
      */
-    #[\Override]
     public function __construct(
         public string $mime_type = 'application/json',
         public ?array $schema = null,
     ) {
+        parent::__construct('text');
+
         if ($this->isJson() && null === $schema) {
             throw new InvalidArgumentException(sprintf('A schema is required when the MIME type is "%s".', $this->mime_type));
         }
 
-        parent::__construct('text');
+        \assert('text' === $this->type);
     }
 
     /**
