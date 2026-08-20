@@ -2,8 +2,11 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextContent;
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextResponseFormat;
 use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\InputText;
+use OneToMany\AI\Resource\Query\JsonSchema;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -21,7 +24,9 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $model = $data->model->name;
+        $request = [
+            'model' => $data->model->name,
+        ];
 
         $resolveType = static function (
             InputText|RemoteFile $part,
@@ -40,44 +45,45 @@ final readonly class QueryNormalizer implements NormalizerInterface
             return $type;
         };
 
-        $input = [];
+        $request['input'] = [];
 
-        foreach ($data->prompt->input() as $part) {
-            $type = $resolveType(part: $part);
+        foreach ($data->prompt->input() as $input) {
+            $type = $resolveType(part: $input);
 
-            if ($part instanceof InputText) {
-                $input[] = [
-                    'type' => $type,
-                    'text' => (string) $part,
-                ];
+            if ($input instanceof InputText) {
+                $request['input'][] = new TextContent(
+                    text: $input->toString(),
+                );
+                //     'type' => $type,
+                //     'text' => $text,
+                // ];
             }
 
-            if ($part instanceof RemoteFile) {
-                $input[] = [
-                    'type' => $type,
-                    'uri' => $part->uri,
-                    'mime_type' => $part->mediaType,
-                ];
+            if ($input instanceof RemoteFile) {
+                // $request['input'][] = new
+                // $input[] = [
+                //     'type' => $type,
+                //     'uri' => $part->uri,
+                //     'mime_type' => $part->mediaType,
+                // ];
             }
         }
-
-        $request = [
-            'model' => $model,
-            'stream' => false,
-            'input' => $input,
-        ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
             $request['system_instruction'] = (string) $instructions;
         }
 
-        if ($schema = $data->prompt->schema()) {
-            $request['response_format'] = [
-                'type' => 'text',
-                'mime_type' => $schema->mediaType,
-                'schema' => $schema->schema,
-            ];
+        if ($data->prompt->schema() instanceof JsonSchema) {
+            $request['response_format'] = new TextResponseFormat(
+                schema: $data->prompt->schema()->schema,
+            );
         }
+
+        //         'type' => 'text',
+        //         'mime_type' => $schema->mediaType,
+        //         'schema' => $schema->schema,
+        //     ];
+        // }
 
         return array_replace($data->options, $request);
     }

@@ -30,11 +30,13 @@ final readonly class InputText implements \Stringable
 
     /**
      * @see \Stringable
+     *
+     * @return non-empty-string
      */
     #[\Override]
     public function __toString(): string
     {
-        return $this->text;
+        return $this->toString();
     }
 
     /**
@@ -49,5 +51,13 @@ final readonly class InputText implements \Stringable
         }
 
         return new self($text);
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function toString(): string
+    {
+        return $this->text;
     }
 }
