@@ -5,6 +5,7 @@ namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function assert;
+use function str_starts_with;
 
 abstract readonly class FileContent extends Content implements \JsonSerializable
 {
@@ -36,13 +37,12 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
         string $mimeType,
         ?string $data = null,
         ?string $uri = null,
-    ): self
-    {
-        if (\str_starts_with($mimeType, 'audio/')) {
+    ): self {
+        if (str_starts_with($mimeType, 'audio/')) {
             return new AudioContent($mimeType, $data, $uri);
         }
 
-        if (\str_starts_with($mimeType, 'image/')) {
+        if (str_starts_with($mimeType, 'image/')) {
             return new ImageContent($mimeType, $data, $uri);
         }
 

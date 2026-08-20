@@ -5,7 +5,8 @@ namespace OneToMany\AI\Resource\File;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
 
-use function stripos;
+use function str_starts_with;
+use function strtolower;
 use function trim;
 
 final readonly class RemoteFile
@@ -50,16 +51,16 @@ final readonly class RemoteFile
             throw new InvalidArgumentException('The MIME type cannot be empty.');
         }
 
-        $this->mimeType = \strtolower($mimeType);
+        $this->mimeType = strtolower($mimeType);
     }
 
     public function isImage(): bool
     {
-        return \str_starts_with($this->mimeType, 'image/');
+        return str_starts_with($this->mimeType, 'image/');
     }
 
     public function isVideo(): bool
     {
-        return \str_starts_with($this->mimeType, 'video/');
+        return str_starts_with($this->mimeType, 'video/');
     }
 }
