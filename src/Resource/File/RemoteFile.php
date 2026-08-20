@@ -3,7 +3,7 @@
 namespace OneToMany\AI\Resource\File;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 
 use function sprintf;
 use function str_starts_with;
@@ -12,7 +12,7 @@ use function trim;
 
 final readonly class RemoteFile
 {
-    public Provider $provider;
+    public Vendor $provider;
 
     /**
      * @var non-empty-string
@@ -37,14 +37,14 @@ final readonly class RemoteFile
      * @throws InvalidArgumentException when the MIME type is empty
      */
     public function __construct(
-        string|Provider $provider,
+        string|Vendor $provider,
         ?string $id,
         ?string $uri,
         ?string $mimeType,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
-        $this->provider = Provider::create($provider);
+        $this->provider = Vendor::create($provider);
 
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');

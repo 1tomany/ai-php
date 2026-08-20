@@ -4,7 +4,7 @@ namespace OneToMany\AI\Resource;
 
 use OneToMany\AI\Contract\Bridge\ProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 
 use function sprintf;
 
@@ -28,11 +28,11 @@ final readonly class Registry
         $indexedProviders = [];
 
         foreach ($providers as $provider) {
-            if (isset($indexedProviders[$provider->provider()->getValue()])) {
-                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $provider->provider()->getValue()));
+            if (isset($indexedProviders[$provider->vendor()->getValue()])) {
+                throw new InvalidArgumentException(sprintf('The "%s" provider is already registered.', $provider->vendor()->getValue()));
             }
 
-            $indexedProviders[$provider->provider()->getValue()] = $provider;
+            $indexedProviders[$provider->vendor()->getValue()] = $provider;
         }
 
         $this->providers = $indexedProviders;
@@ -43,7 +43,7 @@ final readonly class Registry
      *
      * @throws InvalidArgumentException when a provider is not registered
      */
-    public function get(Provider $provider): ProviderInterface
+    public function get(Vendor $provider): ProviderInterface
     {
         if (!isset($this->providers[$provider->getValue()])) {
             throw new InvalidArgumentException(sprintf('The "%s" provider is not registered.', $provider->getValue()));

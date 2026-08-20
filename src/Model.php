@@ -20,7 +20,7 @@ final readonly class Model implements \Stringable
      * @throws InvalidArgumentException when the model name is empty
      */
     public function __construct(
-        public Provider $provider,
+        public Vendor $vendor,
         string $name,
     ) {
         if ('' === $name = trim($name)) {
@@ -37,31 +37,21 @@ final readonly class Model implements \Stringable
      */
     public function __toString(): string
     {
-        return sprintf('%s:%s', $this->provider->getValue(), $this->name);
+        return sprintf('%s:%s', $this->vendor->getValue(), $this->name);
     }
 
-    /**
-     * @see OneToMany\AI\Provider::fromModel()
-     * @see OneToMany\AI\Model::__construct()
-     */
     public static function create(string $model): self
     {
-        return new self(Provider::fromModel($model), array_last(explode(':', trim($model), 2)));
+        return new self(Vendor::fromModel($model), array_last(explode(':', trim($model), 2)));
     }
 
-    /**
-     * @see OneToMany\AI\Model::__construct()
-     */
     public static function gemini(string $name): self
     {
-        return new self(Provider::Gemini, $name);
+        return new self(Vendor::Gemini, $name);
     }
 
-    /**
-     * @see OneToMany\AI\Model::__construct()
-     */
     public static function openai(string $name): self
     {
-        return new self(Provider::OpenAI, $name);
+        return new self(Vendor::OpenAI, $name);
     }
 }

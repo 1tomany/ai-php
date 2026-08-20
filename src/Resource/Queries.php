@@ -40,7 +40,7 @@ final readonly class Queries implements QueriesInterface
             throw new InvalidArgumentException('At least one text or file input is required to compile a prompt into a query.');
         }
 
-        return $this->providers->get($model->provider)->compile($model, $prompt, $options);
+        return $this->providers->get($model->vendor)->compile($model, $prompt, $options);
     }
 
     /**
@@ -49,7 +49,7 @@ final readonly class Queries implements QueriesInterface
     #[\Override]
     public function run(Query $query): Response
     {
-        return $this->providers->get($query->model->provider)->run($query);
+        return $this->providers->get($query->model->vendor)->run($query);
     }
 
     /**

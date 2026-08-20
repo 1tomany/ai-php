@@ -70,7 +70,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryDefinition && $data->model->provider->isOpenAI();
+        return $data instanceof QueryDefinition && $data->model->vendor->isOpenAI();
     }
 
     /**

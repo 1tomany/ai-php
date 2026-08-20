@@ -2,9 +2,9 @@
 
 namespace OneToMany\AI\Contract\Bridge;
 
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 
 interface ProviderInterface
 {
-    public function provider(): Provider;
+    public function vendor(): Vendor;
 }
