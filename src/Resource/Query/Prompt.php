@@ -25,32 +25,36 @@ final class Prompt
     /**
      * @throws InvalidArgumentException when no input is provided
      */
-    public static function with(InputText|RemoteFile ...$inputs): self
+    public static function with(string|InputText|RemoteFile ...$inputs): static
     {
         if ([] === $inputs) {
             throw new InvalidArgumentException('At least one text or file input is required.');
         }
 
-        $prompt = new self();
+        $prompt = new static();
 
         foreach ($inputs as $input) {
+            if (true === is_string($input)) {
+                $input = new InputText($input);
+            }
+
             $prompt = $prompt->addInput($input);
         }
 
         return $prompt;
     }
 
-    public function addInputText(string|InputText $text): self
+    public function addInputText(string|InputText $text): static
     {
         return $this->addInput(is_string($text) ? new InputText($text) : $text);
     }
 
-    public function addRemoteFile(RemoteFile $file): self
+    public function addRemoteFile(RemoteFile $file): static
     {
         return $this->addInput($file);
     }
 
-    public function withInstructions(string|InputText $instructions): self
+    public function withInstructions(string|InputText $instructions): static
     {
         if (!$instructions instanceof InputText) {
             $instructions = new InputText($instructions);
@@ -73,7 +77,7 @@ final class Prompt
         return $this->withSchema(new JsonSchema($name, $strict, schema: $schema));
     }
 
-    public function withJsonSchemaFile(string $path, ?string $name = null): self
+    public function withJsonSchemaFile(string $path, ?string $name = null): static
     {
         return $this->withSchema(JsonSchema::fromFile($name, $path));
     }
@@ -101,7 +105,7 @@ final class Prompt
         return [] === $this->input;
     }
 
-    private function addInput(InputText|RemoteFile $input): self
+    private function addInput(InputText|RemoteFile $input): static
     {
         $prompt = clone $this;
         $prompt->input[] = $input;
@@ -109,7 +113,7 @@ final class Prompt
         return $prompt;
     }
 
-    private function withSchema(JsonSchema $schema): self
+    private function withSchema(JsonSchema $schema): static
     {
         $prompt = clone $this;
         $prompt->schema = $schema;

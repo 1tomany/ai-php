@@ -24,7 +24,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
         protected string $apiVersion = 'v1',
     ) {
         if ('' === $this->apiKey) {
-            throw new InvalidArgumentException(sprintf('The %d API key cannot be empty.', $this->provider()->getName()));
+            throw new InvalidArgumentException(sprintf('The %s API key cannot be empty.', $this->provider()->getName()));
         }
     }
 
