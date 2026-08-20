@@ -33,16 +33,21 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
         assert(true === $this->isFile());
     }
 
+    /**
+     * @param non-empty-lowercase-string $mimeType
+     * @param ?non-empty-string $data
+     * @param ?non-empty-string $uri
+     */
     public static function create(
         string $mimeType,
         ?string $data = null,
         ?string $uri = null,
     ): self {
-        if (str_starts_with($mimeType, 'audio/')) {
+        if (true === str_starts_with($mimeType, 'audio/')) {
             return new AudioContent($mimeType, $data, $uri);
         }
 
-        if (str_starts_with($mimeType, 'image/')) {
+        if (true === str_starts_with($mimeType, 'image/')) {
             return new ImageContent($mimeType, $data, $uri);
         }
 

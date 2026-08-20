@@ -6,9 +6,6 @@ final readonly class AudioContent extends FileContent
 {
     /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
-     *
-     * @param ?non-empty-string $data
-     * @param ?non-empty-string $uri
      */
     public function __construct(
         string $mime_type,
