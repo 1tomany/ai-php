@@ -2,7 +2,10 @@
 
 namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
-use OneToMany\AI\Resource\File\RemoteFile;
+use OneToMany\AI\Bridge\OpenAI\Resource\Response\EasyInputMessage;
+use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputFile;
+use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputImage;
+use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputText;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -22,50 +25,30 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $model = $data->model->name;
-
-        $resolveType = static function (
-            InputText|RemoteFile $part,
-        ): string {
-            if ($part instanceof InputText) {
-                return 'input_text';
-            }
-
-            if ($part->isImage()) {
-                return 'input_image';
-            }
-
-            return 'input_file';
-        };
-
+        /** @var list<ResponseInputFile|ResponseInputImage|ResponseInputText> $content */
         $content = [];
 
         foreach ($data->prompt->input() as $part) {
-            $type = $resolveType(part: $part);
-
             if ($part instanceof InputText) {
-                $content[] = [
-                    'type' => $type,
-                    'text' => (string) $part,
-                ];
+                $content[] = new ResponseInputText($part->text);
+
+                continue;
             }
 
-            if ($part instanceof RemoteFile) {
-                $content[] = [
-                    'type' => $type,
-                    'file_id' => $part->id,
-                ];
+            if ($part->isImage()) {
+                $content[] = new ResponseInputImage($part->id);
+
+                continue;
             }
+
+            $content[] = new ResponseInputFile($part->id);
         }
 
         $request = [
-            'model' => $model,
+            'model' => $data->model->name,
             'stream' => false,
             'input' => [
-                [
-                    'role' => 'user',
-                    'content' => $content,
-                ],
+                new EasyInputMessage(content: $content),
             ],
         ];
 
