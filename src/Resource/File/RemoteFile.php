@@ -34,7 +34,7 @@ final readonly class RemoteFile
     public function __construct(
         string|Provider $provider,
         ?string $id,
-        ?string $mimeType = null,
+        ?string $mimeType,
         public ?string $uri = null,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,

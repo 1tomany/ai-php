@@ -43,7 +43,7 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
         ?string $data = null,
         ?string $uri = null,
     ): self {
-        $content = match(true) {
+        $content = match (true) {
             str_starts_with($mimeType, 'audio') => new AudioContent($mimeType, $data, $uri),
             str_starts_with($mimeType, 'image') => new ImageContent($mimeType, $data, $uri),
             default => new DocumentContent($mimeType, $data, $uri),

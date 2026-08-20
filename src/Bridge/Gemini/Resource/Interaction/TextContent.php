@@ -2,21 +2,34 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
-use function assert;
+use OneToMany\AI\Exception\InvalidArgumentException;
+
+use function trim;
 
 final readonly class TextContent extends Content implements \JsonSerializable
 {
     /**
+     * @var non-empty-string
+     */
+    public string $text;
+
+    /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
      *
-     * @param non-empty-string $text
+     * @throws InvalidArgumentException when the text is empty
      */
     public function __construct(
-        public string $text,
+        ?string $text,
     ) {
         parent::__construct('text');
 
-        assert(true === $this->isTypeText());
+        if ('' === $text = trim((string) $text)) {
+            throw new InvalidArgumentException('The text cannot be empty.');
+        }
+
+        $this->text = $text;
+
+        // assert(true === $this->isTypeText());
     }
 
     /**

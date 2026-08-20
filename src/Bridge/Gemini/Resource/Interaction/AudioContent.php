@@ -5,7 +5,7 @@ namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 final readonly class AudioContent extends FileContent
 {
     /**
-     * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
+     * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\FileContent
      */
     public function __construct(
         string $mime_type,
