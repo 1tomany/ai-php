@@ -49,7 +49,7 @@ final readonly class Queries implements QueriesInterface
     #[\Override]
     public function run(Query $query): Response
     {
-        return $this->providers->get($query->model->vendor)->run($query);
+        return $this->providers->get($query->getModel()->getVendor())->run($query);
     }
 
     /**

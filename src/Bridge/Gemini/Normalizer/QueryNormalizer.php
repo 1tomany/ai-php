@@ -25,7 +25,9 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $request = ['model' => $data->model->name];
+        $request = [
+            'model' => $data->getModel()->getName(),
+        ];
 
         foreach ($data->getPrompt()->getInput() as $input) {
             if (!isset($request['input'])) {
@@ -36,11 +38,9 @@ final readonly class QueryNormalizer implements NormalizerInterface
                 $request['input'][] = new TextContent(
                     text: $input->getText(),
                 );
-            }
-
-            if ($input instanceof RemoteFile) {
+            } else {
                 $request['input'][] = FileContent::create(
-                    $input->uri, mimeType: $input->mimeType,
+                    $input->getUri(), $input->getMimeType(),
                 );
             }
         }
@@ -49,10 +49,8 @@ final readonly class QueryNormalizer implements NormalizerInterface
             $request['system_instruction'] = $instructions->getText();
         }
 
-        if ($data->getPrompt()->getSchema() instanceof JsonSchema) {
-            $request['response_format'] = new TextResponseFormat(
-                schema: $data->getPrompt()->getSchema()->getSchema(),
-            );
+        if ($schema = $data->getPrompt()->getSchema()?->getSchema()) {
+            $request['response_format'] = new TextResponseFormat($schema);
         }
 
         return array_replace($data->getOptions(), $request);

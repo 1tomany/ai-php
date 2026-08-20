@@ -31,17 +31,17 @@ final readonly class QueryNormalizer implements NormalizerInterface
                     text: $input->getText(),
                 );
             } else {
-                $content = ResponseInput::asFile(
-                    $input->mimeType, $input->id,
-                );
+                $content = ResponseInput::asFile($input->getId(), $input->getMimeType());
             }
 
             $easyInputMessage->addContent($content);
         }
 
         $request = [
-            'model' => $data->model->name,
-            'input' => [$easyInputMessage],
+            'model' => $data->getModel()->getName(),
+            'input' => [
+                $easyInputMessage,
+            ],
         ];
 
         if ($instructions = $data->getPrompt()->getInstructions()) {
@@ -49,19 +49,17 @@ final readonly class QueryNormalizer implements NormalizerInterface
         }
 
         if ($schema = $data->getPrompt()->getSchema()) {
-            $request = array_merge($request, [
-                'text' => [
-                    'format' => [
-                        'type' => 'json_schema',
-                        'name' => $schema->getName(),
-                        'strict' => $schema->isStrict(),
-                        'schema' => $schema->getSchema(),
-                    ],
+            $request['text'] = [
+                'format' => [
+                    'type' => 'json_schema',
+                    'name' => $schema->getName(),
+                    'strict' => $schema->isStrict(),
+                    'schema' => $schema->getSchema(),
                 ],
-            ]);
+            ];
         }
 
-        return array_replace($data->options, $request);
+        return array_replace($data->getOptions(), $request);
     }
 
     /**
@@ -70,7 +68,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryDefinition && $data->model->vendor->isOpenAI();
+        return $data instanceof QueryDefinition && $data->getModel()->getVendor()->isOpenAI();
     }
 
     /**
