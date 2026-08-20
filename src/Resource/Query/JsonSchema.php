@@ -40,6 +40,8 @@ final readonly class JsonSchema
             throw new InvalidArgumentException('The schema cannot be empty.');
         }
 
+        $this->schema = $schema;
+
         if (null !== $name) {
             $name = trim($name);
         }
