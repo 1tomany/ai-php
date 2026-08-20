@@ -25,8 +25,6 @@ readonly class Transport
     }
 
     /**
-     * @see OneToMany\AI\Bridge\Transport::assertSuccessful()
-     *
      * @param array<string, mixed> $options
      *
      * @throws RuntimeException when sending the request fails
@@ -45,8 +43,6 @@ readonly class Transport
     }
 
     /**
-     * @see OneToMany\AI\Bridge\Transport::request()
-     *
      * @param array<string, mixed> $options
      */
     public function postRequest(string $url, array $options = []): HttpResponseInterface
@@ -55,8 +51,6 @@ readonly class Transport
     }
 
     /**
-     * @see OneToMany\AI\Bridge\Transport::request()
-     *
      * @param array<string, mixed> $options
      */
     public function deleteRequest(string $url, array $options = []): HttpResponseInterface
@@ -115,23 +109,19 @@ readonly class Transport
     }
 
     /**
-     * @throws RuntimeException when the request fails due to a transport error
-     * @throws RuntimeException when the request was unsuccessful due to an HTTP error
+     * @throws RuntimeException when the request failed due to a network error
+     * @throws RuntimeException when the request failed due to an HTTP error
      */
     public function assertSuccessful(HttpResponseInterface $response): void
     {
         try {
             $statusCode = $response->getStatusCode();
         } catch (HttpClientExceptionInterface $e) {
-            throw new RuntimeException('The request failed.', previous: $e);
+            throw new RuntimeException('The request failed due to a network error.', previous: $e);
         }
 
         if ($statusCode < 200 || $statusCode >= 300) {
-            if (null === $message = $this->extractErrorMessage($response)) {
-                $message = sprintf('[HTTP %d] The request was unsuccessful.', $statusCode);
-            }
-
-            throw new RuntimeException($message, $statusCode);
+            throw new RuntimeException($this->extractErrorMessage($response) ?? sprintf('The server returned an HTTP %d status.', $statusCode), $statusCode);
         }
     }
 

@@ -5,6 +5,7 @@ namespace OneToMany\AI\Resource\File;
 use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Provider;
 
+use function sprintf;
 use function str_starts_with;
 use function strtolower;
 use function trim;
@@ -17,6 +18,11 @@ final readonly class RemoteFile
      * @var non-empty-string
      */
     public string $id;
+
+    /**
+     * @var ?non-empty-string
+     */
+    public ?string $uri;
 
     /**
      * @var non-empty-lowercase-string
@@ -34,8 +40,8 @@ final readonly class RemoteFile
     public function __construct(
         string|Provider $provider,
         ?string $id,
+        ?string $uri,
         ?string $mimeType,
-        public ?string $uri = null,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
@@ -46,6 +52,18 @@ final readonly class RemoteFile
         }
 
         $this->id = $id;
+
+        if (null !== $uri) {
+            $uri = trim($uri);
+        }
+
+        if ($this->provider->isGemini()) {
+            if (null === $uri || '' === $uri) {
+                throw new InvalidArgumentException(sprintf('%s requires a non-empty URI.', $this->provider->getName()));
+            }
+        }
+
+        $this->uri = '' !== $uri ? $uri : null;
 
         if ('' === $mimeType = trim((string) $mimeType)) {
             throw new InvalidArgumentException('The MIME type cannot be empty.');
