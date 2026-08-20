@@ -40,6 +40,8 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      * @param non-empty-lowercase-string $mimeType
      * @param ?non-empty-string $data
      * @param ?non-empty-string $uri
+     *
+     * @return AudioContent|DocumentContent|ImageContent
      */
     public static function create(
         string $mimeType,
