@@ -4,14 +4,19 @@ namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
 
-use function assert;
 use function str_starts_with;
 
+/**
+ * @template TType of 'audio'|'document'|'image'
+ *
+ * @extends Content<TType>
+ */
 abstract readonly class FileContent extends Content implements \JsonSerializable
 {
     /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
      *
+     * @param TType $type
      * @param non-empty-lowercase-string $mime_type
      * @param ?non-empty-string $data
      * @param ?non-empty-string $uri
@@ -29,8 +34,6 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
         if (null === $data && null === $uri) {
             throw new InvalidArgumentException('The data and URI cannot both be empty.');
         }
-
-        assert(true === $this->isFile());
     }
 
     /**

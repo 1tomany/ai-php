@@ -70,7 +70,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
         ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
-            $request['instructions'] = $instructions->__toString();
+            $request['instructions'] = $instructions->toString();
         }
 
         if ($schema = $data->prompt->schema()) {

@@ -2,6 +2,9 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
+/**
+ * @extends FileContent<'document'>
+ */
 final readonly class DocumentContent extends FileContent
 {
     /**

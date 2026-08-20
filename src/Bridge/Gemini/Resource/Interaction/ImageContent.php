@@ -2,6 +2,9 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
+/**
+ * @extends FileContent<'image'>
+ */
 final readonly class ImageContent extends FileContent
 {
     /**

@@ -6,6 +6,9 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function trim;
 
+/**
+ * @extends Content<'text'>
+ */
 final readonly class TextContent extends Content implements \JsonSerializable
 {
     /**
@@ -28,8 +31,6 @@ final readonly class TextContent extends Content implements \JsonSerializable
         }
 
         $this->text = $text;
-
-        // assert(true === $this->isTypeText());
     }
 
     /**

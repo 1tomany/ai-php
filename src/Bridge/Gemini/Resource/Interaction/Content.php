@@ -2,10 +2,13 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
+/**
+ * @template TType of 'audio'|'document'|'image'|'text'|'video'
+ */
 abstract readonly class Content
 {
     /**
-     * @param 'audio'|'document'|'image'|'text'|'video' $type
+     * @param TType $type
      */
     public function __construct(
         public string $type,
