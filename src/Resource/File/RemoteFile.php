@@ -2,34 +2,19 @@
 
 namespace OneToMany\AI\Resource\File;
 
-use OneToMany\AI\Exception\InvalidArgumentException;
-
-use function trim;
-
 final readonly class RemoteFile
 {
     /**
-     * @var non-empty-string
-     */
-    public string $id;
-
-    /**
+     * @param non-empty-string $id
      * @param ?non-empty-string $uri
      * @param ?non-empty-string $purpose
-     *
-     * @throws InvalidArgumentException when the file ID is empty
      */
     public function __construct(
-        ?string $id,
-        public ?string $uri = null,
+        public string $id,
         public ?\DateTimeImmutable $expiresAt = null,
+        public ?string $uri = null,
         public ?string $purpose = null,
     ) {
-        if ('' === $id = trim((string) $id)) {
-            throw new InvalidArgumentException('The file ID cannot be empty.');
-        }
-
-        $this->id = $id;
     }
 
     /**
@@ -40,17 +25,17 @@ final readonly class RemoteFile
         return $this->id;
     }
 
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
     /**
      * @return ?non-empty-string
      */
     public function getUri(): ?string
     {
         return $this->uri;
-    }
-
-    public function getExpiresAt(): ?\DateTimeImmutable
-    {
-        return $this->expiresAt;
     }
 
     /**

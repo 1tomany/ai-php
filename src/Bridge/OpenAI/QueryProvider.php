@@ -22,9 +22,9 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
 
         try {
             $response = $this->transport->postRequest($url, [
-                'auth_bearer' => $this->getApiKey(),
+                'auth_bearer' => $this->apiKey,
                 'json' => [
-                    ...$query->getRequest(),
+                    ...$query->request,
                 ],
             ]);
 

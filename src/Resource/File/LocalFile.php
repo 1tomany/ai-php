@@ -58,15 +58,15 @@ final readonly class LocalFile
 
         $this->path = $path;
 
-        if ('' === $mimeType = trim((string) $mimeType)) {
-            $mimeType = @mime_content_type(filename: $path);
-        }
-
         if ('' === $name = trim($name ?? basename($path))) {
             throw new InvalidArgumentException('The file name cannot be empty.');
         }
 
         $this->name = $name;
+
+        if ('' === $mimeType = trim((string) $mimeType)) {
+            $mimeType = @mime_content_type(filename: $path);
+        }
 
         if (false === $mimeType || '' === $mimeType) {
             throw new InvalidArgumentException('The MIME type cannot be empty.');

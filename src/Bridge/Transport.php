@@ -80,8 +80,8 @@ readonly class Transport
      *
      * @return T
      *
-     * @throws RuntimeException when decoding the response fails
-     * @throws RuntimeException when denormalizing the response fails
+     * @throws RuntimeException when decoding the response content fails
+     * @throws RuntimeException when denormalizing the response content fails
      */
     public function decode(
         HttpResponseInterface $response,
@@ -91,13 +91,13 @@ readonly class Transport
         try {
             $data = $response->toArray(false);
         } catch (HttpClientExceptionInterface $e) {
-            throw new RuntimeException('Decoding the response failed.', previous: $e);
+            throw new RuntimeException('Decoding the response content failed.', previous: $e);
         }
 
         try {
             $payload = $this->denormalizer->denormalize($data, $type, 'json', $context);
         } catch (SerializerExceptionInterface $e) {
-            throw new RuntimeException('Denormalizing the response failed.', previous: $e);
+            throw new RuntimeException('Denormalizing the response content failed.', previous: $e);
         }
 
         return $payload;
