@@ -7,7 +7,7 @@ use OneToMany\AI\Contract\Resource\QueriesInterface;
 
 interface AiClientInterface
 {
-    public FilesInterface $files { }
+    public FilesInterface $files { get; }
 
-    public QueriesInterface $queries { }
+    public QueriesInterface $queries { get; }
 }
