@@ -3,16 +3,15 @@
 namespace OneToMany\AI\Resource\File;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 
 use function sprintf;
-use function str_starts_with;
 use function strtolower;
 use function trim;
 
 final readonly class RemoteFile
 {
-    public Provider $provider;
+    public Vendor $vendor;
 
     /**
      * @var non-empty-string
@@ -33,18 +32,18 @@ final readonly class RemoteFile
      * @param ?non-empty-string $purpose
      *
      * @throws InvalidArgumentException when the file ID is empty
-     * @throws InvalidArgumentException when the provider is Gemini and the URI is empty
+     * @throws InvalidArgumentException when the vendor is Gemini and the URI is empty
      * @throws InvalidArgumentException when the MIME type is empty
      */
     public function __construct(
-        string|Provider $provider,
+        string|Vendor $vendor,
         ?string $id,
         ?string $uri,
         ?string $mimeType,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
-        $this->provider = Provider::create($provider);
+        $this->vendor = Vendor::create($vendor);
 
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');
@@ -56,9 +55,9 @@ final readonly class RemoteFile
             $uri = trim($uri);
         }
 
-        if ($this->provider->isGemini()) {
+        if ($this->vendor->isGemini()) {
             if (null === $uri || '' === $uri) {
-                throw new InvalidArgumentException(sprintf('%s requires a non-empty URI.', $this->provider->getName()));
+                throw new InvalidArgumentException(sprintf('%s requires a non-empty URI.', $this->vendor->getName()));
             }
         }
 
@@ -71,8 +70,40 @@ final readonly class RemoteFile
         $this->mimeType = strtolower($mimeType);
     }
 
-    public function isImage(): bool
+    /**
+     * @return non-empty-string
+     */
+    public function getId(): string
     {
-        return str_starts_with($this->mimeType, 'image/');
+        return $this->id;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @return non-empty-lowercase-string
+     */
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getPurpose(): ?string
+    {
+        return $this->purpose;
     }
 }

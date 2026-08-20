@@ -5,9 +5,9 @@ namespace OneToMany\AI\Resource;
 use OneToMany\AI\Contract\Bridge\FileProviderInterface;
 use OneToMany\AI\Contract\Resource\FilesInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\LocalFile;
 use OneToMany\AI\Resource\File\RemoteFile;
+use OneToMany\AI\Vendor;
 
 final readonly class Files implements FilesInterface
 {
@@ -29,16 +29,15 @@ final readonly class Files implements FilesInterface
 
     /**
      * @see OneToMany\AI\Contract\Resource\FilesInterface
-     * @see OneToMany\AI\Provider::create()
      */
     #[\Override]
-    public function upload(string|Provider $provider, string|LocalFile $file): RemoteFile
+    public function upload(string|Vendor $vendor, string|LocalFile $file): RemoteFile
     {
         if (!$file instanceof LocalFile) {
             $file = new LocalFile($file);
         }
 
-        return $this->providers->get(Provider::create($provider))->upload($file);
+        return $this->providers->get(Vendor::create($vendor))->upload($file);
     }
 
     /**
@@ -49,6 +48,6 @@ final readonly class Files implements FilesInterface
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->providers->get($file->provider)->delete($file);
+        $this->providers->get($file->vendor)->delete($file);
     }
 }

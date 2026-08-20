@@ -22,9 +22,9 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
 
         try {
             $response = $this->transport->postRequest($url, [
-                'auth_bearer' => $this->apiKey,
+                'auth_bearer' => $this->getApiKey(),
                 'json' => [
-                    ...$query->request,
+                    ...$query->getRequest(),
                 ],
             ]);
 
@@ -33,6 +33,6 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
             unset($query);
         }
 
-        return new Response($this->provider(), $record->id, $record->completed, $record->text, $record->refusal, $record->error?->message);
+        return new Response(static::getVendor(), $record->id, $record->completed, $record->text, $record->refusal, $record->error?->message);
     }
 }

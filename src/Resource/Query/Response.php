@@ -3,7 +3,7 @@
 namespace OneToMany\AI\Resource\Query;
 
 use OneToMany\AI\Exception\RuntimeException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 
 use function is_array;
 use function json_decode;
@@ -20,7 +20,7 @@ final readonly class Response
      * @param ?non-empty-string $error
      */
     public function __construct(
-        public Provider $provider,
+        public Vendor $vendor,
         public string $id,
         public bool $completed = true,
         public ?string $text = null,
@@ -28,6 +28,48 @@ final readonly class Response
         public ?string $error = null,
         public Usage $usage = new Usage(),
     ) {
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->completed;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getRefusal(): ?string
+    {
+        return $this->refusal;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    public function getUsage(): Usage
+    {
+        return $this->usage;
     }
 
     /**

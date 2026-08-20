@@ -14,4 +14,17 @@ final readonly class Query
         public array $request,
     ) {
     }
+
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRequest(): array
+    {
+        return $this->request;
+    }
 }

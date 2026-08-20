@@ -5,7 +5,7 @@ namespace OneToMany\AI\Bridge\OpenAI;
 use OneToMany\AI\Bridge\Transport;
 use OneToMany\AI\Contract\Bridge\ProviderInterface;
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
+use OneToMany\AI\Vendor;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function sprintf;
@@ -24,7 +24,7 @@ abstract readonly class AbstractProvider implements ProviderInterface
         protected string $apiVersion = 'v1',
     ) {
         if ('' === $this->apiKey) {
-            throw new InvalidArgumentException(sprintf('The %s API key cannot be empty.', $this->provider()->getName()));
+            throw new InvalidArgumentException(sprintf('The %s API key cannot be empty.', static::getVendor()->getName()));
         }
     }
 
@@ -32,9 +32,17 @@ abstract readonly class AbstractProvider implements ProviderInterface
      * @see OneToMany\AI\Contract\Bridge\ProviderInterface
      */
     #[\Override]
-    public function provider(): Provider
+    public static function getVendor(): Vendor
     {
-        return Provider::OpenAI;
+        return Vendor::OpenAI;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
     }
 
     protected function url(string ...$parts): string

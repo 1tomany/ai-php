@@ -14,14 +14,14 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
     /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\ResponseFormat
      *
-     * @param 'application/json'|'text/plain' $mimeType
      * @param ?array<string, mixed> $schema
+     * @param 'application/json'|'text/plain' $mimeType
      *
      * @throws InvalidArgumentException when the MIME type is "application/json" and a schema is not provided
      */
     public function __construct(
-        public string $mimeType = 'application/json',
         public ?array $schema = null,
+        public string $mimeType = 'application/json',
     ) {
         parent::__construct('text');
 

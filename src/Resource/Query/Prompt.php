@@ -70,28 +70,28 @@ final class Prompt
         array $schema,
         bool $strict = true,
     ): self {
-        return $this->withSchema(new JsonSchema($name, $strict, schema: $schema));
+        return $this->withSchema(new JsonSchema($name, $schema, $strict));
     }
 
-    public function withJsonSchemaFile(string $path, ?string $name = null): static
+    public function withJsonSchemaFile(string $file, ?string $name = null): static
     {
-        return $this->withSchema(JsonSchema::fromFile($name, $path));
+        return $this->withSchema(JsonSchema::fromFile($file, $name));
     }
 
     /**
      * @return list<InputText|RemoteFile>
      */
-    public function input(): array
+    public function getInput(): array
     {
         return $this->input;
     }
 
-    public function instructions(): ?InputText
+    public function getInstructions(): ?InputText
     {
         return $this->instructions;
     }
 
-    public function schema(): ?JsonSchema
+    public function getSchema(): ?JsonSchema
     {
         return $this->schema;
     }

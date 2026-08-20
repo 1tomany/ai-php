@@ -9,37 +9,37 @@ use function sprintf;
 use function str_contains;
 use function trim;
 
-enum Provider: string
+enum Vendor: string
 {
     case Gemini = 'gemini';
     case OpenAI = 'openai';
 
     /**
-     * @throws InvalidArgumentException when the provider is not valid
+     * @throws InvalidArgumentException when the vendor is not valid
      */
-    public static function create(string|self $provider): self
+    public static function create(string|self $vendor): self
     {
-        if ($provider instanceof self) {
-            return $provider;
+        if (!$vendor instanceof self) {
+            try {
+                return self::from($vendor);
+            } catch (\ValueError $e) {
+                throw new InvalidArgumentException(sprintf('The vendor "%s" is not valid.', $vendor), previous: $e);
+            }
         }
 
-        try {
-            return self::from($provider);
-        } catch (\ValueError $e) {
-            throw new InvalidArgumentException(sprintf('The provider "%s" is not valid.', $provider), previous: $e);
-        }
+        return $vendor;
     }
 
     /**
      * @throws InvalidArgumentException when the model format is invalid
-     * @throws InvalidArgumentException when the provider is not found
+     * @throws InvalidArgumentException when the vendor is not found
      */
     public static function fromModel(string $model): self
     {
         $model = trim($model);
 
         if (!str_contains($model, ':')) {
-            throw new InvalidArgumentException('The model must use the "provider:model" format.');
+            throw new InvalidArgumentException('The model must use the "vendor:model" format.');
         }
 
         return self::create(explode(':', $model)[0]);

@@ -15,4 +15,22 @@ final readonly class QueryDefinition
         public array $options = [],
     ) {
     }
+
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    public function getPrompt(): Prompt
+    {
+        return $this->prompt;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
 }

@@ -8,7 +8,6 @@ use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-use function array_merge;
 use function array_replace;
 
 final readonly class QueryNormalizer implements NormalizerInterface
@@ -25,43 +24,41 @@ final readonly class QueryNormalizer implements NormalizerInterface
     {
         $easyInputMessage = new EasyInputMessage();
 
-        foreach ($data->prompt->input() as $input) {
+        foreach ($data->getPrompt()->getInput() as $input) {
             if ($input instanceof InputText) {
                 $content = ResponseInput::asText(
-                    text: $input->toString(),
+                    text: $input->getText(),
                 );
             } else {
-                $content = ResponseInput::asFile(
-                    $input->mimeType, $input->id,
-                );
+                $content = ResponseInput::asFile($input->getId(), $input->getMimeType());
             }
 
             $easyInputMessage->addContent($content);
         }
 
         $request = [
-            'model' => $data->model->name,
-            'input' => [$easyInputMessage],
+            'model' => $data->getModel()->getName(),
+            'input' => [
+                $easyInputMessage,
+            ],
         ];
 
-        if (null !== $instructions = $data->prompt->instructions()) {
-            $request['instructions'] = $instructions->toString();
+        if ($instructions = $data->getPrompt()->getInstructions()) {
+            $request['instructions'] = $instructions->getText();
         }
 
-        if ($schema = $data->prompt->schema()) {
-            $request = array_merge($request, [
-                'text' => [
-                    'format' => [
-                        'type' => 'json_schema',
-                        'name' => $schema->name,
-                        'strict' => $schema->strict,
-                        'schema' => $schema->schema,
-                    ],
+        if ($schema = $data->getPrompt()->getSchema()) {
+            $request['text'] = [
+                'format' => [
+                    'type' => 'json_schema',
+                    'name' => $schema->getName(),
+                    'strict' => $schema->isStrict(),
+                    'schema' => $schema->getSchema(),
                 ],
-            ]);
+            ];
         }
 
-        return array_replace($data->options, $request);
+        return array_replace($data->getOptions(), $request);
     }
 
     /**
@@ -70,7 +67,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryDefinition && $data->model->provider->isOpenAI();
+        return $data instanceof QueryDefinition && $data->getModel()->getVendor()->isOpenAI();
     }
 
     /**

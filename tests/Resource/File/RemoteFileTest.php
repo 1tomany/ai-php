@@ -3,8 +3,8 @@
 namespace OneToMany\AI\Tests\Resource\File;
 
 use OneToMany\AI\Exception\InvalidArgumentException;
-use OneToMany\AI\Provider;
 use OneToMany\AI\Resource\File\RemoteFile;
+use OneToMany\AI\Vendor;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -18,15 +18,15 @@ final class RemoteFileTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageIs('The file ID cannot be empty.');
 
-        new RemoteFile(Provider::OpenAI, null, null, 'image/jpeg');
+        new RemoteFile(Vendor::OpenAI, null, null, 'image/jpeg');
     }
 
-    public function testConstructorRequiresUriWhenProviderIsGemini(): void
+    public function testConstructorRequiresUriWhenVendorIsGemini(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageIs('Gemini requires a non-empty URI.');
 
-        new RemoteFile(Provider::Gemini, uniqid(), null, 'image/jpeg');
+        new RemoteFile(Vendor::Gemini, uniqid(), null, 'image/jpeg');
     }
 
     public function testConstructorRequiresNonEmptyMimeType(): void
@@ -34,6 +34,6 @@ final class RemoteFileTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageIs('The MIME type cannot be empty.');
 
-        new RemoteFile(Provider::Gemini, uniqid(), uniqid(), null);
+        new RemoteFile(Vendor::Gemini, uniqid(), uniqid(), null);
     }
 }
