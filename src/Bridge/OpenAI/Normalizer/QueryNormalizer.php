@@ -4,7 +4,6 @@ namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\EasyInputMessage;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInput;
-use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputText;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -28,7 +27,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
 
         foreach ($data->prompt->input() as $input) {
             if ($input instanceof InputText) {
-                $content = new ResponseInputText(
+                $content = ResponseInput::asText(
                     text: $input->toString(),
                 );
             } else {

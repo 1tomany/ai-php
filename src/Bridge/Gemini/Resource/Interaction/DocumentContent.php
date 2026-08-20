@@ -11,9 +11,9 @@ final readonly class DocumentContent extends FileContent
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\FileContent
      */
     public function __construct(
-        string $mimeType,
         ?string $uri,
+        string $mimeType,
     ) {
-        parent::__construct('document', $mimeType, $uri);
+        parent::__construct('document', $uri, $mimeType);
     }
 }

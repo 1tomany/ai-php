@@ -33,4 +33,9 @@ abstract readonly class ResponseInput implements \JsonSerializable
 
         return new ResponseInputFile($fileId);
     }
+
+    public static function asText(string $text): ResponseInputText
+    {
+        return new ResponseInputText($text);
+    }
 }

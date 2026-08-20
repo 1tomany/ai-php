@@ -40,7 +40,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
 
             if ($input instanceof RemoteFile) {
                 $request['input'][] = FileContent::create(
-                    $input->mimeType, uri: $input->uri,
+                    $input->uri, mimeType: $input->mimeType,
                 );
             }
         }

@@ -3,6 +3,7 @@
 namespace OneToMany\AI\Bridge\Gemini\Resource\Interaction;
 
 use function str_starts_with;
+use function trim;
 
 /**
  * @template TType of 'audio'|'document'|'image'
@@ -12,39 +13,51 @@ use function str_starts_with;
 abstract readonly class FileContent extends Content implements \JsonSerializable
 {
     /**
+     * @var non-empty-string
+     */
+    public string $uri;
+
+    /**
      * @see OneToMany\AI\Bridge\Gemini\Resource\Interaction\Content
      *
      * @param TType $type
      * @param non-empty-lowercase-string $mimeType
-     * @param ?non-empty-string $uri
+     *
+     * @throws \InvalidArgumentException when the URI is empty
      */
     public function __construct(
         string $type,
+        ?string $uri,
         public string $mimeType,
-        public ?string $uri = null,
     ) {
         parent::__construct($type);
+
+        if ('' === trim((string) $uri)) {
+            throw new \InvalidArgumentException('The URI cannot be empty.');
+        }
+
+        $this->uri = $uri;
     }
 
     /**
-     * @param non-empty-lowercase-string $mimeType
      * @param ?non-empty-string $uri
+     * @param non-empty-lowercase-string $mimeType
      *
      * @return AudioContent|DocumentContent|ImageContent
      */
     public static function create(
-        string $mimeType,
         ?string $uri,
+        string $mimeType,
     ): self {
         if (str_starts_with($mimeType, 'audio')) {
-            return new AudioContent($mimeType, $uri);
+            return new AudioContent($uri, $mimeType);
         }
 
         if (str_starts_with($mimeType, 'image')) {
-            return new ImageContent($mimeType, $uri);
+            return new ImageContent($uri, $mimeType);
         }
 
-        return new DocumentContent($mimeType, $uri);
+        return new DocumentContent($uri, $mimeType);
     }
 
     /**
