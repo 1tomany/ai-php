@@ -27,14 +27,14 @@ final readonly class QueryNormalizer implements NormalizerInterface
     {
         $request = ['model' => $data->model->name];
 
-        foreach ($data->prompt->input() as $input) {
+        foreach ($data->getPrompt()->getInput() as $input) {
             if (!isset($request['input'])) {
                 $request['input'] = [];
             }
 
             if ($input instanceof InputText) {
                 $request['input'][] = new TextContent(
-                    text: $input->text,
+                    text: $input->getText(),
                 );
             }
 
@@ -45,17 +45,17 @@ final readonly class QueryNormalizer implements NormalizerInterface
             }
         }
 
-        if (null !== $instructions = $data->prompt->instructions()) {
-            $request['system_instruction'] = (string) $instructions;
+        if (null !== $instructions = $data->prompt->getInstructions()) {
+            $request['system_instruction'] = $instructions->getText();
         }
 
-        if ($data->prompt->schema() instanceof JsonSchema) {
+        if ($data->getPrompt()->getSchema() instanceof JsonSchema) {
             $request['response_format'] = new TextResponseFormat(
-                schema: $data->prompt->schema()->schema,
+                schema: $data->getPrompt()->getSchema()->getSchema(),
             );
         }
 
-        return array_replace($data->options, $request);
+        return array_replace($data->getOptions(), $request);
     }
 
     /**
@@ -64,7 +64,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof QueryDefinition && $data->model->vendor->isGemini();
+        return $data instanceof QueryDefinition && $data->getModel()->getVendor()->isGemini();
     }
 
     /**

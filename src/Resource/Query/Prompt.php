@@ -81,17 +81,17 @@ final class Prompt
     /**
      * @return list<InputText|RemoteFile>
      */
-    public function input(): array
+    public function getInput(): array
     {
         return $this->input;
     }
 
-    public function instructions(): ?InputText
+    public function getInstructions(): ?InputText
     {
         return $this->instructions;
     }
 
-    public function schema(): ?JsonSchema
+    public function getSchema(): ?JsonSchema
     {
         return $this->schema;
     }

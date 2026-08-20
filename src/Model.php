@@ -37,7 +37,7 @@ final readonly class Model implements \Stringable
      */
     public function __toString(): string
     {
-        return sprintf('%s:%s', $this->vendor->getValue(), $this->name);
+        return sprintf('%s:%s', $this->getVendor()->getValue(), $this->getName());
     }
 
     public static function create(string|self $model): self
@@ -57,5 +57,18 @@ final readonly class Model implements \Stringable
     public static function openai(string $name): self
     {
         return new self(Vendor::OpenAI, $name);
+    }
+
+    public function getVendor(): Vendor
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

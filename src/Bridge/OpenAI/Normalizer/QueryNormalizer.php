@@ -25,7 +25,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     {
         $easyInputMessage = new EasyInputMessage();
 
-        foreach ($data->prompt->input() as $input) {
+        foreach ($data->getPrompt()->getInput() as $input) {
             if ($input instanceof InputText) {
                 $content = ResponseInput::asText(
                     text: $input->getText(),
@@ -44,18 +44,18 @@ final readonly class QueryNormalizer implements NormalizerInterface
             'input' => [$easyInputMessage],
         ];
 
-        if (null !== $instructions = $data->prompt->instructions()) {
+        if ($instructions = $data->getPrompt()->getInstructions()) {
             $request['instructions'] = $instructions->getText();
         }
 
-        if ($schema = $data->prompt->schema()) {
+        if ($schema = $data->getPrompt()->getSchema()) {
             $request = array_merge($request, [
                 'text' => [
                     'format' => [
                         'type' => 'json_schema',
-                        'name' => $schema->name,
-                        'strict' => $schema->strict,
-                        'schema' => $schema->schema,
+                        'name' => $schema->getName(),
+                        'strict' => $schema->isStrict(),
+                        'schema' => $schema->getSchema(),
                     ],
                 ],
             ]);

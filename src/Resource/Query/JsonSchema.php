@@ -54,7 +54,6 @@ final readonly class JsonSchema
      * @throws InvalidArgumentException when reading the schema file fails
      * @throws InvalidArgumentException when decoding the schema fails
      * @throws InvalidArgumentException when the schema does not contain an object
-     * @throws InvalidArgumentException when the schema has no name
      */
     public static function fromFile(string $file, ?string $name = null): self
     {
@@ -91,5 +90,26 @@ final readonly class JsonSchema
         }
 
         return new self($name, schema: $schema); // @phpstan-ignore argument.type
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSchema(): array
+    {
+        return $this->schema;
+    }
+
+    public function isStrict(): bool
+    {
+        return $this->strict;
     }
 }

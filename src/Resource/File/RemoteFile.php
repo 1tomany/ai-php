@@ -6,7 +6,6 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 use OneToMany\AI\Vendor;
 
 use function sprintf;
-use function str_starts_with;
 use function strtolower;
 use function trim;
 
@@ -33,18 +32,18 @@ final readonly class RemoteFile
      * @param ?non-empty-string $purpose
      *
      * @throws InvalidArgumentException when the file ID is empty
-     * @throws InvalidArgumentException when the provider is Gemini and the URI is empty
+     * @throws InvalidArgumentException when the vendor is Gemini and the URI is empty
      * @throws InvalidArgumentException when the MIME type is empty
      */
     public function __construct(
-        string|Vendor $provider,
+        string|Vendor $vendor,
         ?string $id,
         ?string $uri,
         ?string $mimeType,
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
-        $this->vendor = Vendor::create($provider);
+        $this->vendor = Vendor::create($vendor);
 
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');
@@ -71,8 +70,40 @@ final readonly class RemoteFile
         $this->mimeType = strtolower($mimeType);
     }
 
-    public function isImage(): bool
+    /**
+     * @return non-empty-string
+     */
+    public function getId(): string
     {
-        return str_starts_with($this->mimeType, 'image/');
+        return $this->id;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getUri(): ?string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @return non-empty-lowercase-string
+     */
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getPurpose(): ?string
+    {
+        return $this->purpose;
     }
 }
