@@ -30,8 +30,6 @@ final readonly class RemoteFile
     public string $mimeType;
 
     /**
-     * @param ?non-empty-string $mimeType
-     * @param ?non-empty-string $uri
      * @param ?non-empty-string $purpose
      *
      * @throws InvalidArgumentException when the file ID is empty
