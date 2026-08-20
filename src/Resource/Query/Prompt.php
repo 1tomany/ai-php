@@ -73,9 +73,9 @@ final class Prompt
         return $this->withSchema(new JsonSchema($name, $schema, $strict));
     }
 
-    public function withJsonSchemaFile(string $path, ?string $name = null): static
+    public function withJsonSchemaFile(string $file, ?string $name = null): static
     {
-        return $this->withSchema(JsonSchema::fromFile($name, $path));
+        return $this->withSchema(JsonSchema::fromFile($file, $name));
     }
 
     /**

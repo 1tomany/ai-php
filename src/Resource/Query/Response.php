@@ -31,6 +31,48 @@ final readonly class Response
     }
 
     /**
+     * @return non-empty-string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->completed;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getRefusal(): ?string
+    {
+        return $this->refusal;
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    public function getUsage(): Usage
+    {
+        return $this->usage;
+    }
+
+    /**
      * @return ?array<array-key, mixed>
      *
      * @throws RuntimeException when decoding the response as JSON fails

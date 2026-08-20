@@ -18,8 +18,6 @@ final readonly class Queries implements QueriesInterface
     private Registry $providers;
 
     /**
-     * @see OneToMany\AI\Resource\Registry::__construct()
-     *
      * @param iterable<QueryProviderInterface> $providers
      */
     public function __construct(
@@ -34,8 +32,10 @@ final readonly class Queries implements QueriesInterface
      * @throws InvalidArgumentException when the prompt has no input
      */
     #[\Override]
-    public function compile(Model $model, Prompt $prompt, array $options = []): Query
+    public function compile(string|Model $model, Prompt $prompt, array $options = []): Query
     {
+        $model = Model::create($model);
+
         if ($prompt->isEmpty()) {
             throw new InvalidArgumentException('At least one text or file input is required to compile a prompt into a query.');
         }
@@ -54,18 +54,12 @@ final readonly class Queries implements QueriesInterface
 
     /**
      * @see OneToMany\AI\Contract\Resource\QueriesInterface
-     * @see OneToMany\AI\Resource\Queries::compile()
-     * @see OneToMany\AI\Resource\Queries::run()
      *
      * @param array<string, mixed> $options
      */
     #[\Override]
     public function compileAndRun(string|Model $model, Prompt $prompt, array $options = []): Response
     {
-        if (!$model instanceof Model) {
-            $model = Model::create($model);
-        }
-
-        return $this->run($this->compile($model, $prompt, $options));
+        return $this->run($this->compile(Model::create($model), $prompt, $options));
     }
 }

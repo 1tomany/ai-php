@@ -56,16 +56,16 @@ final readonly class JsonSchema
      * @throws InvalidArgumentException when the schema does not contain an object
      * @throws InvalidArgumentException when the schema has no name
      */
-    public static function fromFile(?string $name, string $path): self
+    public static function fromFile(string $file, ?string $name = null): self
     {
-        if (false === $contents = @file_get_contents($path)) {
-            throw new InvalidArgumentException(sprintf('Reading the JSON schema file "%s" failed.', $path));
+        if (false === $contents = @file_get_contents($file)) {
+            throw new InvalidArgumentException(sprintf('Reading the JSON schema file "%s" failed.', $file));
         }
 
         try {
             $schema = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
-            throw new InvalidArgumentException(sprintf('Decoding the JSON schema file "%s" failed.', $path), previous: $e);
+            throw new InvalidArgumentException(sprintf('Decoding the JSON schema file "%s" failed.', $file), previous: $e);
         }
 
         $isObject = true;
@@ -87,7 +87,7 @@ final readonly class JsonSchema
         }
 
         if (false === $isObject) {
-            throw new InvalidArgumentException(sprintf('The JSON schema file "%s" must contain an object.', $path));
+            throw new InvalidArgumentException(sprintf('The JSON schema file "%s" must contain an object.', $file));
         }
 
         return new self($name, schema: $schema); // @phpstan-ignore argument.type

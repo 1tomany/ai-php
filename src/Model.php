@@ -40,8 +40,12 @@ final readonly class Model implements \Stringable
         return sprintf('%s:%s', $this->vendor->getValue(), $this->name);
     }
 
-    public static function create(string $model): self
+    public static function create(string|self $model): self
     {
+        if ($model instanceof self) {
+            return $model;
+        }
+
         return new self(Vendor::fromModel($model), array_last(explode(':', trim($model), 2)));
     }
 
