@@ -2,6 +2,9 @@
 
 namespace OneToMany\AI\Bridge\Gemini\Normalizer;
 
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\AudioContent;
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\DocumentContent;
+use OneToMany\AI\Bridge\Gemini\Resource\Interaction\ImageContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextContent;
 use OneToMany\AI\Bridge\Gemini\Resource\Interaction\TextResponseFormat;
 use OneToMany\AI\Resource\File\RemoteFile;
@@ -24,9 +27,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        $request = [
-            'model' => $data->model->name,
-        ];
+        $request = ['model' => $data->model->name];
 
         $resolveType = static function (
             InputText|RemoteFile $part,
@@ -48,18 +49,20 @@ final readonly class QueryNormalizer implements NormalizerInterface
         $request['input'] = [];
 
         foreach ($data->prompt->input() as $input) {
-            $type = $resolveType(part: $input);
-
             if ($input instanceof InputText) {
                 $request['input'][] = new TextContent(
                     text: $input->toString(),
                 );
-                //     'type' => $type,
-                //     'text' => $text,
-                // ];
             }
 
             if ($input instanceof RemoteFile) {
+                $content = match (true) {
+                    $input->isAudio() => new AudioContent(uri: $input->uri),
+                    $input->isImage() => new ImageContent(uri: $input->uri),
+                    default => new DocumentContent(uri: $input->uri),
+                };
+
+                $request['input'][] = $content;
                 // $request['input'][] = new
                 // $input[] = [
                 //     'type' => $type,

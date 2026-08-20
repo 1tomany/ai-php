@@ -11,8 +11,8 @@ final readonly class ImageContent extends FileContent
      * @param ?non-empty-string $uri
      */
     public function __construct(
-        ?string $data,
-        ?string $uri,
+        ?string $data = null,
+        ?string $uri = null,
     ) {
         parent::__construct('image', $data, $uri);
     }

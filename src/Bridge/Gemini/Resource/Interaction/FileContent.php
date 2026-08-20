@@ -18,8 +18,9 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      */
     public function __construct(
         string $type,
-        public ?string $data,
-        public ?string $uri,
+        public ?string $data = null,
+        public ?string $uri = null,
+        // public ?string $mime_type,
     ) {
         parent::__construct($type);
 
