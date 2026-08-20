@@ -97,7 +97,7 @@ readonly class Transport
         }
 
         try {
-            $payload = $this->serializer->denormalize($data, $type, 'json', $context);
+            $payload = $this->serializer->denormalize($data, $type, context: $context);
         } catch (SerializerExceptionInterface $e) {
             throw new RuntimeException('Denormalizing the response content failed.', previous: $e);
         }
@@ -147,7 +147,7 @@ readonly class Transport
         }
 
         try {
-            $error = $this->serializer->denormalize($data, GenericError::class, null, [
+            $error = $this->serializer->denormalize($data, GenericError::class, context: [
                 UnwrappingDenormalizer::UNWRAP_PATH => '[error]',
             ]);
         } catch (SerializerExceptionInterface) {
