@@ -63,11 +63,11 @@ final class Prompt
      * @param array<string, mixed> $schema
      */
     public function withJsonSchema(
-        ?string $name,
         array $schema,
+        ?string $name = null,
         bool $strict = true,
     ): self {
-        return $this->withSchema(new JsonSchema($name, $schema, $strict));
+        return $this->withSchema(new JsonSchema($schema, $name, $strict));
     }
 
     public function withJsonSchemaFile(string $file, ?string $name = null): static
