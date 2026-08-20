@@ -27,7 +27,6 @@ final readonly class QueryNormalizer implements NormalizerInterface
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
-        /** @var list<ResponseInputFile|ResponseInputImage|ResponseInputText> $content */
         $content = [];
 
         foreach ($data->prompt->input() as $input) {
@@ -44,12 +43,16 @@ final readonly class QueryNormalizer implements NormalizerInterface
             }
         }
 
+        $input = new EasyInputMessage(...[
+            'content' => $content,
+        ]);
+
         $request = [
             'model' => $data->model->name,
-            'stream' => false,
             'input' => [
-                new EasyInputMessage(content: $content),
+                $input,
             ],
+            'stream' => false,
         ];
 
         if (null !== $instructions = $data->prompt->instructions()) {
