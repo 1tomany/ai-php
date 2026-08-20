@@ -31,7 +31,7 @@ final readonly class TextResponseFormat extends ResponseFormat implements \JsonS
     }
 
     /**
-     * @phpstan-assert-if-true 'application/json' $this->mime_type
+     * @phpstan-assert-if-true 'application/json' $this->mimeType
      */
     public function isMimeTypeApplicationJson(): bool
     {
