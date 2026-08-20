@@ -12,7 +12,7 @@ use function trim;
 
 final readonly class RemoteFile
 {
-    public Vendor $provider;
+    public Vendor $vendor;
 
     /**
      * @var non-empty-string
@@ -44,7 +44,7 @@ final readonly class RemoteFile
         public ?\DateTimeImmutable $expiresAt = null,
         public ?string $purpose = null,
     ) {
-        $this->provider = Vendor::create($provider);
+        $this->vendor = Vendor::create($provider);
 
         if ('' === $id = trim((string) $id)) {
             throw new InvalidArgumentException('The file ID cannot be empty.');
@@ -56,9 +56,9 @@ final readonly class RemoteFile
             $uri = trim($uri);
         }
 
-        if ($this->provider->isGemini()) {
+        if ($this->vendor->isGemini()) {
             if (null === $uri || '' === $uri) {
-                throw new InvalidArgumentException(sprintf('%s requires a non-empty URI.', $this->provider->getName()));
+                throw new InvalidArgumentException(sprintf('%s requires a non-empty URI.', $this->vendor->getName()));
             }
         }
 

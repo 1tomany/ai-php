@@ -20,7 +20,7 @@ final readonly class Response
      * @param ?non-empty-string $error
      */
     public function __construct(
-        public Vendor $provider,
+        public Vendor $vendor,
         public string $id,
         public bool $completed = true,
         public ?string $text = null,

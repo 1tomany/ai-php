@@ -48,6 +48,6 @@ final readonly class Files implements FilesInterface
     #[\Override]
     public function delete(RemoteFile $file): void
     {
-        $this->providers->get($file->provider)->delete($file);
+        $this->providers->get($file->vendor)->delete($file);
     }
 }
