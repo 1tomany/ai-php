@@ -3,9 +3,11 @@
 namespace OneToMany\AI\Bridge\OpenAI\Normalizer;
 
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\EasyInputMessage;
+use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInput;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputFile;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputImage;
 use OneToMany\AI\Bridge\OpenAI\Resource\Response\ResponseInputText;
+use OneToMany\AI\Resource\File\RemoteFile;
 use OneToMany\AI\Resource\Query\InputText;
 use OneToMany\AI\Resource\Query\QueryDefinition;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -33,17 +35,13 @@ final readonly class QueryNormalizer implements NormalizerInterface
                 $content[] = new ResponseInputText(
                     text: $input->text,
                 );
-
-                continue;
             }
 
-            if ($input->isImage()) {
-                $content[] = new ResponseInputImage($input->id);
-
-                continue;
+            if ($input instanceof RemoteFile) {
+                $content[] = ResponseInput::asFile(
+                    $input->mimeType, $input->id,
+                );
             }
-
-            $content[] = new ResponseInputFile($input->id);
         }
 
         $request = [

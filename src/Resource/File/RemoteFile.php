@@ -75,9 +75,4 @@ final readonly class RemoteFile
     {
         return str_starts_with($this->mimeType, 'image/');
     }
-
-    public function isVideo(): bool
-    {
-        return str_starts_with($this->mimeType, 'video/');
-    }
 }
