@@ -9,5 +9,8 @@ interface FileProviderInterface extends ProviderInterface
 {
     public function upload(LocalFile $file): RemoteFile;
 
-    public function delete(RemoteFile $file): void;
+    /**
+     * @param non-empty-string $fileId
+     */
+    public function delete(string $fileId): void;
 }

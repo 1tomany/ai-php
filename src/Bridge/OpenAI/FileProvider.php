@@ -22,15 +22,15 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
     #[\Override]
     public function upload(LocalFile $file): RemoteFile
     {
-        if (false === $handle = @fopen($file->getPath(), 'rb')) {
-            throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->getPath()));
+        if (false === $handle = @fopen($file->path, 'rb')) {
+            throw new RuntimeException(sprintf('Opening the file "%s" failed.', $file->path));
         }
 
         $url = $this->url('files');
 
         try {
             $response = $this->transport->postRequest($url, [
-                'auth_bearer' => $this->getApiKey(),
+                'auth_bearer' => $this->apiKey,
                 'body' => [
                     'file' => $handle,
                     'purpose' => 'user_data',
@@ -42,19 +42,19 @@ final readonly class FileProvider extends AbstractProvider implements FileProvid
             @fclose($handle);
         }
 
-        return new RemoteFile(static::getVendor(), $record->id, null, $file->getMimeType(), $record->getExpiresAt(), $record->purpose);
+        return new RemoteFile($record->id, $record->getExpiresAt(), null, $record->purpose);
     }
 
     /**
      * @see OneToMany\AI\Contract\Bridge\FileProviderInterface
      */
     #[\Override]
-    public function delete(RemoteFile $file): void
+    public function delete(string $fileId): void
     {
-        $url = $this->url('files', $file->getId());
+        $url = $this->url('files', $fileId);
 
         $this->transport->deleteRequest($url, [
-            'auth_bearer' => $this->getApiKey(),
+            'auth_bearer' => $this->apiKey,
         ]);
     }
 }

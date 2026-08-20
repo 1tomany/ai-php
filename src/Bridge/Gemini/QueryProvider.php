@@ -23,9 +23,9 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
         try {
             $response = $this->transport->postRequest($url, [
                 'headers' => [
-                    'x-goog-api-key' => $this->getApiKey(),
+                    'x-goog-api-key' => $this->apiKey,
                 ],
-                'json' => $query->getRequest(),
+                'json' => $query->request,
             ]);
 
             $record = $this->transport->decode($response, ResponsePayload::class);
@@ -33,6 +33,6 @@ final readonly class QueryProvider extends AbstractProvider implements QueryProv
             unset($query);
         }
 
-        return new Response(static::getVendor(), $record->id, $record->completed, $record->text, null, $record->error?->message);
+        return new Response($record->id, $record->completed, $record->text, null, $record->error?->message);
     }
 }

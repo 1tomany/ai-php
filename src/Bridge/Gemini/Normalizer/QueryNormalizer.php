@@ -27,7 +27,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
             'model' => $data->getModel()->getName(),
         ];
 
-        foreach ($data->getPrompt()->getInput() as $input) {
+        foreach ($data->getPrompt()->getInputs() as $input) {
             if (!isset($request['input'])) {
                 $request['input'] = [];
             }
@@ -38,7 +38,7 @@ final readonly class QueryNormalizer implements NormalizerInterface
                 );
             } else {
                 $request['input'][] = FileContent::create(
-                    $input->getUri(), $input->getMimeType(),
+                    $input->getId(), $input->getMimeType(),
                 );
             }
         }

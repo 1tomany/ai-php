@@ -67,7 +67,7 @@ abstract readonly class FileContent extends Content implements \JsonSerializable
      *
      * @return array{
      *   type: 'audio'|'document'|'image',
-     *   uri: ?non-empty-string,
+     *   uri: non-empty-string,
      *   mime_type: non-empty-lowercase-string,
      * }
      */
