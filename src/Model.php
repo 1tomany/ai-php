@@ -6,11 +6,16 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function array_last;
 use function explode;
-use function sprintf;
 use function trim;
+use function vsprintf;
 
 final readonly class Model implements \Stringable
 {
+    /**
+     * @return non-empty-string
+     */
+    public string $id;
+
     public Vendor $vendor;
 
     /**
@@ -32,6 +37,10 @@ final readonly class Model implements \Stringable
         }
 
         $this->name = $name;
+
+        $this->id = vsprintf('%s:%s', [
+            $this->vendor->value, $name,
+        ]);
     }
 
     /**
@@ -41,7 +50,7 @@ final readonly class Model implements \Stringable
      */
     public function __toString(): string
     {
-        return sprintf('%s:%s', $this->getVendor()->getValue(), $this->getName());
+        return $this->id;
     }
 
     public static function create(string|self $model): self
@@ -61,6 +70,14 @@ final readonly class Model implements \Stringable
     public static function openai(string $name): self
     {
         return new self(Vendor::OpenAI, $name);
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getVendor(): Vendor
