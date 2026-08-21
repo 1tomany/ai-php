@@ -6,8 +6,8 @@ use OneToMany\AI\Exception\InvalidArgumentException;
 
 use function array_last;
 use function explode;
-use function sprintf;
 use function trim;
+use function vsprintf;
 
 final readonly class Model implements \Stringable
 {
@@ -17,6 +17,11 @@ final readonly class Model implements \Stringable
      * @var non-empty-string
      */
     public string $name;
+
+    /**
+     * @return non-empty-string
+     */
+    public string $label;
 
     /**
      * @throws InvalidArgumentException when the model name is empty
@@ -32,6 +37,10 @@ final readonly class Model implements \Stringable
         }
 
         $this->name = $name;
+
+        $this->label = vsprintf('%s:%s', [
+            $this->vendor->value, $this->name,
+        ]);
     }
 
     /**
@@ -41,7 +50,7 @@ final readonly class Model implements \Stringable
      */
     public function __toString(): string
     {
-        return sprintf('%s:%s', $this->getVendor()->getValue(), $this->getName());
+        return $this->label;
     }
 
     public static function create(string|self $model): self
@@ -74,5 +83,13 @@ final readonly class Model implements \Stringable
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
     }
 }
