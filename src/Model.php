@@ -11,17 +11,17 @@ use function vsprintf;
 
 final readonly class Model implements \Stringable
 {
+    /**
+     * @return non-empty-string
+     */
+    public string $id;
+
     public Vendor $vendor;
 
     /**
      * @var non-empty-string
      */
     public string $name;
-
-    /**
-     * @return non-empty-string
-     */
-    public string $label;
 
     /**
      * @throws InvalidArgumentException when the model name is empty
@@ -38,8 +38,8 @@ final readonly class Model implements \Stringable
 
         $this->name = $name;
 
-        $this->label = vsprintf('%s:%s', [
-            $this->vendor->value, $this->name,
+        $this->id = vsprintf('%s:%s', [
+            $this->vendor->value, $name,
         ]);
     }
 
@@ -50,7 +50,7 @@ final readonly class Model implements \Stringable
      */
     public function __toString(): string
     {
-        return $this->label;
+        return $this->id;
     }
 
     public static function create(string|self $model): self
@@ -72,6 +72,14 @@ final readonly class Model implements \Stringable
         return new self(Vendor::OpenAI, $name);
     }
 
+    /**
+     * @return non-empty-string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
     public function getVendor(): Vendor
     {
         return $this->vendor;
@@ -83,13 +91,5 @@ final readonly class Model implements \Stringable
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    public function getLabel(): string
-    {
-        return $this->label;
     }
 }
