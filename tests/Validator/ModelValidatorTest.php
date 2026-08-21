@@ -19,11 +19,25 @@ final class ModelValidatorTest extends TestCase
         new ModelValidator()->validate('mock:model', new Assert\Blank());
     }
 
-    public function testValidateRequiresValueToBeNullOrString(): void
+    public function testValidateIgnoresNullValues(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        new ModelValidator()->validate(null, new Model());
+    }
+
+    public function testValidateRequiresValueToBeString(): void
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessageIs('Expected argument of type "string", "array" given');
 
         new ModelValidator()->validate(['mock:model'], new Model());
+    }
+
+    public function testValidatingValidModel(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        new ModelValidator()->validate('openai:gpt-5.6-sol', new Model());
     }
 }

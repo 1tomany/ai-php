@@ -16,7 +16,7 @@ final class ModelValidator extends ConstraintValidator
      * @see Symfony\Component\Validator\ConstraintValidator
      *
      * @throws UnexpectedTypeException when the constraint is not a {@see Model} object
-     * @throws UnexpectedValueException when the value is not a string
+     * @throws UnexpectedValueException when the value is not null or a string
      */
     public function validate(mixed $value, Constraint $constraint): void
     {
