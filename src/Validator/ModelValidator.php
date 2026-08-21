@@ -12,6 +12,12 @@ use function is_string;
 
 final class ModelValidator extends ConstraintValidator
 {
+    /**
+     * @see Symfony\Component\Validator\ConstraintValidator
+     *
+     * @throws UnexpectedTypeException when the constraint is not a {@see \OneToMany\AI\Validator\Model} object
+     * @throws UnexpectedValueException when the value is not a string
+     */
     public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof Model) {
